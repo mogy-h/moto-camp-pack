@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/organic-05df4399-2545-42d8-a736-030508ad6606/styles.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caprasimo&amp;family=Figtree:wght@400;500;600;700&amp;family=Zen+Maru+Gothic:wght@400;500;700&amp;display=swap">
+<style>
+body{margin:0;background:var(--color-bg);color:var(--color-text);font-family:'Figtree','Zen Maru Gothic',system-ui,sans-serif}
+*{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+a{color:var(--color-accent-700);text-decoration:none}
+a:hover{color:var(--color-accent-600)}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}
+@keyframes popIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</helmet>
+<div style="min-height:100vh;background:radial-gradient(120% 50% at 50% 0%, #fbf4e6 0%, var(--color-bg) 60%)">
+
+  <header style="position:sticky;top:0;z-index:20;background:color-mix(in srgb, var(--color-bg) 88%, transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--color-divider)">
+    <div style="max-width:880px;margin:0 auto;padding:12px clamp(14px,3vw,28px);display:flex;align-items:center;gap:12px">
+      <a href="./MotoCamp Dashboard.dc.html" title="ダッシュボードへ戻る" style="flex:none;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:999px;border:1px solid var(--color-neutral-300);color:var(--color-neutral-800)" style-hover="background:var(--color-surface)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+      </a>
+      <div style="font-family:'Caprasimo',serif;font-size:17px;color:var(--color-accent-700);flex:1;min-width:0">MotoCamp Pack</div>
+      <span style="flex:none;width:32px;height:32px;border-radius:999px;background:var(--color-accent-2-600);color:var(--color-accent-2-100);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">山田</span>
+    </div>
+  </header>
+
+  <main style="max-width:880px;margin:0 auto;padding:clamp(20px,3vw,32px) clamp(14px,3vw,28px) 96px">
+
+    <div style="display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:16px">
+      <div style="flex:1 1 260px;min-width:0">
+        <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:6px">Notifications</div>
+        <h1 style="margin:0;font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:clamp(22px,3.2vw,29px);line-height:1.3;font-weight:400">通知</h1>
+        <div style="font-size:12.5px;color:var(--color-neutral-700);margin-top:6px;line-height:1.6">{{ summaryText }}</div>
+      </div>
+      <button type="button" onClick="{{ markAllRead }}" style="{{ markAllStyle }}" style-hover="background:var(--color-surface)">すべて既読にする</button>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
+      <sc-for list="{{ filters }}" as="f" hint-placeholder-count="3">
+        <button type="button" onClick="{{ f.onPick }}" style="{{ f.style }}">
+          <span>{{ f.label }}</span>
+          <span style="{{ f.countStyle }}">{{ f.count }}</span>
+        </button>
+      </sc-for>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:clamp(16px,2.4vw,22px)">
+      <sc-for list="{{ groups }}" as="g" hint-placeholder-count="2">
+        <section>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;flex-wrap:wrap">
+            <span style="{{ g.dateStyle }}">{{ g.dateLabel }}</span>
+            <a href="{{ g.href }}" style="flex:1 1 200px;min-width:0;font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:15px;font-weight:500;color:var(--color-text);line-height:1.4;text-wrap:pretty" style-hover="color:var(--color-accent-700)">{{ g.title }}</a>
+            <sc-if value="{{ g.hasUnread }}" hint-placeholder-val="{{ true }}">
+              <span style="{{ g.unreadStyle }}">{{ g.unreadLabel }}</span>
+            </sc-if>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ g.items }}" as="n" hint-placeholder-count="3">
+              <div style="{{ n.rowStyle }}" style-hover="box-shadow:var(--shadow-md)">
+                <span style="{{ n.iconWrapStyle }}">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="{{ n.iconPath }}"></path></svg>
+                </span>
+                <div style="flex:1 1 220px;min-width:0">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <span style="{{ n.titleStyle }}">{{ n.title }}</span>
+                    <sc-if value="{{ n.unread }}" hint-placeholder-val="{{ true }}">
+                      <span style="flex:none;width:7px;height:7px;border-radius:999px;background:var(--color-accent-600)"></span>
+                    </sc-if>
+                  </div>
+                  <div style="font-size:12px;color:var(--color-neutral-700);line-height:1.6;margin-top:3px;text-wrap:pretty">{{ n.body }}</div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap">
+                    <span style="{{ n.avatarStyle }}" title="{{ n.actorName }}">{{ n.actorInitials }}</span>
+                    <span style="font-size:11px;color:var(--color-neutral-600)">{{ n.timeLabel }}</span>
+                    <sc-if value="{{ n.hasResult }}" hint-placeholder-val="{{ false }}">
+                      <span style="{{ n.resultStyle }}">{{ n.resultLabel }}</span>
+                    </sc-if>
+                  </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;flex:none;margin-left:auto">
+                  <sc-if value="{{ n.needsAction }}" hint-placeholder-val="{{ false }}">
+                    <span style="display:flex;gap:6px">
+                      <button type="button" onClick="{{ n.onAccept }}" style="{{ n.acceptStyle }}">引き受ける</button>
+                      <button type="button" onClick="{{ n.onDecline }}" style="{{ n.declineStyle }}">断る</button>
+                    </span>
+                  </sc-if>
+                  <sc-if value="{{ n.showOpen }}" hint-placeholder-val="{{ true }}">
+                    <a href="{{ n.href }}" title="イベントを開く" style="flex:none;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:999px;color:var(--color-neutral-600)" style-hover="background:var(--color-neutral-200);color:var(--color-text)">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+                    </a>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </sc-for>
+
+      <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:44px 20px;text-align:center;border-radius:22px;background:var(--color-surface);border:1px solid var(--color-divider)">
+          <div style="font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:16px;margin-bottom:6px">{{ emptyTitle }}</div>
+          <div style="font-size:12.5px;color:var(--color-neutral-700);line-height:1.7">{{ emptyBody }}</div>
+        </div>
+      </sc-if>
+    </div>
+
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultFilter&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;未対応のみ&quot;,&quot;すべて&quot;],&quot;default&quot;:&quot;未対応のみ&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;表示&quot;},&quot;groupByEvent&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;表示&quot;}}">
+const SELF = 't';
+
+const PEOPLE = {
+  k: { name: '佐々木 健二', bg: 'var(--color-accent-600)', fg: 'var(--color-accent-100)' },
+  m: { name: '川瀬 美咲', bg: 'var(--color-accent-2-600)', fg: 'var(--color-accent-2-100)' },
+  t: { name: '山田 拓也', bg: 'var(--color-neutral-700)', fg: 'var(--color-neutral-100)' },
+  y: { name: '中村 悠', bg: 'var(--color-accent-500)', fg: 'var(--color-accent-100)' },
+  s: { name: '白石 あかり', bg: 'var(--color-accent-2-700)', fg: 'var(--color-accent-2-100)' },
+};
+
+const EVENTS = [
+  { id: 1, title: '富士山麓 1泊2日 キャンプツーリング', date: '10/12', href: './MotoCamp Pack Web v2.dc.html' },
+  { id: 2, title: '道志みち 日帰りソロ', date: '10/25', href: './MotoCamp Pack Web v2.dc.html' },
+  { id: 3, title: '紀伊半島 3泊 林道キャンプ', date: '11/2', href: './MotoCamp Pack Web v2.dc.html' },
+];
+
+const ICONS = {
+  ask: 'M3 13h5l1.6 3h4.8L16 13h5M5 6.6L3 13v5a2 2 0 002 2h14a2 2 0 002-2v-5l-2-6.4A2 2 0 0017.1 5H6.9a2 2 0 00-1.9 1.6z',
+  accepted: 'M5 12.5l4.5 4.5L19 7',
+  declined: 'M12 4a8 8 0 100 16 8 8 0 000-16zM6.5 6.5l11 11',
+  withdrawn: 'M9 14l-4-4 4-4M5 10h9a5 5 0 015 5v4',
+  shared: 'M3 10l9-6 9 6v9a2 2 0 01-2 2H5a2 2 0 01-2-2v-9zM9 21v-7h6v7',
+  member: 'M4.8 20c.9-3.5 3.7-5.4 7.2-5.4 1 0 1.9.1 2.7.4M12 4.4a3.6 3.6 0 100 7.2 3.6 3.6 0 000-7.2zM18.5 14.5v6M15.5 17.5h6',
+  schedule: 'M7 3.6V7M17 3.6V7M4 10h16M5.4 6.4h13.2A1.4 1.4 0 0120 7.8v11.2a1.4 1.4 0 01-1.4 1.4H5.4A1.4 1.4 0 014 19V7.8a1.4 1.4 0 011.4-1.4z',
+};
+
+const TONE = {
+  ask: { bg: 'var(--color-accent-200)', fg: 'var(--color-accent-800)' },
+  withdrawn: { bg: '#f4dda1', fg: '#6d4a04' },
+  accepted: { bg: 'var(--color-accent-2-200)', fg: 'var(--color-accent-2-800)' },
+  declined: { bg: 'var(--color-neutral-200)', fg: 'var(--color-neutral-800)' },
+  shared: { bg: 'var(--color-neutral-200)', fg: 'var(--color-neutral-800)' },
+  member: { bg: 'var(--color-neutral-200)', fg: 'var(--color-neutral-800)' },
+  schedule: { bg: 'var(--color-accent-200)', fg: 'var(--color-accent-800)' },
+};
+
+const NOTIFS = [
+  { id: 1, ev: 1, type: 'ask', actor: 'k', time: '12分前', read: false, done: null,
+    title: '「ローチェア」を貸せるか確認したい', body: '佐々木 健二 さんがあなたのローチェアを借りたいとリクエストしています。運搬は貸す人のバイクです。' },
+  { id: 2, ev: 1, type: 'withdrawn', actor: 'k', time: '40分前', read: false, done: null,
+    title: '「インフレータブルマット」の貸し手が空きました', body: '佐々木 健二 さんが担当から降りました。貸せる人を募集中です。' },
+  { id: 3, ev: 1, type: 'accepted', actor: 'k', time: '2時間前', read: false, done: null,
+    title: '「焚き火台 + ゴトク」の運搬が決まりました', body: '佐々木 健二 さん（CB400SF）が運搬を引き受けました。' },
+  { id: 4, ev: 1, type: 'withdrawn', actor: 'm', time: '昨日 21:04', read: true, done: null,
+    title: '「初日夕食の食材」の運搬担当が空きました', body: '川瀬 美咲 さんが「タンデムシートに40Lバッグのみで積めない」と担当から降りました。運べる人を募集中です。' },
+  { id: 5, ev: 1, type: 'shared', actor: 'k', time: '昨日 18:30', read: true, done: null,
+    title: '共同装備「炭・薪」が追加されました', body: 'かさばる装備です。積めそうなら「自分が運ぶ」で引き受けられます（早い者勝ち）。' },
+  { id: 6, ev: 1, type: 'member', actor: 'y', time: '2日前', read: true, done: null,
+    title: '中村 悠 さんが参加しました', body: '積載装備メモ：トップケース45L＋サイドバッグ左右' },
+
+  { id: 7, ev: 2, type: 'schedule', actor: 'm', time: '3時間前', read: false, done: null,
+    title: '集合場所が変更されました', body: '「道の駅どうし」から「山伏峠 駐車場」へ。集合は 7:30 のままです。' },
+  { id: 8, ev: 2, type: 'ask', actor: 'm', time: '5時間前', read: false, done: null,
+    title: '「シングルバーナー」の運搬を頼まれています', body: '川瀬 美咲 さんが日帰りの昼食用に持っていってほしいと希望しています。' },
+  { id: 9, ev: 2, type: 'shared', actor: 'm', time: '昨日 12:10', read: true, done: null,
+    title: '共同装備「クッカーセット」が追加されました', body: '小物です。担当はまだ決まっていません。' },
+
+  { id: 10, ev: 3, type: 'member', actor: 's', time: '2日前', read: true, done: null,
+    title: '白石 あかり さんが参加しました', body: '積載装備メモ：リアキャリア＋防水バッグ60L、長物OK' },
+  { id: 11, ev: 3, type: 'schedule', actor: 't', time: '4日前', read: true, done: null,
+    title: '日程が 11/2 – 11/5 に確定しました', body: '下書きから予定に変わりました。装備の分担を始められます。' },
+];
+
+class Component extends DCLogic {
+  state = { notifs: NOTIFS, filter: null };
+
+  patch(id, next) {
+    this.setState(st => ({ notifs: st.notifs.map(n => n.id === id ? { ...n, ...next } : n) }));
+  }
+
+  renderVals() {
+    const s = this.state;
+    const grouped = (this.props.groupByEvent ?? true);
+    const filter = s.filter || ((this.props.defaultFilter ?? '未対応のみ') === 'すべて' ? 'all' : 'todo');
+
+    const isTodo = n => (n.type === 'ask' && !n.done) || !n.read;
+    const unreadCount = s.notifs.filter(n => !n.read).length;
+    const actionCount = s.notifs.filter(n => n.type === 'ask' && !n.done).length;
+    const visible = s.notifs.filter(n => filter === 'all' ? true : isTodo(n));
+
+    const chip = on => ({
+      display: 'inline-flex', alignItems: 'center', gap: 8, height: 38, padding: '0 16px', borderRadius: 999,
+      cursor: 'pointer', fontSize: 12.5, flex: 'none', fontFamily: 'inherit',
+      border: on ? 'none' : '1px solid var(--color-neutral-300)',
+      background: on ? 'var(--color-accent-600)' : 'transparent',
+      color: on ? 'var(--color-accent-100)' : 'var(--color-neutral-800)',
+      fontWeight: on ? 700 : 500,
+    });
+    const chipCount = on => ({
+      fontSize: 11, fontWeight: 700, padding: '1px 8px', borderRadius: 999,
+      background: on ? 'var(--color-accent-100)' : 'var(--color-accent-200)', color: 'var(--color-accent-800)',
+    });
+
+    const rowView = n => {
+      const p = PEOPLE[n.actor] || PEOPLE.t;
+      const ev = EVENTS.find(e => e.id === n.ev) || EVENTS[0];
+      const tone = TONE[n.type];
+      const needsAction = n.type === 'ask' && !n.done;
+      return {
+        id: n.id,
+        iconPath: ICONS[n.type],
+        iconWrapStyle: {
+          flex: 'none', width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center',
+          justifyContent: 'center', background: tone.bg, color: tone.fg,
+        },
+        title: n.title,
+        titleStyle: {
+          fontSize: 14, lineHeight: 1.4, textWrap: 'pretty', overflowWrap: 'anywhere',
+          fontWeight: n.read ? 500 : 700, color: 'var(--color-text)',
+        },
+        body: n.body,
+        unread: !n.read,
+        actorName: p.name,
+        actorInitials: p.name.replace(/\s+/g, '').slice(0, 2),
+        avatarStyle: {
+          flex: 'none', width: 22, height: 22, borderRadius: '50%', background: p.bg, color: p.fg,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9.5, fontWeight: 700,
+        },
+        timeLabel: n.time,
+        hasResult: !!n.done,
+        resultLabel: n.done === 'accepted' ? '引き受けました' : '断りました',
+        resultStyle: {
+          display: 'inline-flex', alignItems: 'center', height: 22, padding: '0 10px', borderRadius: 999, fontSize: 11,
+          fontWeight: 700,
+          background: n.done === 'accepted' ? 'var(--color-accent-2-200)' : 'var(--color-neutral-200)',
+          color: n.done === 'accepted' ? 'var(--color-accent-2-800)' : 'var(--color-neutral-800)',
+        },
+        needsAction,
+        showOpen: !needsAction,
+        href: ev.href,
+        acceptStyle: {
+          height: 36, padding: '0 14px', borderRadius: 999, border: 'none', cursor: 'pointer', fontFamily: 'inherit',
+          fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap',
+          background: 'var(--color-accent-2-600)', color: 'var(--color-accent-2-100)',
+        },
+        declineStyle: {
+          height: 36, padding: '0 14px', borderRadius: 999, cursor: 'pointer', fontFamily: 'inherit',
+          fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap',
+          border: '1px solid var(--color-neutral-300)', background: 'transparent', color: 'var(--color-neutral-800)',
+        },
+        onAccept: () => this.patch(n.id, { done: 'accepted', read: true }),
+        onDecline: () => this.patch(n.id, { done: 'declined', read: true }),
+        rowStyle: {
+          display: 'flex', alignItems: 'flex-start', gap: 11, rowGap: 8, flexWrap: 'wrap',
+          padding: '13px 15px', borderRadius: 18, background: 'var(--color-neutral-100)',
+          transition: 'box-shadow .16s ease',
+          boxShadow: n.read ? 'none' : 'var(--shadow-sm)',
+          border: '1px solid ' + (n.read ? 'var(--color-divider)' : 'transparent'),
+          opacity: n.read && !needsAction ? 0.86 : 1,
+        },
+      };
+    };
+
+    const groups = grouped
+      ? EVENTS.map(e => {
+          const items = visible.filter(n => n.ev === e.id);
+          const unread = items.filter(n => !n.read).length;
+          return {
+            id: e.id, title: e.title, href: e.href, items: items.map(rowView),
+            dateLabel: e.date,
+            dateStyle: {
+              flex: 'none', display: 'inline-flex', alignItems: 'center', height: 26, padding: '0 11px',
+              borderRadius: 999, background: 'var(--color-accent-2-200)', color: 'var(--color-accent-2-800)',
+              fontSize: 11.5, fontWeight: 700, fontVariantNumeric: 'tabular-nums',
+            },
+            hasUnread: unread > 0,
+            unreadLabel: '未読 ' + unread,
+            unreadStyle: {
+              flex: 'none', display: 'inline-flex', alignItems: 'center', height: 24, padding: '0 10px',
+              borderRadius: 999, background: 'var(--color-accent-600)', color: 'var(--color-accent-100)',
+              fontSize: 11, fontWeight: 700,
+            },
+          };
+        }).filter(g => g.items.length > 0)
+      : (visible.length ? [{
+          id: 'all', title: 'すべてのイベント', href: './MotoCamp Dashboard.dc.html',
+          items: visible.map(rowView), dateLabel: '時系列',
+          dateStyle: {
+            flex: 'none', display: 'inline-flex', alignItems: 'center', height: 26, padding: '0 11px',
+            borderRadius: 999, background: 'var(--color-neutral-200)', color: 'var(--color-neutral-800)',
+            fontSize: 11.5, fontWeight: 700,
+          },
+          hasUnread: unreadCount > 0, unreadLabel: '未読 ' + unreadCount,
+          unreadStyle: {
+            flex: 'none', display: 'inline-flex', alignItems: 'center', height: 24, padding: '0 10px',
+            borderRadius: 999, background: 'var(--color-accent-600)', color: 'var(--color-accent-100)',
+            fontSize: 11, fontWeight: 700,
+          },
+        }] : []);
+
+    return {
+      summaryText: actionCount
+        ? 'あなたの返事待ちが ' + actionCount + '件、未読が ' + unreadCount + '件あります。'
+        : unreadCount ? '未読が ' + unreadCount + '件あります。返事待ちはありません。' : 'すべて確認済みです。',
+      markAllStyle: {
+        flex: 'none', height: 40, padding: '0 16px', borderRadius: 999, cursor: 'pointer', fontFamily: 'inherit',
+        fontSize: 12.5, fontWeight: 600, border: '1px solid var(--color-neutral-300)', background: 'transparent',
+        color: 'var(--color-neutral-800)', opacity: unreadCount ? 1 : 0.45,
+      },
+      markAllRead: () => this.setState(st => ({ notifs: st.notifs.map(n => ({ ...n, read: true })) })),
+      filters: [
+        { id: 'todo', label: '未対応', count: s.notifs.filter(isTodo).length, on: filter === 'todo' },
+        { id: 'all', label: 'すべて', count: s.notifs.length, on: filter === 'all' },
+      ].map(f => ({
+        id: f.id, label: f.label, count: f.count,
+        style: chip(f.on), countStyle: chipCount(f.on),
+        onPick: () => this.setState({ filter: f.id }),
+      })),
+      groups,
+      isEmpty: groups.length === 0,
+      emptyTitle: filter === 'todo' ? '未対応の通知はありません' : '通知はまだありません',
+      emptyBody: filter === 'todo' ? '返事待ちも未読もすべて片付いています。' : 'イベントが動き出すと、ここに確認依頼や変更が届きます。',
+    };
+  }
+}
+
+</script>
+</body>
+</html>

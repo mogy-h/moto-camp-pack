@@ -1,0 +1,61 @@
+ENUM定義,,,
+No,型名,値,備考
+1,event_status,DRAFT / PUBLISHED,「終了」は end_date からの導出なので含めない
+2,member_role,OWNER / MEMBER,
+3,item_kind,SHARED / RENTAL,
+4,item_size,S / M / L,小物 / 中くらい / かさばる。表示ラベルのみ
+5,notif_type,ASK / ACCEPTED / DECLINED / WITHDRAWN / REQUEST_CANCELLED / SHARED_ADDED / MEMBER_JOINED / SCHEDULE_CHANGED,DECLINED=未承諾の依頼を断る（借り手のみ）／WITHDRAWN=確定後に降りる（全員）
+,,,
+インデックス・制約,,,
+No,テーブル,内容,備考
+1,users,UNIQUE (auth_uid),
+1-2,users,UNIQUE (claim_token_hash),ゲストCookieの照合
+2,event_members,UNIQUE (event_id, user_id),同一ユーザーの二重参加を防ぐ。再参加はupsertで既存行を復活させる
+2-2,event_members,INDEX (event_id, left_at),参加中メンバーの絞り込み
+4,invites,UNIQUE (token),
+5,items,INDEX (event_id, kind),イベント詳細の一覧取得
+6,items,CHECK (kind <> 'RENTAL' OR requester_id IS NOT NULL),貸し借りには必ず借り手がいる
+7,notifications,INDEX (recipient_id, read_at),未読バッジの件数取得
+8,notifications,INDEX (event_id, recipient_id),イベント詳細のベル
+,,,
+外部キー,,,
+No,子テーブル.FK列,参照先,onDelete
+1,events.created_by_id,users.id,RESTRICT
+2,event_members.event_id,events.id,CASCADE
+3,event_members.user_id,users.id,RESTRICT
+4,event_members.invited_via,invites.id,SET NULL
+5,items.event_id,events.id,CASCADE
+6,items.requester_id,event_members.id,RESTRICT
+7,items.carrier_id,event_members.id,RESTRICT
+8,items.created_by_id,event_members.id,RESTRICT
+9,items.source_gear_id,lendable_gears.id,SET NULL
+10,lendable_gears.event_id,events.id,CASCADE
+11,lendable_gears.member_id,event_members.id,CASCADE
+12,notifications.event_id,events.id,CASCADE
+13,notifications.recipient_id,event_members.id,CASCADE
+14,notifications.actor_id,event_members.id,SET NULL
+15,notifications.item_id,items.id,CASCADE
+16,invites.event_id,events.id,CASCADE
+17,invites.created_by_id,event_members.id,RESTRICT
+,,,
+離脱時の関連レコード処理,,,
+No,対象,処理,備考
+1,運搬担当だったアイテム,carrier_id / accepted_at / packed_at をクリア,募集中に戻しWITHDRAWN通知（reason: member_left）
+2,借り手だったリクエスト（items.kind=RENTAL）,アイテムごと削除,REQUEST_CANCELLED通知（reason: member_left）
+3,登録した貸せるギア,削除,このギア宛の依頼は source_gear_id が SET NULL で募集扱いになる
+4,登録した共同装備,残す,イベント全体の持ち物のため
+5,本人宛の未読通知,残すが配信対象外,
+6,過去の通知のactor表示,残す,履歴として参照される
+,,,,以上を1トランザクションで実行する
+,,,
+保存しない導出項目,,,
+No,項目,導出元,使う画面
+1,アイテムの表示ステータス（確定/引き受け確認中/募集中）,carrier_id / accepted_at,イベント詳細
+2,イベントの「終了」,end_date < now(),ダッシュボード
+2-2,参加人数・メンバー一覧,event_members の left_at IS NULL 件数,ダッシュボード・イベント詳細
+3,積載進捗 packed / total,items の集計（packed_at IS NOT NULL の件数 / 全件）,ダッシュボード・イベント詳細
+4,メンバーの実効積載メモ,event_members.gear_memo ?? users.gear_memo,イベント詳細・メンバーカード
+5,アバター色,users.id からの決定的導出,全画面
+6,イニシャル,users.display_name の先頭2文字,全画面
+7,通知の文面,type + 参照ID + payload,通知ページ・ベル
+8,相対時刻「12分前」,created_at,通知ページ・ベル

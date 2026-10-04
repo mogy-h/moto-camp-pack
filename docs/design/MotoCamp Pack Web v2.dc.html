@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/organic-05df4399-2545-42d8-a736-030508ad6606/styles.css">
+<script src="_ds/organic-05df4399-2545-42d8-a736-030508ad6606/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Figtree:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<style>
+body{margin:0;background:var(--color-bg);color:var(--color-text);font-family:'Figtree','Zen Maru Gothic',system-ui,sans-serif}
+*{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+a{color:var(--color-accent-700);text-decoration:none}
+a:hover{color:var(--color-accent-600)}
+button,input{font-family:inherit}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes popIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</helmet>
+<div style="min-height:100vh;background:radial-gradient(120% 50% at 50% 0%, #fbf4e6 0%, var(--color-bg) 60%)">
+
+  <header style="position:sticky;top:0;z-index:20;background:color-mix(in srgb, var(--color-bg) 88%, transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--color-divider)">
+    <div style="max-width:1080px;margin:0 auto;padding:12px clamp(14px,3vw,28px);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="font-family:'Caprasimo',serif;font-size:17px;color:var(--color-accent-700);flex:none">MotoCamp Pack</div>
+      <div style="flex:1;min-width:0"></div>
+      <sc-if value="{{ showPackProgress }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;align-items:center;gap:9px;flex:none">
+          <div style="width:clamp(80px,14vw,140px);height:8px;border-radius:999px;background:var(--color-neutral-300);overflow:hidden">
+            <div style="{{ packedBarStyle }}"></div>
+          </div>
+          <span style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:tabular-nums;white-space:nowrap">積み込み {{ packedLabel }}</span>
+        </div>
+      </sc-if>
+      <button type="button" onClick="{{ openNotif }}" title="このイベントの通知" style="flex:none;position:relative;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:999px;border:1px solid var(--color-neutral-300);background:transparent;color:var(--color-neutral-800);cursor:pointer" style-hover="background:var(--color-surface)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10a6 6 0 0112 0c0 5 2 6 2 6H4s2-1 2-6"></path><path d="M10.5 20a1.8 1.8 0 003 0"></path></svg>
+        <sc-if value="{{ hasNotifBadge }}" hint-placeholder-val="{{ true }}">
+          <span style="position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--color-accent-600);color:var(--color-accent-100);border:2px solid var(--color-bg);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">{{ notifBadgeLabel }}</span>
+        </sc-if>
+      </button>
+      <button type="button" onClick="{{ openSettings }}" title="イベント設定" style="flex:none;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:999px;border:1px solid var(--color-neutral-300);background:transparent;color:var(--color-neutral-800);cursor:pointer" style-hover="background:var(--color-surface)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"></path></svg>
+      </button>
+      <button type="button" onClick="{{ openInvite }}" style="flex:none;display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--color-neutral-300);background:transparent;color:var(--color-neutral-800);font-size:13px;font-weight:500;cursor:pointer" style-hover="background:var(--color-surface)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20v-1.5a3.5 3.5 0 00-3.5-3.5h-5A3.5 3.5 0 004 18.5V20"></path><circle cx="10" cy="8" r="3.5"></circle><path d="M19 8v6M22 11h-6"></path></svg>
+        招待
+      </button>
+      <button type="button" onClick="{{ openAddMenu }}" style="flex:none;display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 18px;border-radius:999px;border:none;background:var(--color-accent-600);color:var(--color-neutral-100);font-size:13px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm)" style-hover="background:var(--color-accent-700)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+        追加
+      </button>
+    </div>
+  </header>
+
+  <main style="max-width:1080px;margin:0 auto;padding:clamp(18px,3vw,32px) clamp(14px,3vw,28px) 96px">
+
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px;margin-bottom:clamp(18px,3vw,26px)">
+      <div style="flex:1 1 280px;min-width:0">
+        <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:6px">ツーリング</div>
+        <h1 style="margin:0;font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:clamp(22px,3.4vw,32px);line-height:1.3;font-weight:400;text-wrap:pretty">{{ evTitle }}</h1>
+        <sc-if value="{{ evIsDraft }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--color-neutral-200);color:var(--color-neutral-800)">下書き</span>
+            <span style="font-size:12px;color:var(--color-neutral-700)">まだ公開されていません。公開すると招待リンクから参加できるようになります。</span>
+          </div>
+        </sc-if>
+      </div>
+      <div style="flex:none;display:flex;gap:8px;flex-wrap:wrap">
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:7px 14px;border-radius:999px;background:var(--color-surface);color:var(--color-neutral-800)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="4"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg>
+          {{ evRangeLabel }}
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:7px 14px;border-radius:999px;background:var(--color-accent-2-200);color:var(--color-accent-2-800)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"></circle><path d="M3 19v-1a4 4 0 014-4h4a4 4 0 014 4v1M17 5.2a3.2 3.2 0 010 5.6M19 19v-1a4 4 0 00-2.4-3.7"></path></svg>
+          {{ memberCountLabel }} · {{ headerStatus }}
+        </span>
+      </div>
+    </div>
+
+    <sc-if value="{{ hasAlerts }}" hint-placeholder-val="{{ false }}">
+      <div style="{{ alertBoxStyle }}">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px"><path d="M12 4l9 16H3l9-16z"></path><path d="M12 10v4M12 17h.01"></path></svg>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13.5px;font-weight:700;margin-bottom:3px">調整が必要な項目があります</div>
+          <div style="font-size:12.5px;line-height:1.6;opacity:.95">{{ alertText }}</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 10px">
+      <h2 style="margin:0;font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:15px;font-weight:400">メンバーの積載</h2>
+      <span style="font-size:11.5px;color:var(--color-neutral-600)">カードをタップで絞り込み</span>
+    </div>
+
+    <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin-bottom:clamp(22px,4vw,34px)">
+      <sc-for list="{{ memberViews }}" as="m" hint-placeholder-count="3">
+        <div onClick="{{ m.onTap }}" style="{{ m.cardStyle }}" style-hover="transform:translateY(-2px)">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="{{ m.avatarStyle }}">{{ m.initials }}</div>
+            <div style="flex:1;min-width:0;text-align:left">
+              <div style="display:flex;align-items:baseline;gap:7px;flex-wrap:wrap">
+                <span style="font-size:15px;font-weight:700">{{ m.name }}</span>
+                <span style="font-size:11.5px;color:var(--color-neutral-600)">{{ m.bike }}</span>
+              </div>
+              <div style="font-size:11.5px;color:var(--color-neutral-700);margin-top:2px">{{ m.loadLabel }}</div>
+            </div>
+            <sc-if value="{{ m.hasWaiting }}" hint-placeholder-val="{{ false }}">
+              <span style="{{ m.waitStyle }}">{{ m.waitLabel }}</span>
+            </sc-if>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:11px;flex-wrap:wrap">
+            <sc-if value="{{ m.isSelf }}" hint-placeholder-val="{{ true }}">
+              <button type="button" onClick="{{ m.onGear }}" title="自分の積載装備メモを編集" style="{{ m.gearStyle }}" style-hover="background:var(--color-surface);border-style:solid">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="5.5" cy="17" r="3.2"></circle><circle cx="18.5" cy="17" r="3.2"></circle><path d="M8.7 17h6.1l-3.3-6.4H7.2M14.8 10.6h2.2l1.5 6.4M11.5 10.6l2-3.1h2.6"></path></svg>
+                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ m.gearLabel }}</span>
+              </button>
+            </sc-if>
+            <sc-if value="{{ m.notSelf }}" hint-placeholder-val="{{ false }}">
+              <span style="{{ m.gearStyle }}">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="5.5" cy="17" r="3.2"></circle><circle cx="18.5" cy="17" r="3.2"></circle><path d="M8.7 17h6.1l-3.3-6.4H7.2M14.8 10.6h2.2l1.5 6.4M11.5 10.6l2-3.1h2.6"></path></svg>
+                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ m.gearLabel }}</span>
+              </span>
+            </sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
+      <button type="button" onClick="{{ toggleOnlyOpen }}" style="{{ onlyOpenChipStyle }}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-6.4 7.5V19l-3.2 1.6v-8.1L4 5z"></path></svg>
+        調整が必要なものだけ
+        <span style="{{ onlyOpenCountStyle }}">{{ openCount }}</span>
+      </button>
+      <sc-if value="{{ memberFilterOn }}" hint-placeholder-val="{{ false }}">
+        <button type="button" onClick="{{ clearMemberFilter }}" style="display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 12px 0 16px;border-radius:999px;border:none;background:var(--color-accent-2-600);color:var(--color-accent-2-100);font-size:12.5px;font-weight:600;cursor:pointer;flex:none">
+          {{ memberFilterLabel }}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+        </button>
+      </sc-if>
+    </div>
+
+    <section style="margin-bottom:clamp(26px,4vw,38px)">
+      <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin:0 0 10px">
+        <div style="flex:1 1 240px;min-width:0">
+          <h2 style="margin:0;font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:17px;font-weight:400">ギアの貸し借り</h2>
+          <div style="font-size:11.5px;color:var(--color-neutral-700);margin-top:3px;line-height:1.6">借りたい人のリクエストに、最初に「自分が貸す」を押した人が貸します（早い者勝ち）。運搬は原則「貸す人」のバイク。積めるかどうかは本人が判断します。</div>
+        </div>
+        <div style="flex:none;display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" onClick="{{ openRequestForm }}" style="display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 15px;border-radius:999px;border:1px solid var(--color-accent-500);background:transparent;color:var(--color-accent-700);font-size:12.5px;font-weight:600;cursor:pointer" style-hover="background:var(--color-accent-200)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14l-4-4 4-4"></path><path d="M5 10h9a5 5 0 015 5v4"></path></svg>
+            借りたいギアをリクエスト
+          </button>
+          <button type="button" onClick="{{ openOfferForm }}" style="display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 15px;border-radius:999px;border:1px solid var(--color-accent-2-500);background:transparent;color:var(--color-accent-2-800);font-size:12.5px;font-weight:600;cursor:pointer" style-hover="background:var(--color-accent-2-200)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l4 4-4 4"></path><path d="M19 10h-9a5 5 0 00-5 5v4"></path></svg>
+            貸せるギアを登録
+          </button>
+        </div>
+      </div>
+
+      <sc-if value="{{ showLegend }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <sc-for list="{{ legend }}" as="l" hint-placeholder-count="3">
+            <span style="{{ l.style }}">{{ l.label }}</span>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ rentalViews }}" as="r" hint-placeholder-count="4">
+          <div style="{{ r.rowStyle }}" style-hover="box-shadow:var(--shadow-md)">
+            <div style="width:30px;flex:0 0 30px;display:flex;justify-content:center;padding-top:1px">
+              <sc-if value="{{ r.canPack }}" hint-placeholder-val="{{ false }}">
+                <button type="button" onClick="{{ r.onToggle }}" title="積み込み済みにする" style="width:30px;height:30px;flex:none;display:flex;align-items:center;justify-content:center;border:none;background:transparent;padding:0;cursor:pointer;border-radius:999px">
+                  <span style="{{ r.checkStyle }}">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="{{ r.checkIconStyle }}"><path d="M5 12.5l4.5 4.5L19 7"></path></svg>
+                  </span>
+                </button>
+              </sc-if>
+            </div>
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:7px">
+              <div style="display:flex;align-items:flex-start;gap:8px">
+                <span style="{{ r.nameStyle }}">{{ r.name }}</span>
+                <span style="{{ r.badgeStyle }}">{{ r.badgeLabel }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:7px;min-width:0">
+                <span style="{{ r.sizeStyle }}">{{ r.sizeLabel }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:7px;min-width:0">
+                <span style="display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 12px 0 3px;border-radius:999px;background:var(--color-neutral-200);font-size:11.5px;color:var(--color-neutral-800);white-space:nowrap">
+                  <span style="{{ r.borrowerAvatarStyle }}" title="{{ r.borrowerName }}">{{ r.borrowerInitials }}</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M9 14l-4-4 4-4"></path><path d="M5 10h9a5 5 0 015 5v4"></path></svg>
+                  借りたい
+                </span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;min-width:0">
+                <div style="flex:1;min-width:0;display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+                  <sc-if value="{{ r.hasLender }}" hint-placeholder-val="{{ false }}">
+                    <span style="{{ r.lenderChipStyle }}">
+                      <span style="{{ r.lenderAvatarStyle }}" title="{{ r.lenderName }}">{{ r.lenderInitials }}</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="5.5" cy="17" r="3.2"></circle><circle cx="18.5" cy="17" r="3.2"></circle><path d="M8.7 17h6.1l-3.3-6.4H7.2M14.8 10.6h2.2l1.5 6.4M11.5 10.6l2-3.1h2.6"></path></svg>
+                      {{ r.lenderNote }}
+                    </span>
+                  </sc-if>
+                  <sc-if value="{{ r.noOffers }}" hint-placeholder-val="{{ false }}">
+                    <span style="{{ r.noOffersStyle }}">貸せる人を募集中</span>
+                  </sc-if>
+                </div>
+                <sc-if value="{{ r.needsAccept }}" hint-placeholder-val="{{ false }}">
+                  <button type="button" onClick="{{ r.onAccept }}" style="{{ r.acceptStyle }}">{{ r.acceptLabel }}</button>
+                </sc-if>
+                <sc-if value="{{ r.hasAction }}" hint-placeholder-val="{{ true }}">
+                  <button type="button" onClick="{{ r.onLender }}" style="{{ r.actionStyle }}">{{ r.actionLabel }}</button>
+                </sc-if>
+              </div>
+            </div>
+            <button type="button" onClick="{{ r.onMenu }}" title="操作" style="width:32px;height:32px;flex:0 0 32px;margin-right:-4px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;color:var(--color-neutral-600);cursor:pointer;border-radius:12px" style-hover="background:var(--color-neutral-200);color:var(--color-text)">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5.5" r="1.9"></circle><circle cx="12" cy="12" r="1.9"></circle><circle cx="12" cy="18.5" r="1.9"></circle></svg>
+            </button>
+          </div>
+        </sc-for>
+        <sc-if value="{{ rentalsEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:30px 20px;text-align:center;border-radius:20px;background:var(--color-surface);color:var(--color-neutral-700);font-size:13px">貸し借りのリクエストはありません</div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ hasPool }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:12px;padding:12px 14px;border-radius:18px;background:var(--color-accent-2-100);border:1px dashed var(--color-accent-2-400)">
+          <div style="font-size:11.5px;color:var(--color-accent-2-800);margin-bottom:8px">貸せます（希望者待ち）</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <sc-for list="{{ poolViews }}" as="p" hint-placeholder-count="2">
+              <span style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 6px 0 12px;border-radius:999px;background:var(--color-neutral-100);font-size:12px;color:var(--color-neutral-800)">
+                <span style="{{ p.ownerAvatarStyle }}" title="{{ p.ownerName }}">{{ p.ownerInitials }}</span>
+                {{ p.label }}
+                <button type="button" onClick="{{ p.onRemove }}" title="取り下げる" style="width:22px;height:22px;display:flex;align-items:center;justify-content:center;border:none;border-radius:999px;background:transparent;color:var(--color-neutral-600);cursor:pointer" style-hover="background:var(--color-neutral-300);color:var(--color-text)">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                </button>
+              </span>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </section>
+
+    <section>
+      <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin:0 0 10px">
+        <div style="flex:1 1 240px;min-width:0">
+          <h2 style="margin:0;font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:17px;font-weight:400">共同装備の分担</h2>
+          <div style="font-size:11.5px;color:var(--color-neutral-700);margin-top:3px;line-height:1.6">全員で使う大型ギア。運搬は最初に「自分が運ぶ」を押した人に決まります。</div>
+        </div>
+        <button type="button" onClick="{{ openSharedForm }}" style="flex:none;display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 15px;border-radius:999px;border:none;background:var(--color-accent-600);color:var(--color-neutral-100);font-size:12.5px;font-weight:700;cursor:pointer" style-hover="background:var(--color-accent-700)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+          共同装備を追加
+        </button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ sharedViews }}" as="it" hint-placeholder-count="5">
+          <div style="{{ it.rowStyle }}" style-hover="box-shadow:var(--shadow-md)">
+            <sc-if value="{{ it.canPack }}" hint-placeholder-val="{{ true }}">
+              <button type="button" onClick="{{ it.onToggle }}" title="積み込み済みにする" style="width:44px;height:44px;flex:none;margin-left:-6px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;padding:0;cursor:pointer;border-radius:999px">
+                <span style="{{ it.checkStyle }}">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="{{ it.checkIconStyle }}"><path d="M5 12.5l4.5 4.5L19 7"></path></svg>
+                </span>
+              </button>
+            </sc-if>
+            <div style="flex:1 1 200px;min-width:0">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <span style="{{ it.nameStyle }}">{{ it.name }}</span>
+                <span style="{{ it.badgeStyle }}">{{ it.badgeLabel }}</span>
+                <span style="{{ it.sizeStyle }}">{{ it.sizeLabel }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:7px;min-width:0;margin-top:6px">
+                <sc-if value="{{ it.hasCarrier }}" hint-placeholder-val="{{ true }}">
+                  <span style="{{ it.carrierAvatarStyle }}" title="{{ it.carrierName }}">{{ it.carrierInitials }}</span>
+                </sc-if>
+                <span style="font-size:11.5px;color:var(--color-neutral-700);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ it.carrierNote }}</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;flex:0 0 auto;margin-left:auto">
+              <sc-if value="{{ it.needsAccept }}" hint-placeholder-val="{{ false }}">
+                <button type="button" onClick="{{ it.onAccept }}" style="{{ it.acceptStyle }}">{{ it.acceptLabel }}</button>
+              </sc-if>
+              <sc-if value="{{ it.canClaim }}" hint-placeholder-val="{{ false }}">
+                <button type="button" onClick="{{ it.onClaim }}" style="{{ it.claimStyle }}">{{ it.claimLabel }}</button>
+              </sc-if>
+              <sc-if value="{{ it.canRelease }}" hint-placeholder-val="{{ false }}">
+                <button type="button" onClick="{{ it.onRelease }}" style="{{ it.releaseStyle }}">{{ it.releaseLabel }}</button>
+              </sc-if>
+              <button type="button" onClick="{{ it.onMenu }}" title="操作" style="width:36px;height:44px;flex:none;margin-right:-6px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;color:var(--color-neutral-600);cursor:pointer;border-radius:12px" style-hover="background:var(--color-neutral-200);color:var(--color-text)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5.5" r="1.9"></circle><circle cx="12" cy="12" r="1.9"></circle><circle cx="12" cy="18.5" r="1.9"></circle></svg>
+              </button>
+            </div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ sharedEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:30px 20px;text-align:center;border-radius:20px;background:var(--color-surface);color:var(--color-neutral-700);font-size:13px">共同装備はまだありません</div>
+        </sc-if>
+      </div>
+    </section>
+
+    <div style="margin-top:20px;font-size:11.5px;line-height:1.7;color:var(--color-neutral-700)">積めるかどうかはバイクとキャリアによって違うため、上限はアプリでは持ちません。積めるかどうかは本人だけが判断し、他の人の担当は変更できません。</div>
+  </main>
+
+  <sc-if value="{{ overlayOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeSheet }}" style="position:fixed;inset:0;z-index:40;background:color-mix(in srgb, var(--color-neutral-900) 38%, transparent);animation:fadeIn .16s ease"></div>
+  </sc-if>
+
+  <sc-if value="{{ addMenuOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;pointer-events:none">
+      <div style="width:100%;max-width:380px;background:var(--color-bg);border-radius:24px;padding:18px;box-shadow:var(--shadow-lg);animation:popIn .18s ease;pointer-events:auto">
+        <div style="font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:18px;margin-bottom:12px">何を追加しますか？</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button type="button" onClick="{{ openSharedForm }}" style="display:flex;align-items:center;gap:11px;width:100%;padding:14px 16px;border-radius:18px;border:none;background:var(--color-accent-200);color:var(--color-accent-800);font-size:14.5px;font-weight:700;cursor:pointer;text-align:left;font-family:inherit" style-hover="background:var(--color-accent-300)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6v9a2 2 0 01-2 2H5a2 2 0 01-2-2v-9z"></path><path d="M9 21v-7h6v7"></path></svg>
+            共同装備を追加
+          </button>
+          <button type="button" onClick="{{ openRequestForm }}" style="display:flex;align-items:center;gap:11px;width:100%;padding:14px 16px;border-radius:18px;border:1px solid var(--color-neutral-300);background:var(--color-neutral-100);color:var(--color-text);font-size:14.5px;font-weight:600;cursor:pointer;text-align:left;font-family:inherit" style-hover="background:var(--color-surface)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14l-4-4 4-4"></path><path d="M5 10h9a5 5 0 015 5v4"></path></svg>
+            借りたいギアをリクエスト
+          </button>
+          <button type="button" onClick="{{ openOfferForm }}" style="display:flex;align-items:center;gap:11px;width:100%;padding:14px 16px;border-radius:18px;border:1px solid var(--color-neutral-300);background:var(--color-neutral-100);color:var(--color-text);font-size:14.5px;font-weight:600;cursor:pointer;text-align:left;font-family:inherit" style-hover="background:var(--color-surface)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l4 4-4 4"></path><path d="M19 10h-9a5 5 0 00-5 5v4"></path></svg>
+            貸せるギアを登録
+          </button>
+          <button type="button" onClick="{{ closeSheet }}" style="width:100%;padding:13px 16px;border-radius:16px;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-800);font-size:13.5px;font-weight:500;cursor:pointer;font-family:inherit">キャンセル</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ gearOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;pointer-events:none">
+      <div style="width:100%;max-width:400px;background:var(--color-bg);border-radius:24px;padding:20px;box-shadow:var(--shadow-lg);animation:popIn .18s ease;pointer-events:auto">
+        <div style="font-size:11.5px;color:var(--color-neutral-600);margin-bottom:2px">積載装備のメモ</div>
+        <div style="font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:18px;margin-bottom:6px">{{ gearMemberName }}</div>
+        <div style="font-size:12.5px;color:var(--color-neutral-700);line-height:1.6;margin-bottom:12px">キャリアやバッグの構成を書いておくと、他のメンバーが「誰に頼めそうか」を判断しやすくなります。枠数や上限は設定しません。</div>
+        <input value="{{ gearDraft }}" onChange="{{ onGearDraft }}" placeholder="例：リアキャリア＋40Lシートバッグ、サイドバッグなし" style="width:100%;min-height:46px;border-radius:16px;background:var(--color-neutral-100);border:1px solid var(--color-divider);color:var(--color-text);padding:8px 16px;font-size:14px" style-focus="border-color:var(--color-accent-600)">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
+          <sc-for list="{{ gearPresets }}" as="g" hint-placeholder-count="4">
+            <button type="button" onClick="{{ g.onAdd }}" style="height:32px;padding:0 12px;border-radius:999px;border:1px dashed var(--color-neutral-400);background:transparent;color:var(--color-neutral-800);font-size:11.5px;cursor:pointer;font-family:inherit" style-hover="background:var(--color-surface);border-style:solid">＋ {{ g.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:18px">
+          <button type="button" onClick="{{ closeSheet }}" style="flex:none;padding:0 20px;height:46px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-800);font-size:13.5px;font-weight:500;cursor:pointer">キャンセル</button>
+          <button type="button" onClick="{{ saveGear }}" style="flex:1;height:46px;border-radius:999px;border:none;background:var(--color-accent-600);color:var(--color-neutral-100);font-size:14px;font-weight:700;cursor:pointer" style-hover="background:var(--color-accent-700)">保存する</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;pointer-events:none">
+      <div style="width:100%;max-width:360px;background:var(--color-bg);border-radius:24px;padding:18px;box-shadow:var(--shadow-lg);animation:popIn .18s ease;pointer-events:auto">
+        <div style="font-size:11.5px;color:var(--color-neutral-600);margin-bottom:2px">アイテムの操作</div>
+        <div style="font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:17px;line-height:1.35;margin-bottom:12px;text-wrap:pretty">{{ targetName }}</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button type="button" onClick="{{ openEdit }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:14px 16px;border-radius:16px;border:none;background:var(--color-surface);color:var(--color-text);font-size:14.5px;font-weight:600;cursor:pointer;font-family:inherit;text-align:left" style-hover="background:var(--color-neutral-200)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10-10a2.8 2.8 0 10-4-4L4 16v4z"></path></svg>
+            内容を編集
+          </button>
+          <sc-if value="{{ canDecline }}" hint-placeholder-val="{{ false }}">
+            <button type="button" onClick="{{ declineItem }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:14px 16px;border-radius:16px;border:1px solid var(--color-neutral-300);background:transparent;color:var(--color-neutral-800);font-size:14.5px;font-weight:600;cursor:pointer;font-family:inherit;text-align:left" style-hover="background:var(--color-surface)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4a8 8 0 100 16 8 8 0 000-16z"></path><path d="M6.5 6.5l11 11"></path></svg>
+              積めないので辞退する
+            </button>
+          </sc-if>
+          <button type="button" onClick="{{ deleteItem }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:14px 16px;border-radius:16px;border:none;background:var(--color-accent-200);color:var(--color-accent-800);font-size:14.5px;font-weight:600;cursor:pointer;font-family:inherit;text-align:left" style-hover="background:var(--color-accent-300)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg>
+            リストから削除
+          </button>
+          <button type="button" onClick="{{ closeSheet }}" style="width:100%;padding:13px 16px;border-radius:16px;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-800);font-size:13.5px;font-weight:500;cursor:pointer;font-family:inherit">キャンセル</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ formOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;pointer-events:none">
+      <div style="width:100%;max-width:440px;max-height:calc(100vh - 40px);overflow-y:auto;background:var(--color-bg);border-radius:24px;padding:20px;box-shadow:var(--shadow-lg);animation:popIn .18s ease;pointer-events:auto">
+        <div style="font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:19px;margin-bottom:14px">{{ formTitle }}</div>
+        <div style="margin-bottom:12px">
+          <div style="font-size:11.5px;color:var(--color-neutral-700);margin-bottom:5px">ギア名</div>
+          <input value="{{ draftName }}" onChange="{{ onDraftName }}" placeholder="例：ヘキサタープ" style="width:100%;min-height:46px;border-radius:16px;background:var(--color-neutral-100);border:1px solid var(--color-divider);color:var(--color-text);padding:8px 16px;font-size:14.5px" style-focus="border-color:var(--color-accent-600)">
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="font-size:11.5px;color:var(--color-neutral-700);margin-bottom:5px">かさばり具合（運ぶ人の判断材料）</div>
+          <div style="display:flex;gap:6px">
+            <sc-for list="{{ draftSizes }}" as="sz" hint-placeholder-count="3">
+              <button type="button" onClick="{{ sz.onPick }}" style="{{ sz.style }}">{{ sz.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <sc-if value="{{ showDraftMembers }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-bottom:12px">
+            <div style="font-size:11.5px;color:var(--color-neutral-700);margin-bottom:5px">{{ draftMemberLabel }}</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <sc-for list="{{ draftMembers }}" as="o" hint-placeholder-count="4">
+                <button type="button" onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button>
+              </sc-for>
+            </div>
+            <div style="margin-top:7px;font-size:11.5px;line-height:1.5;color:var(--color-neutral-700)">{{ draftHint }}</div>
+          </div>
+        </sc-if>
+        <div style="display:flex;gap:8px;margin-top:18px">
+          <button type="button" onClick="{{ closeSheet }}" style="flex:none;padding:0 20px;height:48px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-800);font-size:14px;font-weight:500;cursor:pointer">キャンセル</button>
+          <button type="button" onClick="{{ submitForm }}" style="flex:1;height:48px;border-radius:999px;border:none;background:var(--color-accent-600);color:var(--color-neutral-100);font-size:14.5px;font-weight:700;cursor:pointer" style-hover="background:var(--color-accent-700)">{{ formSubmitLabel }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ notifOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;pointer-events:none">
+      <div style="width:100%;max-width:520px;max-height:calc(100vh - 40px);display:flex;flex-direction:column;background:var(--color-bg);border-radius:24px;box-shadow:var(--shadow-lg);animation:popIn .18s ease;pointer-events:auto">
+        <div style="padding:20px 20px 12px;display:flex;align-items:flex-start;gap:12px">
+          <div style="flex:1;min-width:0">
+            <div style="font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:19px;margin-bottom:4px">このイベントの通知</div>
+            <div style="font-size:11.5px;color:var(--color-neutral-700);line-height:1.6">富士山麓 1泊2日 キャンプツーリング · {{ notifSummary }}</div>
+          </div>
+          <button type="button" onClick="{{ closeSheet }}" title="閉じる" style="flex:none;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:999px;border:none;background:transparent;color:var(--color-neutral-700);cursor:pointer" style-hover="background:var(--color-neutral-200)">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+          </button>
+        </div>
+
+        <div style="flex:1;min-height:0;overflow-y:auto;padding:0 20px 4px;display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ notifViews }}" as="n" hint-placeholder-count="4">
+            <div style="{{ n.rowStyle }}">
+              <span style="{{ n.iconWrapStyle }}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="{{ n.iconPath }}"></path></svg>
+              </span>
+              <div style="flex:1 1 200px;min-width:0">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                  <span style="{{ n.titleStyle }}">{{ n.title }}</span>
+                  <sc-if value="{{ n.unread }}" hint-placeholder-val="{{ true }}">
+                    <span style="flex:none;width:7px;height:7px;border-radius:999px;background:var(--color-accent-600)"></span>
+                  </sc-if>
+                </div>
+                <div style="font-size:11.5px;color:var(--color-neutral-700);line-height:1.6;margin-top:3px;text-wrap:pretty">{{ n.body }}</div>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap">
+                  <span style="{{ n.avatarStyle }}" title="{{ n.actorName }}">{{ n.actorInitials }}</span>
+                  <span style="font-size:11px;color:var(--color-neutral-600)">{{ n.timeLabel }}</span>
+                  <sc-if value="{{ n.hasResult }}" hint-placeholder-val="{{ false }}">
+                    <span style="{{ n.resultStyle }}">{{ n.resultLabel }}</span>
+                  </sc-if>
+                </div>
+              </div>
+              <sc-if value="{{ n.needsAction }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;gap:6px;flex:none;margin-left:auto">
+                  <button type="button" onClick="{{ n.onAccept }}" style="{{ n.acceptStyle }}">引き受ける</button>
+                  <button type="button" onClick="{{ n.onDecline }}" style="{{ n.declineStyle }}">断る</button>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center;padding:14px 20px 18px">
+          <button type="button" onClick="{{ markNotifsRead }}" style="flex:none;height:42px;padding:0 16px;border-radius:999px;border:1px solid var(--color-neutral-300);background:transparent;color:var(--color-neutral-800);font-size:12.5px;font-weight:600;cursor:pointer" style-hover="background:var(--color-surface)">すべて既読にする</button>
+          <a href="./MotoCamp Notifications.dc.html" style="flex:1;height:42px;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:999px;background:var(--color-surface);color:var(--color-neutral-800);font-size:12.5px;font-weight:600" style-hover="background:var(--color-neutral-200);color:var(--color-text)">
+            すべての通知を見る
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ inviteOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;pointer-events:none">
+      <div style="width:100%;max-width:420px;background:var(--color-bg);border-radius:24px;padding:22px 20px;box-shadow:var(--shadow-lg);animation:popIn .18s ease;pointer-events:auto">
+        <div style="font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:19px;margin-bottom:6px">メンバーを招待</div>
+        <div style="font-size:13px;color:var(--color-neutral-800);line-height:1.65;margin-bottom:14px">このリンクを共有すると、参加者が自分のバイクと積載装備を登録して、貸し借り・共同装備の分担に参加できます。</div>
+        <div style="display:flex;align-items:center;gap:8px;padding:12px 16px;border-radius:999px;background:var(--color-surface);margin-bottom:14px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-700)" stroke-width="2.6" stroke-linecap="round"><path d="M10 13a4 4 0 006 .5l2.5-2.5a4 4 0 00-5.7-5.7L11.5 6.6"></path><path d="M14 11a4 4 0 00-6-.5L5.5 13a4 4 0 005.7 5.7l1.3-1.3"></path></svg>
+          <span style="flex:1;min-width:0;font-size:12.5px;color:var(--color-neutral-800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">motocamp.pack/j/FUJI-3K9X</span>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button type="button" onClick="{{ closeSheet }}" style="flex:none;padding:0 18px;height:46px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-800);font-size:13.5px;font-weight:500;cursor:pointer">閉じる</button>
+          <button type="button" onClick="{{ copyInvite }}" style="{{ copyBtnStyle }}">{{ copyLabel }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ settingsOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;pointer-events:none">
+      <div style="width:100%;max-width:520px;max-height:calc(100vh - 40px);overflow:auto;background:var(--color-bg);border-radius:24px;padding:22px 20px;box-shadow:var(--shadow-lg);animation:popIn .18s ease;pointer-events:auto">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <div style="flex:1;min-width:0;display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+            <span style="font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:19px">イベント設定</span>
+            <span style="{{ roleTagStyle }}">{{ roleLabel }}</span>
+          </div>
+          <button type="button" onClick="{{ closeSheet }}" aria-label="閉じる" style="flex:none;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:999px;border:none;background:var(--color-surface);color:var(--color-neutral-800);cursor:pointer" style-hover="background:var(--color-neutral-200)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+        </div>
+
+        <sc-if value="{{ isOwner }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;gap:4px;padding:4px;border-radius:999px;background:var(--color-surface);margin-bottom:18px">
+            <sc-for list="{{ settingsTabs }}" as="tb" hint-placeholder-count="3">
+              <button type="button" onClick="{{ tb.onTap }}" style="{{ tb.style }}">{{ tb.label }}</button>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ tabInfo }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--radius-lg);background:var(--color-surface)">
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                    <span style="font-size:12px;font-weight:600;color:var(--color-neutral-800)">公開状態</span>
+                    <span style="{{ evStatusTagStyle }}">{{ evStatusLabel }}</span>
+                  </div>
+                  <div style="font-size:12px;line-height:1.65;color:var(--color-neutral-700)">{{ evStatusNote }}</div>
+                </div>
+                <sc-if value="{{ evIsDraft }}" hint-placeholder-val="{{ false }}">
+                  <button type="button" onClick="{{ publishEvent }}" style="flex:none;height:40px;padding:0 18px;border-radius:999px;border:none;background:var(--color-accent-2-600);color:var(--color-accent-2-100);font-size:13px;font-weight:700;cursor:pointer" style-hover="background:var(--color-accent-2-700)">公開する</button>
+                </sc-if>
+              </div>
+              <label>
+                <span style="display:block;font-size:12px;font-weight:600;color:var(--color-neutral-800);margin-bottom:6px">イベント名</span>
+                <input value="{{ evDraftTitle }}" onChange="{{ onEvTitle }}" style="box-sizing:border-box;width:100%;height:44px;padding:0 14px;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-surface);color:var(--color-text);font-size:14px;outline:none;font-family:inherit" style-focus="border-color:var(--color-accent-500)">
+              </label>
+              <label>
+                <span style="display:block;font-size:12px;font-weight:600;color:var(--color-neutral-800);margin-bottom:6px">目的地</span>
+                <input value="{{ evDraftPlace }}" onChange="{{ onEvPlace }}" placeholder="例）朝霧ジャンボリー" style="box-sizing:border-box;width:100%;height:44px;padding:0 14px;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-surface);color:var(--color-text);font-size:14px;outline:none;font-family:inherit" style-focus="border-color:var(--color-accent-500)">
+              </label>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:10px">
+                <label>
+                  <span style="display:block;font-size:12px;font-weight:600;color:var(--color-neutral-800);margin-bottom:6px">出発日</span>
+                  <input type="date" value="{{ evDraftStart }}" onChange="{{ onEvStart }}" style="box-sizing:border-box;width:100%;height:44px;padding:0 14px;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-surface);color:var(--color-text);font-size:14px;outline:none;font-family:inherit" style-focus="border-color:var(--color-accent-500)">
+                </label>
+                <label>
+                  <span style="display:block;font-size:12px;font-weight:600;color:var(--color-neutral-800);margin-bottom:6px">帰着日</span>
+                  <input type="date" value="{{ evDraftEnd }}" onChange="{{ onEvEnd }}" style="box-sizing:border-box;width:100%;height:44px;padding:0 14px;border-radius:999px;border:1.5px solid var(--color-neutral-300);background:var(--color-surface);color:var(--color-text);font-size:14px;outline:none;font-family:inherit" style-focus="border-color:var(--color-accent-500)">
+                </label>
+              </div>
+              <sc-if value="{{ scheduleDirty }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;gap:8px;align-items:flex-start;padding:11px 14px;border-radius:var(--radius-md);font-size:12px;line-height:1.7;background:var(--color-accent-100);color:var(--color-accent-800);border:1px solid var(--color-accent-200)">
+                  <span style="flex:none;margin-top:1px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10a6 6 0 0112 0c0 5 2 6 2 6H4s2-1 2-6"></path><path d="M10.5 20a1.8 1.8 0 003 0"></path></svg></span>
+                  <span style="flex:1">日程・目的地の変更は、保存すると参加者全員に通知されます。</span>
+                </div>
+              </sc-if>
+              <sc-if value="{{ infoSavedOn }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;gap:8px;align-items:flex-start;padding:11px 14px;border-radius:var(--radius-md);font-size:12px;line-height:1.7;background:var(--color-accent-2-100);color:var(--color-accent-2-800);border:1px solid var(--color-accent-2-200)">
+                  <span style="flex:none;margin-top:1px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"></path></svg></span>
+                  <span style="flex:1">{{ infoSavedMsg }}</span>
+                </div>
+              </sc-if>
+              <div style="display:flex;gap:8px;justify-content:flex-end">
+                <button type="button" onClick="{{ resetEvDraft }}" disabled="{{ infoClean }}" style="flex:none;padding:0 18px;height:44px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-800);font-size:13.5px;font-weight:500;cursor:pointer">元に戻す</button>
+                <button type="button" onClick="{{ saveEvDraft }}" disabled="{{ infoClean }}" style="flex:none;height:44px;padding:0 22px;border-radius:999px;border:none;background:var(--color-accent-600);color:var(--color-neutral-100);font-size:13.5px;font-weight:700;cursor:pointer" style-hover="background:var(--color-accent-700)">変更を保存</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabMembers }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12.5px;line-height:1.75;color:var(--color-neutral-700);margin-bottom:12px">外したメンバーの運搬担当は募集中に戻り、借りたいリクエストと貸せるギアは取り消されます。参加者全員に通知されます。同じ招待リンクから入り直せば、同じメンバーとして復帰できます。</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ memberRows }}" as="mr" hint-placeholder-count="3">
+                <div style="padding:12px 14px;border-radius:var(--radius-lg);background:var(--color-surface)">
+                  <div style="display:flex;align-items:center;gap:11px">
+                    <span style="{{ mr.avatarStyle }}">{{ mr.initials }}</span>
+                    <div style="flex:1;min-width:0">
+                      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                        <span style="font-size:13.5px;font-weight:700">{{ mr.name }}</span>
+                        <sc-for list="{{ mr.tags }}" as="tg" hint-placeholder-count="1">
+                          <span style="{{ tg.style }}">{{ tg.label }}</span>
+                        </sc-for>
+                      </div>
+                      <div style="font-size:11.5px;color:var(--color-neutral-700);margin-top:2px">{{ mr.bike }}</div>
+                    </div>
+                    <sc-if value="{{ mr.canRemove }}" hint-placeholder-val="{{ false }}">
+                      <button type="button" onClick="{{ mr.onAsk }}" style="flex:none;height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--color-neutral-300);background:transparent;color:var(--color-accent-700);font-size:12.5px;font-weight:600;cursor:pointer" style-hover="background:var(--color-accent-100)">外す</button>
+                    </sc-if>
+                  </div>
+                  <sc-if value="{{ mr.confirming }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:12px;padding:12px 14px;border-radius:var(--radius-md);background:var(--color-accent-100);border:1px solid var(--color-accent-200)">
+                      <div style="font-size:12.5px;font-weight:700;color:var(--color-accent-800);margin-bottom:4px">{{ mr.name }} さんをイベントから外しますか？</div>
+                      <div style="font-size:12px;line-height:1.7;color:var(--color-accent-800)">{{ mr.impact }}</div>
+                      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+                        <button type="button" onClick="{{ cancelRemove }}" style="flex:none;height:38px;padding:0 16px;border-radius:999px;border:1px solid var(--color-accent-300);background:transparent;color:var(--color-accent-800);font-size:12.5px;font-weight:500;cursor:pointer">キャンセル</button>
+                        <button type="button" onClick="{{ mr.onRemove }}" style="flex:none;height:38px;padding:0 16px;border-radius:999px;border:none;background:var(--color-accent-700);color:var(--color-accent-100);font-size:12.5px;font-weight:700;cursor:pointer" style-hover="background:var(--color-accent-800)">外す</button>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ removedMsgOn }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:8px;align-items:flex-start;padding:11px 14px;border-radius:var(--radius-md);font-size:12px;line-height:1.7;margin-top:12px;background:var(--color-accent-2-100);color:var(--color-accent-2-800);border:1px solid var(--color-accent-2-200)">
+                <span style="flex:none;margin-top:1px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"></path></svg></span>
+                <span style="flex:1">{{ removedMsg }}</span>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <sc-if value="{{ tabInvites }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12.5px;line-height:1.75;color:var(--color-neutral-700);margin-bottom:12px">無効にしたリンクからは参加できなくなります。参加済みのメンバーには影響しません。</div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+              <sc-for list="{{ inviteRows }}" as="iv" hint-placeholder-count="2">
+                <div style="{{ iv.rowStyle }}">
+                  <span style="flex:none;color:var(--color-neutral-700)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a4 4 0 006 .5l2.5-2.5a4 4 0 00-5.7-5.7L11.5 6.6"></path><path d="M14 11a4 4 0 00-6-.5L5.5 13a4 4 0 005.7 5.7l1.3-1.3"></path></svg></span>
+                  <div style="flex:1;min-width:0">
+                    <div style="{{ iv.urlStyle }}">{{ iv.url }}</div>
+                    <div style="font-size:11.5px;color:var(--color-neutral-700);margin-top:2px">{{ iv.meta }}</div>
+                  </div>
+                  <span style="{{ iv.tagStyle }}">{{ iv.tagLabel }}</span>
+                  <sc-if value="{{ iv.active }}" hint-placeholder-val="{{ true }}">
+                    <button type="button" onClick="{{ iv.onRevoke }}" style="flex:none;height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--color-neutral-300);background:transparent;color:var(--color-accent-700);font-size:12.5px;font-weight:600;cursor:pointer" style-hover="background:var(--color-accent-100)">無効にする</button>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <button type="button" onClick="{{ issueInvite }}" style="width:100%;height:46px;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:999px;border:1.5px dashed var(--color-neutral-400);background:transparent;color:var(--color-neutral-800);font-size:13.5px;font-weight:600;cursor:pointer" style-hover="background:var(--color-surface)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+              新しいリンクを発行
+            </button>
+          </sc-if>
+        </sc-if>
+
+        <sc-if value="{{ isMemberView }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:8px;align-items:flex-start;padding:11px 14px;border-radius:var(--radius-md);font-size:12px;line-height:1.7;background:var(--color-surface);color:var(--color-neutral-800);margin-bottom:16px">
+            <span style="flex:none;margin-top:1px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-4.5M12 8.2h.01"></path></svg></span>
+            <span style="flex:1">イベントの編集・公開、メンバーの管理、招待リンクの管理はオーナー（{{ ownerName }} さん）だけが行えます。</span>
+          </div>
+          <div style="padding:16px;border-radius:var(--radius-lg);border:1px solid var(--color-accent-200)">
+            <div style="font-size:14px;font-weight:700;margin-bottom:6px">このイベントから退出する</div>
+            <div style="font-size:12.5px;line-height:1.75;color:var(--color-neutral-700);margin-bottom:12px">{{ leaveImpact }}</div>
+            <sc-if value="{{ leaveIdle }}" hint-placeholder-val="{{ true }}">
+              <button type="button" onClick="{{ askLeave }}" style="height:42px;padding:0 18px;border-radius:999px;border:1px solid var(--color-accent-300);background:transparent;color:var(--color-accent-700);font-size:13px;font-weight:600;cursor:pointer" style-hover="background:var(--color-accent-100)">退出する</button>
+            </sc-if>
+            <sc-if value="{{ leaveConfirming }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                <span style="flex:1 1 160px;font-size:12.5px;font-weight:700;color:var(--color-accent-800)">本当に退出しますか？</span>
+                <button type="button" onClick="{{ cancelLeave }}" style="flex:none;height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-800);font-size:12.5px;cursor:pointer">キャンセル</button>
+                <button type="button" onClick="{{ doLeave }}" style="flex:none;height:40px;padding:0 16px;border-radius:999px;border:none;background:var(--color-accent-700);color:var(--color-accent-100);font-size:12.5px;font-weight:700;cursor:pointer" style-hover="background:var(--color-accent-800)">退出する</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ leftDone }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12.5px;font-weight:600;color:var(--color-accent-2-800)">退出しました（実装ではダッシュボードへ戻ります）</div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showPackProgress&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;表示&quot;},&quot;showBadgeLegend&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;表示&quot;},&quot;listDensity&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;ゆったり&quot;,&quot;コンパクト&quot;],&quot;default&quot;:&quot;ゆったり&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;表示&quot;},&quot;viewerRole&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;オーナー&quot;,&quot;メンバー&quot;],&quot;default&quot;:&quot;オーナー&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;状態&quot;},&quot;eventStatus&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;公開中&quot;,&quot;下書き&quot;],&quot;default&quot;:&quot;公開中&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;状態&quot;}}">
+const SELF = 't';
+
+const MEMBERS = [
+  { id: 'k', name: '佐々木 健二', bike: 'CB400SF', bg: 'var(--color-accent-600)', fg: 'var(--color-accent-100)' },
+  { id: 'm', name: '川瀬 美咲', bike: 'Rebel 250', bg: 'var(--color-accent-2-600)', fg: 'var(--color-accent-2-100)' },
+  { id: 't', name: '山田 拓也', bike: 'SEROW 250', bg: 'var(--color-neutral-700)', fg: 'var(--color-neutral-100)' },
+].map(m => ({ ...m, initials: m.name.replace(/\s+/g, '').slice(0, 2) }));
+
+const GEAR0 = {
+  k: 'リアキャリア＋60Lシートバッグ、サイドバッグ左右',
+  m: 'タンデムシートに40Lバッグのみ',
+  t: 'リアキャリア＋40Lバッグ、長物は横積み可',
+};
+
+const GEAR_PRESETS = ['トップケース', 'サイドバッグ', 'シートバッグ', 'リアキャリア', 'タンクバッグ', '長物OK'];
+
+const SIZE_NAME = { s: '小物', m: '中くらい', l: 'かさばる' };
+const SIZES = [
+  { id: 's', label: '小物' },
+  { id: 'm', label: '中くらい' },
+  { id: 'l', label: 'かさばる' },
+];
+
+const SHARED0 = [
+  { id: 1, name: 'ヘキサタープ + ポール', size: 'l', carrier: 't', accepted: true, packed: true },
+  { id: 2, name: '焚き火台 + ゴトク', size: 'm', carrier: 'k', accepted: true, packed: false },
+  { id: 3, name: '初日夕食の食材', size: 'm', carrier: 'm', accepted: false, packed: false },
+  { id: 4, name: 'クッカーセット', size: 's', carrier: 'm', accepted: true, packed: true },
+  { id: 5, name: '炭・薪', size: 'l', carrier: null, accepted: false, packed: false },
+  { id: 6, name: 'LEDランタン ×2', size: 's', carrier: null, accepted: false, packed: false },
+];
+
+const RENTALS0 = [
+  { id: 11, name: 'シュラフ（冬用 -5℃）', size: 'm', borrower: 'm', lender: 't', accepted: true, packed: false },
+  { id: 12, name: 'ローチェア', size: 'm', borrower: 'k', lender: 't', accepted: false, packed: false },
+  { id: 13, name: 'インフレータブルマット', size: 'l', borrower: 'm', lender: null, accepted: false, packed: false },
+  { id: 14, name: 'シングルバーナー', size: 's', borrower: 't', lender: 'm', accepted: true, packed: false },
+  { id: 15, name: 'ランタン（充電式）', size: 's', borrower: 't', lender: null, accepted: false, packed: false },
+];
+
+const POOL0 = [
+  { id: 21, name: '予備グローブ', size: 's', owner: 't' },
+  { id: 22, name: 'ランタンスタンド', size: 'm', owner: 'k' },
+];
+
+const EVENT0 = { title: '富士山麓 1泊2日 キャンプツーリング', place: '朝霧ジャンボリーオートキャンプ場', start: '2024-10-12', end: '2024-10-13' };
+const INVITES0 = [
+  { id: 1, token: 'FUJI-3K9X', created: '10/1', expires: '10/12 まで', joins: 2, revoked: false },
+  { id: 2, token: 'FUJI-7QW2', created: '9/24', expires: '期限なし', joins: 0, revoked: true },
+];
+const fmtJ = (iso) => { if (!iso) return ''; const d = new Date(iso + 'T00:00:00'); return (d.getMonth() + 1) + '/' + d.getDate() + '(' + '日月火水木金土'[d.getDay()] + ')'; };
+
+const WARN_BG = '#f4dda1';
+const WARN_FG = '#6d4a04';
+const WARN_LINE = '#d9a021';
+
+const CHIP = 'display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 18px;border-radius:999px;font-size:13px;white-space:nowrap;cursor:pointer;flex:none;';
+
+const STATUS = {
+  open: { label: '未解決', bg: WARN_BG, fg: WARN_FG, line: WARN_LINE },
+  asking: { label: '引き受け確認中', bg: 'var(--color-neutral-200)', fg: 'var(--color-neutral-800)', line: 'var(--color-neutral-400)' },
+  fixed: { label: '確定', bg: 'var(--color-accent-2-200)', fg: 'var(--color-accent-2-800)', line: 'var(--color-accent-2-500)' },
+  unassigned: { label: '未割り当て', bg: WARN_BG, fg: WARN_FG, line: WARN_LINE },
+};
+
+function badgeStyle(k, strong) {
+  const s = STATUS[k];
+  return {
+    display: 'inline-flex', alignItems: 'center', flex: 'none', height: 24, padding: '0 10px',
+    borderRadius: 999, fontSize: 11, fontWeight: strong ? 700 : 600,
+    background: s.bg, color: s.fg, border: '1px solid ' + s.line, whiteSpace: 'nowrap',
+  };
+}
+
+function sizeChip() {
+  return {
+    display: 'inline-flex', alignItems: 'center', flex: 'none', height: 24, fontSize: 10.5, padding: '0 10px',
+    borderRadius: 999, background: 'var(--color-neutral-200)', color: 'var(--color-neutral-800)',
+  };
+}
+
+function rowBorder(key) {
+  if (key === 'open' || key === 'unassigned') return '2px dashed ' + WARN_LINE;
+  return '2px solid transparent';
+}
+
+const NOTIF_ICONS = {
+  ask: 'M3 13h5l1.6 3h4.8L16 13h5M5 6.6L3 13v5a2 2 0 002 2h14a2 2 0 002-2v-5l-2-6.4A2 2 0 0017.1 5H6.9a2 2 0 00-1.9 1.6z',
+  accepted: 'M5 12.5l4.5 4.5L19 7',
+  declined: 'M12 4a8 8 0 100 16 8 8 0 000-16zM6.5 6.5l11 11',
+  withdrawn: 'M9 14l-4-4 4-4M5 10h9a5 5 0 015 5v4',
+  shared: 'M3 10l9-6 9 6v9a2 2 0 01-2 2H5a2 2 0 01-2-2v-9zM9 21v-7h6v7',
+  member: 'M4.8 20c.9-3.5 3.7-5.4 7.2-5.4 1 0 1.9.1 2.7.4M12 4.4a3.6 3.6 0 100 7.2 3.6 3.6 0 000-7.2zM18.5 14.5v6M15.5 17.5h6',
+};
+
+const NOTIF_TONE = {
+  ask: { bg: 'var(--color-accent-200)', fg: 'var(--color-accent-800)' },
+  withdrawn: { bg: WARN_BG, fg: WARN_FG },
+  accepted: { bg: 'var(--color-accent-2-200)', fg: 'var(--color-accent-2-800)' },
+  declined: { bg: 'var(--color-neutral-200)', fg: 'var(--color-neutral-800)' },
+  shared: { bg: 'var(--color-neutral-200)', fg: 'var(--color-neutral-800)' },
+  member: { bg: 'var(--color-neutral-200)', fg: 'var(--color-neutral-800)' },
+};
+
+const NOTIFS0 = [
+  { id: 1, type: 'ask', actor: 'k', time: '12分前', read: false, done: null,
+    title: '「ローチェア」を貸せるか確認したい', body: '佐々木 健二 さんがあなたのローチェアを借りたいとリクエストしています。運搬は貸す人のバイクです。' },
+  { id: 2, type: 'withdrawn', actor: 'k', time: '40分前', read: false, done: null,
+    title: '「インフレータブルマット」の貸し手が空きました', body: '佐々木 健二 さんが担当から降りました。貸せる人を募集中です。' },
+  { id: 3, type: 'accepted', actor: 'k', time: '2時間前', read: false, done: null,
+    title: '「焚き火台 + ゴトク」の運搬が決まりました', body: '佐々木 健二 さん（CB400SF）が運搬を引き受けました。' },
+  { id: 4, type: 'withdrawn', actor: 'm', time: '昨日 21:04', read: true, done: null,
+    title: '「初日夕食の食材」の運搬担当が空きました', body: '川瀬 美咲 さんが「40Lバッグのみで積めない」と担当から降りました。運べる人を募集中です。' },
+  { id: 5, type: 'shared', actor: 'k', time: '昨日 18:30', read: true, done: null,
+    title: '共同装備「炭・薪」が追加されました', body: 'かさばる装備です。積めそうなら「自分が運ぶ」で引き受けられます（早い者勝ち）。' },
+  { id: 6, type: 'member', actor: 'm', time: '2日前', read: true, done: null,
+    title: '川瀬 美咲 さんが参加しました', body: '積載装備メモ：タンデムシートに40Lバッグのみ' },
+];
+
+class Component extends DCLogic {
+  state = {
+    notifs: NOTIFS0,
+    shared: SHARED0, rentals: RENTALS0, pool: POOL0, gear: GEAR0,
+    onlyOpen: false, memberFilter: null,
+    sheet: null, kind: null, targetId: null,
+    gearTarget: null, gearDraft: '',
+    lenderMode: 'confirm',
+    editing: false, draft: { kind: 'shared', name: '', size: 'm', member: null },
+    copied: false,
+    settingsTab: 'info', ev: null, evDraft: null, evStatus: null, infoSaved: null,
+    removed: [], confirmRemove: null, removedMsg: null,
+    invites: INVITES0, leave: 'idle',
+  };
+
+  close = () => this.setState({ sheet: null, kind: null, targetId: null, gearTarget: null, copied: false, editing: false });
+
+  member(id) { return MEMBERS.find(m => m.id === id); }
+
+  patchShared(id, patch) {
+    this.setState(st => ({ shared: st.shared.map(x => x.id === id ? { ...x, ...patch } : x) }));
+  }
+  patchRental(id, patch) {
+    this.setState(st => ({ rentals: st.rentals.map(x => x.id === id ? { ...x, ...patch } : x) }));
+  }
+
+  setLender(id, mid, accepted) {
+    this.setState(st => ({
+      rentals: st.rentals.map(x => x.id === id
+        ? { ...x, lender: mid, accepted: accepted }
+        : x),
+      sheet: null, kind: null, targetId: null,
+    }));
+  }
+
+  // 早い者勝ち: 担当が空いているときだけ確定する
+  takeRental(id) {
+    this.setState(st => ({
+      rentals: st.rentals.map(x => x.id === id && !x.lender ? { ...x, lender: SELF, accepted: true } : x),
+    }));
+  }
+
+  rentalStatus(r) {
+    if (r.lender) return r.accepted ? 'fixed' : 'asking';
+    return 'open';
+  }
+  sharedStatus(i) {
+    if (!i.carrier) return 'unassigned';
+    return i.accepted ? 'fixed' : 'asking';
+  }
+
+  impactOf(id, s) {
+    const carry = s.shared.filter(i => i.carrier === id).length + s.rentals.filter(r => r.lender === id).length;
+    const borrow = s.rentals.filter(r => r.borrower === id).length;
+    const pool = s.pool.filter(p => p.owner === id).length;
+    const parts = [];
+    if (carry) parts.push('運搬・貸し出しの担当 ' + carry + '件は募集中に戻ります');
+    if (borrow) parts.push('借りたいリクエスト ' + borrow + '件は取り消されます');
+    if (pool) parts.push('貸せるギア ' + pool + '件は取り下げられます');
+    return (parts.length ? parts.join('。') + '。' : '担当中の装備はありません。') + '参加者全員に通知されます。';
+  }
+
+  settingsVals(s) {
+    const owner = (this.props.viewerRole ?? 'オーナー') === 'オーナー' ? SELF : 'k';
+    const isOwner = owner === SELF;
+    const evStatus = s.evStatus ?? ((this.props.eventStatus ?? '公開中') === '下書き' ? 'DRAFT' : 'PUBLISHED');
+    const ev = s.ev ?? EVENT0;
+    const d = s.evDraft ?? ev;
+    const scheduleDirty = d.place !== ev.place || d.start !== ev.start || d.end !== ev.end;
+    const infoClean = !scheduleDirty && d.title === ev.title;
+    const setD = (k) => (e) => { const v = e.target.value; this.setState(st => ({ evDraft: { ...(st.evDraft ?? st.ev ?? EVENT0), [k]: v }, infoSaved: null })); };
+    const tab = s.settingsTab;
+    const tabDef = [{ k: 'info', l: '基本情報' }, { k: 'members', l: 'メンバー' }, { k: 'invites', l: '招待リンク' }];
+    const pill = (bg, fg) => 'font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap;background:' + bg + ';color:' + fg;
+    const tagOwner = pill('var(--color-accent-200)', 'var(--color-accent-800)');
+    const tagNeutral = pill('var(--color-neutral-200)', 'var(--color-neutral-800)');
+    const nights = ev.end ? Math.round((new Date(ev.end) - new Date(ev.start)) / 864e5) : 0;
+    return {
+      openSettings: () => this.setState({ sheet: 'settings', settingsTab: 'info', confirmRemove: null, removedMsg: null, infoSaved: null, leave: s.leave === 'done' ? 'done' : 'idle' }),
+      settingsOpen: s.sheet === 'settings',
+      isOwner, isMemberView: !isOwner,
+      roleLabel: isOwner ? 'オーナー' : 'メンバー',
+      roleTagStyle: isOwner ? tagOwner : tagNeutral,
+      ownerName: (this.member(owner) || {}).name,
+      settingsTabs: tabDef.map(x => ({
+        label: x.l,
+        onTap: () => this.setState({ settingsTab: x.k, confirmRemove: null }),
+        style: 'flex:1;height:38px;border-radius:999px;border:none;font-size:13px;cursor:pointer;font-family:inherit;' + (tab === x.k ? 'background:var(--color-bg);color:var(--color-text);font-weight:700;box-shadow:var(--shadow-sm)' : 'background:transparent;color:var(--color-neutral-700);font-weight:500'),
+      })),
+      tabInfo: tab === 'info', tabMembers: tab === 'members', tabInvites: tab === 'invites',
+
+      evTitle: ev.title,
+      evRangeLabel: fmtJ(ev.start) + (ev.end && ev.end !== ev.start ? ' – ' + fmtJ(ev.end) : '・日帰り'),
+      evIsDraft: evStatus === 'DRAFT',
+      evStatusLabel: evStatus === 'DRAFT' ? '下書き' : '公開中',
+      evStatusTagStyle: evStatus === 'DRAFT' ? tagNeutral : pill('var(--color-accent-2-200)', 'var(--color-accent-2-800)'),
+      evStatusNote: evStatus === 'DRAFT' ? '下書きのイベントには招待リンクから参加できません。準備ができたら公開してください。' : '招待リンクから参加できます。' + (nights > 0 ? nights + '泊' + (nights + 1) + '日' : '日帰り') + 'の予定です。',
+      publishEvent: () => this.setState({ evStatus: 'PUBLISHED', infoSaved: '公開しました。招待リンクから参加できるようになりました。' }),
+      evDraftTitle: d.title, evDraftPlace: d.place, evDraftStart: d.start, evDraftEnd: d.end,
+      onEvTitle: setD('title'), onEvPlace: setD('place'), onEvStart: setD('start'), onEvEnd: setD('end'),
+      scheduleDirty, infoClean,
+      resetEvDraft: () => this.setState({ evDraft: null }),
+      saveEvDraft: () => this.setState(st => ({ ev: d, evDraft: null, infoSaved: scheduleDirty ? '保存しました。参加者全員に日程・目的地の変更を通知しました。' : '保存しました。' })),
+      infoSavedOn: !!s.infoSaved, infoSavedMsg: s.infoSaved || '',
+
+      memberRows: MEMBERS.filter(m => !s.removed.includes(m.id)).map(m => {
+        const tags = [];
+        if (m.id === owner) tags.push({ label: 'オーナー', style: tagOwner });
+        if (m.id === SELF) tags.push({ label: 'あなた', style: tagNeutral });
+        return {
+          id: m.id, name: m.name, bike: m.bike, initials: m.initials, tags,
+          avatarStyle: 'flex:none;width:36px;height:36px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:' + m.bg + ';color:' + m.fg,
+          canRemove: m.id !== owner && s.confirmRemove !== m.id,
+          confirming: s.confirmRemove === m.id,
+          impact: this.impactOf(m.id, s),
+          onAsk: () => this.setState({ confirmRemove: m.id, removedMsg: null }),
+          onRemove: () => this.setState(st => ({
+            removed: st.removed.concat([m.id]), confirmRemove: null,
+            removedMsg: m.name + ' さんを外しました。' + this.impactOf(m.id, st),
+            shared: st.shared.map(i => i.carrier === m.id ? { ...i, carrier: null, accepted: false, packed: false } : i),
+            rentals: st.rentals.filter(r => r.borrower !== m.id).map(r => r.lender === m.id ? { ...r, lender: null, accepted: false, packed: false } : r),
+            pool: st.pool.filter(p => p.owner !== m.id),
+            memberFilter: st.memberFilter === m.id ? null : st.memberFilter,
+          })),
+        };
+      }),
+      cancelRemove: () => this.setState({ confirmRemove: null }),
+      removedMsgOn: !!s.removedMsg, removedMsg: s.removedMsg || '',
+      memberCountLabel: (MEMBERS.length - s.removed.length) + '名',
+
+      inviteRows: s.invites.map(iv => ({
+        id: iv.id, url: 'motocamp.pack/j/' + iv.token, active: !iv.revoked,
+        meta: iv.created + ' 発行・' + (iv.revoked ? '無効化済み' : iv.expires) + '・参加 ' + iv.joins + '名',
+        tagLabel: iv.revoked ? '無効' : '有効',
+        tagStyle: iv.revoked ? tagNeutral : pill('var(--color-accent-2-200)', 'var(--color-accent-2-800)'),
+        rowStyle: 'display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:var(--radius-lg);background:var(--color-surface)' + (iv.revoked ? ';opacity:.7' : ''),
+        urlStyle: 'font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap' + (iv.revoked ? ';text-decoration:line-through;color:var(--color-neutral-700)' : ''),
+        onRevoke: () => this.setState(st => ({ invites: st.invites.map(x => x.id === iv.id ? { ...x, revoked: true } : x) })),
+      })),
+      issueInvite: () => this.setState(st => {
+        const cs = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let tk = 'FUJI-'; for (let i = 0; i < 4; i++) tk += cs[Math.floor(Math.random() * cs.length)];
+        return { invites: [{ id: Date.now(), token: tk, created: '今日', expires: '10/12 まで', joins: 0, revoked: false }].concat(st.invites) };
+      }),
+
+      leaveImpact: this.impactOf(SELF, s) + ' 同じ招待リンクから入り直せば、同じメンバーとして復帰できます。',
+      leaveIdle: s.leave === 'idle', leaveConfirming: s.leave === 'confirm', leftDone: s.leave === 'done',
+      askLeave: () => this.setState({ leave: 'confirm' }),
+      cancelLeave: () => this.setState({ leave: 'idle' }),
+      doLeave: () => this.setState({ leave: 'done' }),
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const dense = (this.props.listDensity ?? 'ゆったり') === 'コンパクト';
+
+    const carrying = {};
+    MEMBERS.forEach(m => { carrying[m.id] = { done: 0, waiting: 0 }; });
+    s.shared.forEach(i => {
+      if (!i.carrier || !carrying[i.carrier]) return;
+      carrying[i.carrier][i.accepted ? 'done' : 'waiting'] += 1;
+    });
+    s.rentals.forEach(r => {
+      if (!r.lender || !carrying[r.lender]) return;
+      carrying[r.lender][r.accepted ? 'done' : 'waiting'] += 1;
+    });
+
+    const memberViews = MEMBERS.filter(m => !s.removed.includes(m.id)).map(m => {
+      const c = carrying[m.id];
+      const selected = s.memberFilter === m.id;
+      const gear = s.gear[m.id] || '';
+      return {
+        id: m.id, name: m.name, bike: m.bike, initials: m.initials,
+        loadLabel: c.done === 0 && c.waiting === 0 ? 'まだ何も運ばない' : '引き受け ' + c.done + '件',
+        hasWaiting: c.waiting > 0,
+        waitLabel: '確認中 ' + c.waiting,
+        waitStyle: {
+          flex: 'none', fontSize: 11, fontWeight: 700, padding: '5px 11px', borderRadius: 999,
+          background: 'var(--color-neutral-200)', color: 'var(--color-neutral-800)', whiteSpace: 'nowrap',
+        },
+        isSelf: m.id === SELF,
+        notSelf: m.id !== SELF,
+        gearLabel: m.id === SELF ? (gear || '積載装備を登録') : (gear || '積載装備は未登録'),
+        gearStyle: {
+          flex: '1 1 auto', minWidth: 0, display: 'inline-flex', alignItems: 'center', gap: 6, height: 32,
+          padding: '0 12px', borderRadius: 999, fontFamily: 'inherit', fontSize: 11.5,
+          cursor: m.id === SELF ? 'pointer' : 'default',
+          border: '1px ' + (gear ? 'solid var(--color-divider)' : 'dashed var(--color-neutral-400)'),
+          background: 'transparent', color: gear ? 'var(--color-neutral-800)' : 'var(--color-neutral-700)',
+          textAlign: 'left',
+        },
+        onTap: () => this.setState({ memberFilter: selected ? null : m.id }),
+        onGear: e => {
+          if (e && e.stopPropagation) e.stopPropagation();
+          if (m.id !== SELF) return;
+          this.setState({ sheet: 'gear', gearTarget: SELF, gearDraft: gear });
+        },
+        cardStyle: {
+          display: 'block', width: '100%', textAlign: 'left', cursor: 'pointer',
+          padding: '14px 16px', borderRadius: 20, transition: 'transform .16s ease, box-shadow .16s ease',
+          background: 'var(--color-neutral-100)',
+          border: '2px solid ' + (selected ? 'var(--color-accent-2-600)' : 'transparent'),
+          boxShadow: 'var(--shadow-sm)',
+        },
+        avatarStyle: {
+          width: 42, height: 42, flex: 'none', borderRadius: '50%', background: m.bg, color: m.fg,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700,
+        },
+      };
+    });
+
+    const needsWork = k => k === 'open' || k === 'asking' || k === 'unassigned';
+    const passShared = i => (!s.onlyOpen || needsWork(this.sharedStatus(i))) && (!s.memberFilter || i.carrier === s.memberFilter);
+    const passRental = i => (!s.onlyOpen || needsWork(this.rentalStatus(i))) && (!s.memberFilter || i.lender === s.memberFilter || i.borrower === s.memberFilter);
+
+    const rentalList = s.rentals.filter(passRental);
+
+    const rowBase = {
+      display: 'flex', alignItems: 'center', gap: 10, rowGap: 8, flexWrap: 'wrap',
+      transition: 'box-shadow .16s ease',
+      padding: dense ? '9px 14px' : '13px 14px', borderRadius: 18, background: 'var(--color-neutral-100)',
+    };
+    const acceptBtn = {
+      flex: 'none', height: 38, padding: '0 14px', borderRadius: 999, cursor: 'pointer', fontFamily: 'inherit',
+      fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap', border: 'none',
+      background: 'var(--color-accent-2-600)', color: 'var(--color-accent-2-100)',
+    };
+    const nameStyle = packed => ({
+      flex: '1 1 auto', minWidth: 0,
+      fontSize: 14.5, fontWeight: 600, lineHeight: 1.35, textWrap: 'pretty', overflowWrap: 'anywhere',
+      textDecoration: packed ? 'line-through' : 'none',
+      color: packed ? 'var(--color-neutral-600)' : 'var(--color-text)',
+    });
+    const rentalRowStyle = { ...rowBase, alignItems: 'flex-start', flexWrap: 'nowrap' };
+    const rentalActionBtn = {
+      flex: 'none', height: 32, padding: '0 13px', borderRadius: 999, cursor: 'pointer', fontFamily: 'inherit',
+      fontSize: 11.5, fontWeight: 700, whiteSpace: 'nowrap',
+    };
+    const checkStyle = packed => ({
+      width: 26, height: 26, flex: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: packed ? 'var(--color-accent-2-600)' : 'transparent',
+      border: '2px solid ' + (packed ? 'var(--color-accent-2-600)' : 'var(--color-neutral-400)'),
+      color: 'var(--color-accent-2-100)',
+    });
+    const miniAvatar = (m, size) => ({
+      width: size || 24, height: size || 24, flex: 'none', borderRadius: '50%',
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      background: m ? m.bg : 'var(--color-neutral-400)', color: m ? m.fg : 'var(--color-neutral-100)',
+      fontSize: 10, fontWeight: 700, lineHeight: 1, letterSpacing: '.02em',
+    });
+
+    const rentalViews = rentalList.map(r => {
+      const key = this.rentalStatus(r);
+      const st = STATUS[key];
+      const lender = r.lender ? this.member(r.lender) : null;
+      const active = s.targetId === r.id && s.kind === 'rental' && !!s.sheet;
+      const isBorrower = r.borrower === SELF;
+      const action = (() => {
+        if (r.lender) return r.lender === SELF
+          ? { label: r.accepted ? '降りる' : '辞退', kind: 'plain', onClick: () => this.patchRental(r.id, { lender: null, accepted: false, packed: false }) }
+          : null;
+        if (isBorrower) return null;
+        return { label: '自分が貸す', kind: 'offer', onClick: () => this.takeRental(r.id) };
+      })();
+      return {
+        id: r.id, name: r.name, nameStyle: nameStyle(r.packed),
+        badgeLabel: st.label, badgeStyle: badgeStyle(key, true),
+        sizeLabel: SIZE_NAME[r.size], sizeStyle: sizeChip(),
+        rowStyle: {
+          ...rentalRowStyle,
+          boxShadow: active ? '0 0 0 2px var(--color-accent-600)' : 'var(--shadow-sm)',
+          border: rowBorder(key),
+          opacity: r.packed ? 0.75 : 1,
+        },
+        borrowerName: (this.member(r.borrower) || {}).name || '—',
+        borrowerInitials: (this.member(r.borrower) || {}).initials || '？',
+        borrowerAvatarStyle: miniAvatar(this.member(r.borrower)),
+        hasLender: !!lender,
+        lenderName: lender ? lender.name : '',
+        lenderInitials: lender ? lender.initials : '',
+        lenderAvatarStyle: miniAvatar(lender),
+        lenderNote: lender ? (r.accepted ? '貸す・運搬' : '確認中') : '',
+        lenderChipStyle: {
+          display: 'inline-flex', alignItems: 'center', gap: 7, height: 30,
+          padding: '0 12px 0 3px', borderRadius: 999, whiteSpace: 'nowrap',
+          background: r.accepted ? 'var(--color-accent-2-200)' : 'var(--color-neutral-200)',
+          color: r.accepted ? 'var(--color-accent-2-800)' : 'var(--color-neutral-800)',
+          fontSize: 11.5, fontWeight: 600,
+        },
+        noOffers: !lender,
+        noOffersStyle: {
+          display: 'inline-flex', alignItems: 'center', height: 28, padding: '0 11px', borderRadius: 999,
+          background: WARN_BG, color: WARN_FG, fontSize: 11.5, fontWeight: 600,
+        },
+        needsAccept: key === 'asking' && r.lender === SELF,
+        acceptLabel: r.lender === SELF ? '引き受ける' : '引き受け済み',
+        acceptStyle: { ...rentalActionBtn, border: 'none', background: 'var(--color-accent-2-600)', color: 'var(--color-accent-2-100)' },
+        onAccept: () => this.patchRental(r.id, { accepted: true }),
+        canPack: !!lender && r.accepted,
+        checkStyle: checkStyle(r.packed),
+        checkIconStyle: { opacity: r.packed ? 1 : 0 },
+        onToggle: () => this.patchRental(r.id, { packed: !r.packed }),
+        hasAction: !!action,
+        actionLabel: action ? action.label : '',
+        actionStyle: {
+          ...rentalActionBtn,
+          border: action && action.kind === 'offer' ? 'none' : '1px solid var(--color-neutral-300)',
+          background: action && action.kind === 'offer' ? 'var(--color-accent-2-600)' : 'transparent',
+          color: action && action.kind === 'offer' ? 'var(--color-accent-2-100)' : 'var(--color-neutral-800)',
+        },
+        onLender: action ? action.onClick : (() => {}),
+        onMenu: () => this.setState({ sheet: 'menu', kind: 'rental', targetId: r.id }),
+      };
+    });
+
+    const sharedViews = s.shared.filter(passShared).map(i => {
+      const key = this.sharedStatus(i);
+      const st = STATUS[key];
+      const carrier = i.carrier ? this.member(i.carrier) : null;
+      const active = s.targetId === i.id && s.kind === 'shared' && !!s.sheet;
+      return {
+        id: i.id, name: i.name, nameStyle: nameStyle(i.packed),
+        badgeLabel: st.label, badgeStyle: badgeStyle(key, key !== 'asking'),
+        sizeLabel: SIZE_NAME[i.size], sizeStyle: sizeChip(),
+        hasCarrier: !!carrier,
+        carrierName: carrier ? carrier.name : '',
+        carrierInitials: carrier ? carrier.initials : '',
+        carrierAvatarStyle: miniAvatar(carrier, 22),
+        carrierNote: carrier
+          ? (i.accepted ? '運搬担当（' + carrier.bike + '）' : '積めるか確認中')
+          : '運搬できる人を募集中 — 最初に押した人が担当',
+        rowStyle: {
+          ...rowBase,
+          boxShadow: active ? '0 0 0 2px var(--color-accent-600)' : 'var(--shadow-sm)',
+          border: rowBorder(key),
+          opacity: i.packed ? 0.75 : 1,
+        },
+        needsAccept: key === 'asking' && i.carrier === SELF,
+        acceptLabel: '引き受ける',
+        acceptStyle: acceptBtn,
+        onAccept: () => this.patchShared(i.id, { accepted: true }),
+        canPack: !!carrier && i.accepted,
+        checkStyle: checkStyle(i.packed),
+        checkIconStyle: { opacity: i.packed ? 1 : 0 },
+        onToggle: () => this.patchShared(i.id, { packed: !i.packed }),
+        canClaim: !carrier,
+        claimLabel: '自分が運ぶ',
+        claimStyle: { height: 38, flex: 'none', padding: '0 14px', borderRadius: 999, border: 'none', background: 'var(--color-accent-200)', color: 'var(--color-accent-800)', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' },
+        onClaim: () => this.patchShared(i.id, { carrier: SELF, accepted: true }),
+        canRelease: i.carrier === SELF,
+        releaseLabel: '取り消す',
+        releaseStyle: { height: 38, flex: 'none', padding: '0 14px', borderRadius: 999, border: '1px solid var(--color-neutral-300)', background: 'transparent', color: 'var(--color-neutral-800)', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' },
+        onRelease: () => this.patchShared(i.id, { carrier: null, accepted: false, packed: false }),
+        onMenu: () => this.setState({ sheet: 'menu', kind: 'shared', targetId: i.id }),
+      };
+    });
+
+    const unassigned = s.shared.filter(i => !i.carrier).length;
+    const unresolved = s.rentals.filter(r => !r.lender).length;
+    const asking = s.shared.filter(i => i.carrier && !i.accepted).length + s.rentals.filter(r => r.lender && !r.accepted).length;
+    const alertParts = [];
+    if (unresolved) alertParts.push('貸せる人がいないリクエスト ' + unresolved + '件');
+    if (unassigned) alertParts.push('運搬担当が未割り当ての共同装備 ' + unassigned + '件');
+    if (asking) alertParts.push('本人の引き受け待ち ' + asking + '件');
+
+    const target = s.kind === 'rental' ? s.rentals.find(x => x.id === s.targetId)
+      : s.kind === 'shared' ? s.shared.find(x => x.id === s.targetId) : null;
+
+    const d = s.draft;
+    const draftMember = d.member ? this.member(d.member) : null;
+    const draftHint = (() => {
+      if (d.kind === 'request') return draftMember
+        ? draftMember.name + 'に貸してもらう前提で登録します。積めるかどうかは' + draftMember.name + '本人が確認します。'
+        : '指定しない場合は募集中になり、最初に「自分が貸す」を押した人に決まります。運搬は貸す人のバイクです。';
+      if (d.kind === 'offer') return draftMember
+        ? draftMember.name + 'に貸すギアとして登録し、自分が運搬まで引き受けます。'
+        : '指定しない場合は「貸せます」一覧に並び、希望者が出たら相談できます。';
+      if (!draftMember) return '未割り当てのままにすると、最初に「自分が運ぶ」を押したメンバーが担当になります。';
+      return '自分のバイクに積んで運びます。';
+    })();
+
+    const formTitles = {
+      shared: s.editing ? '共同装備を編集' : '共同装備を追加',
+      request: s.editing ? 'リクエストを編集' : '借りたいギアをリクエスト',
+      offer: s.editing ? '貸せるギアを編集' : '貸せるギアを登録',
+    };
+    const memberLabels = {
+      shared: '運搬担当',
+      request: '貸してくれる人（決まっていれば・任意）',
+      offer: '貸す相手（決まっていれば・任意）',
+    };
+
+    const openForm = kind => this.setState({
+      sheet: 'form', editing: false, kind: null, targetId: null,
+      draft: { kind: kind, name: '', size: 'm', member: null },
+    });
+
+    const packable = s.shared.filter(i => i.carrier && i.accepted).concat(s.rentals.filter(r => r.lender && r.accepted));
+    const packedCount = packable.filter(i => i.packed).length;
+
+    return {
+      showPackProgress: this.props.showPackProgress ?? true,
+      showLegend: this.props.showBadgeLegend ?? true,
+      packedLabel: packedCount + ' / ' + packable.length,
+      packedBarStyle: { height: '100%', width: (packable.length ? Math.round((packedCount / packable.length) * 100) : 0) + '%', background: 'var(--color-accent-2-500)', borderRadius: 999, transition: 'width .3s ease' },
+      headerStatus: asking ? '引き受け待ち ' + asking + '件' : '引き受け待ちなし',
+
+      hasAlerts: alertParts.length > 0,
+      alertText: alertParts.join(' / '),
+      alertBoxStyle: {
+        display: 'flex', gap: 11, alignItems: 'flex-start', padding: '13px 16px', borderRadius: 18,
+        background: 'color-mix(in srgb, ' + WARN_LINE + ' 16%, var(--color-bg))',
+        border: '1px solid ' + WARN_LINE, color: WARN_FG, marginBottom: 18,
+      },
+
+      memberViews,
+      legend: ['open', 'asking', 'fixed'].map(k => ({
+        id: k,
+        label: STATUS[k].label + '：' + (k === 'open' ? '貸せる人がいない' : k === 'asking' ? '指定した相手の返事待ち' : '貸す人が引き受け済み'),
+        style: { ...badgeStyle(k, false), height: 26, fontSize: 11 },
+      })),
+
+      rentalViews, sharedViews,
+      rentalsEmpty: rentalViews.length === 0,
+      sharedEmpty: sharedViews.length === 0,
+
+      poolViews: s.pool.map(p => ({
+        id: p.id,
+        label: p.name + '（' + SIZE_NAME[p.size] + '）',
+        ownerName: (this.member(p.owner) || {}).name || '',
+        ownerInitials: (this.member(p.owner) || {}).initials || '',
+        ownerAvatarStyle: miniAvatar(this.member(p.owner), 22),
+        onRemove: () => this.setState(st => ({ pool: st.pool.filter(x => x.id !== p.id) })),
+      })),
+      hasPool: s.pool.length > 0,
+
+      openCount: unassigned + s.rentals.filter(r => !r.lender).length + asking,
+      toggleOnlyOpen: () => this.setState({ onlyOpen: !s.onlyOpen }),
+      onlyOpenChipStyle: CHIP + (s.onlyOpen
+        ? 'background:var(--color-accent-600);color:var(--color-accent-100);border:none;font-weight:700;'
+        : 'background:transparent;border:1px solid var(--color-neutral-300);color:var(--color-neutral-800);font-weight:500;'),
+      onlyOpenCountStyle: { fontSize: 11, fontWeight: 700, padding: '1px 8px', borderRadius: 999, background: s.onlyOpen ? 'var(--color-accent-100)' : 'var(--color-accent-200)', color: 'var(--color-accent-800)' },
+      memberFilterOn: !!s.memberFilter,
+      memberFilterLabel: s.memberFilter ? (this.member(s.memberFilter) || {}).name + 'の担当分' : '',
+      clearMemberFilter: () => this.setState({ memberFilter: null }),
+
+      ...this.settingsVals(s),
+      overlayOpen: !!s.sheet,
+      closeSheet: this.close,
+      addMenuOpen: s.sheet === 'add',
+      gearOpen: s.sheet === 'gear',
+      menuOpen: s.sheet === 'menu',
+      formOpen: s.sheet === 'form',
+      inviteOpen: s.sheet === 'invite',
+      openAddMenu: () => this.setState({ sheet: 'add' }),
+
+      gearMemberName: s.gearTarget ? (this.member(s.gearTarget) || {}).name + '・' + (this.member(s.gearTarget) || {}).bike : '',
+      gearDraft: s.gearDraft,
+      onGearDraft: e => { const v = e.target.value; this.setState({ gearDraft: v }); },
+      gearPresets: GEAR_PRESETS.map(g => ({
+        id: g, label: g,
+        onAdd: () => this.setState(st => ({ gearDraft: st.gearDraft ? st.gearDraft + '、' + g : g })),
+      })),
+      saveGear: () => this.setState(st => ({ gear: { ...st.gear, [st.gearTarget]: st.gearDraft.trim() }, sheet: null, gearTarget: null })),
+
+      targetName: target ? target.name : '',
+
+      canDecline: !!target && (s.kind === 'rental' ? target.lender === SELF : target.carrier === SELF),
+      declineItem: () => {
+        if (s.kind === 'rental') this.patchRental(s.targetId, { lender: null, accepted: false, packed: false });
+        else this.patchShared(s.targetId, { carrier: null, accepted: false, packed: false });
+        this.close();
+      },
+      deleteItem: () => this.setState(st => ({
+        shared: st.kind === 'shared' ? st.shared.filter(x => x.id !== st.targetId) : st.shared,
+        rentals: st.kind === 'rental' ? st.rentals.filter(x => x.id !== st.targetId) : st.rentals,
+        sheet: null, kind: null, targetId: null,
+      })),
+      openEdit: () => this.setState(st => {
+        const t = st.kind === 'rental' ? st.rentals.find(x => x.id === st.targetId) : st.shared.find(x => x.id === st.targetId);
+        if (!t) return {};
+        return {
+          sheet: 'form', editing: true,
+          draft: {
+            kind: st.kind === 'rental' ? 'request' : 'shared',
+            name: t.name, size: t.size,
+            member: st.kind === 'rental' ? t.lender : t.carrier,
+          },
+        };
+      }),
+
+      openSharedForm: () => openForm('shared'),
+      openRequestForm: () => openForm('request'),
+      openOfferForm: () => openForm('offer'),
+      formTitle: formTitles[d.kind],
+      formSubmitLabel: s.editing ? '変更を保存' : d.kind === 'request' ? 'リクエストする' : d.kind === 'offer' ? '貸せるギアを登録' : 'リストに追加',
+      draftName: d.name,
+      onDraftName: e => { const v = e.target.value; this.setState(st => ({ draft: { ...st.draft, name: v } })); },
+      draftSizes: SIZES.map(z => ({
+        id: z.id, label: z.label,
+        onPick: () => this.setState(st => ({ draft: { ...st.draft, size: z.id } })),
+        style: 'flex:1;height:44px;border-radius:999px;font-size:12.5px;cursor:pointer;padding:0 8px;font-family:inherit;' + (d.size === z.id
+          ? 'background:var(--color-accent-600);border:none;color:var(--color-accent-100);font-weight:700;'
+          : 'background:transparent;border:1px solid var(--color-neutral-300);color:var(--color-neutral-800);'),
+      })),
+      draftMemberLabel: memberLabels[d.kind],
+      showDraftMembers: !(d.kind === 'shared' && d.member && d.member !== SELF),
+      draftMembers: MEMBERS.filter(m => d.kind === 'shared' ? m.id === SELF : m.id !== SELF).map(m => ({
+        id: m.id, label: d.kind === 'shared' ? '自分が運ぶ' : m.name,
+        onPick: () => this.setState(st => ({ draft: { ...st.draft, member: m.id } })),
+        style: 'flex:1 1 auto;height:42px;padding:0 16px;border-radius:999px;font-size:12.5px;cursor:pointer;font-family:inherit;' + (d.member === m.id
+          ? 'background:var(--color-accent-2-600);border:none;color:var(--color-accent-2-100);font-weight:700;'
+          : 'background:transparent;border:1px solid var(--color-neutral-300);color:var(--color-neutral-800);'),
+      })).concat([{
+        id: 'none', label: d.kind === 'shared' ? '未割り当て' : '指定なし',
+        onPick: () => this.setState(st => ({ draft: { ...st.draft, member: null } })),
+        style: 'flex:none;padding:0 16px;height:42px;border-radius:999px;font-size:12.5px;cursor:pointer;font-family:inherit;' + (d.member === null
+          ? 'background:var(--color-accent-2-600);border:none;color:var(--color-accent-2-100);font-weight:700;'
+          : 'background:transparent;border:1px dashed var(--color-neutral-400);color:var(--color-neutral-700);'),
+      }]),
+      draftHint: draftHint,
+      submitForm: () => this.setState(st => {
+        const dr = st.draft;
+        const name = dr.name.trim() || (dr.kind === 'shared' ? '新しい共同装備' : '新しいギア');
+        const nextId = Math.max.apply(null, [0].concat(st.shared.map(x => x.id), st.rentals.map(x => x.id), st.pool.map(x => x.id))) + 1;
+        if (st.editing) {
+          if (dr.kind === 'shared') {
+            return { shared: st.shared.map(x => x.id === st.targetId ? { ...x, name, size: dr.size, carrier: dr.member, accepted: dr.member === x.carrier ? x.accepted : dr.member === SELF, packed: dr.member ? x.packed : false } : x), sheet: null, editing: false, kind: null, targetId: null };
+          }
+          return {
+            rentals: st.rentals.map(x => x.id === st.targetId ? {
+              ...x, name, size: dr.size, lender: dr.member,
+              accepted: dr.member ? (dr.member === x.lender ? x.accepted : dr.member === SELF) : false,
+              packed: dr.member ? x.packed : false,
+            } : x),
+            sheet: null, editing: false, kind: null, targetId: null,
+          };
+        }
+        if (dr.kind === 'shared') {
+          return { shared: st.shared.concat([{ id: nextId, name, size: dr.size, carrier: dr.member, accepted: dr.member === SELF, packed: false }]), sheet: null };
+        }
+        if (dr.kind === 'request') {
+          return { rentals: st.rentals.concat([{ id: nextId, name, size: dr.size, borrower: SELF, lender: dr.member, accepted: false, packed: false }]), sheet: null };
+        }
+        if (dr.member) {
+          return { rentals: st.rentals.concat([{ id: nextId, name, size: dr.size, borrower: dr.member, lender: SELF, accepted: true, packed: false }]), sheet: null };
+        }
+        return { pool: st.pool.concat([{ id: nextId, name, size: dr.size, owner: SELF }]), sheet: null };
+      }),
+
+      notifOpen: s.sheet === 'notif',
+      openNotif: () => this.setState({ sheet: 'notif' }),
+      notifUnread: s.notifs.filter(n => !n.read).length,
+      hasNotifBadge: s.notifs.filter(n => !n.read).length > 0,
+      notifBadgeLabel: String(s.notifs.filter(n => !n.read).length),
+      notifSummary: (() => {
+        const act = s.notifs.filter(n => n.type === 'ask' && !n.done).length;
+        const un = s.notifs.filter(n => !n.read).length;
+        return act ? 'あなたの返事待ち ' + act + '件 / 未読 ' + un + '件' : un ? '未読 ' + un + '件' : 'すべて確認済みです';
+      })(),
+      markNotifsRead: () => this.setState(st => ({ notifs: st.notifs.map(n => ({ ...n, read: true })) })),
+      notifViews: s.notifs.map(n => {
+        const p = this.member(n.actor) || {};
+        const tone = NOTIF_TONE[n.type];
+        const needsAction = n.type === 'ask' && !n.done;
+        return {
+          id: n.id, title: n.title, body: n.body, timeLabel: n.time, unread: !n.read,
+          iconPath: NOTIF_ICONS[n.type],
+          iconWrapStyle: { flex: 'none', width: 34, height: 34, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: tone.bg, color: tone.fg },
+          titleStyle: { fontSize: 13.5, lineHeight: 1.4, textWrap: 'pretty', overflowWrap: 'anywhere', fontWeight: n.read ? 500 : 700 },
+          actorName: p.name || '', actorInitials: p.initials || '',
+          avatarStyle: miniAvatar(p, 20),
+          hasResult: !!n.done,
+          resultLabel: n.done === 'accepted' ? '引き受けました' : '断りました',
+          resultStyle: {
+            display: 'inline-flex', alignItems: 'center', height: 22, padding: '0 10px', borderRadius: 999,
+            fontSize: 11, fontWeight: 700,
+            background: n.done === 'accepted' ? 'var(--color-accent-2-200)' : 'var(--color-neutral-200)',
+            color: n.done === 'accepted' ? 'var(--color-accent-2-800)' : 'var(--color-neutral-800)',
+          },
+          needsAction,
+          acceptStyle: { height: 34, padding: '0 13px', borderRadius: 999, border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 11.5, fontWeight: 700, whiteSpace: 'nowrap', background: 'var(--color-accent-2-600)', color: 'var(--color-accent-2-100)' },
+          declineStyle: { height: 34, padding: '0 13px', borderRadius: 999, cursor: 'pointer', fontFamily: 'inherit', fontSize: 11.5, fontWeight: 600, whiteSpace: 'nowrap', border: '1px solid var(--color-neutral-300)', background: 'transparent', color: 'var(--color-neutral-800)' },
+          onAccept: () => this.setState(st => ({ notifs: st.notifs.map(x => x.id === n.id ? { ...x, done: 'accepted', read: true } : x) })),
+          onDecline: () => this.setState(st => ({ notifs: st.notifs.map(x => x.id === n.id ? { ...x, done: 'declined', read: true } : x) })),
+          rowStyle: {
+            display: 'flex', alignItems: 'flex-start', gap: 10, rowGap: 8, flexWrap: 'wrap',
+            padding: '12px 13px', borderRadius: 18, background: 'var(--color-neutral-100)',
+            border: '1px solid ' + (n.read ? 'var(--color-divider)' : 'transparent'),
+            boxShadow: n.read ? 'none' : 'var(--shadow-sm)',
+            opacity: n.read && !needsAction ? 0.86 : 1,
+          },
+        };
+      }),
+
+      openInvite: () => this.setState({ sheet: 'invite', copied: false }),
+      copyInvite: () => this.setState({ copied: true }),
+      copyLabel: s.copied ? 'コピーしました' : 'リンクをコピー',
+      copyBtnStyle: { flex: 1, height: 46, borderRadius: 999, cursor: 'pointer', fontSize: 13.5, fontWeight: 700, border: 'none', fontFamily: 'inherit', background: s.copied ? 'var(--color-accent-2-600)' : 'var(--color-accent-600)', color: 'var(--color-neutral-100)' },
+    };
+  }
+}
+
+</script>
+</body>
+</html>

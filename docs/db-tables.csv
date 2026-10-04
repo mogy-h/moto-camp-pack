@@ -1,0 +1,87 @@
+users,,,,,,,,
+No,PK,FK,カラム名,項目名,データ型,NOT NULL,デフォルト,備考
+1,○,,id,ID,uuid,○,gen_random_uuid(),DB側で生成
+2,,,auth_uid,認証UID,uuid,,,UNIQUE。Supabase auth.users.id。ゲストはNULL
+3,,,display_name,表示名,text,○,,
+4,,,bike,車種,text,,,
+5,,,gear_memo,既定の積載装備メモ,text,,,イベント単位の上書きが無い場合に使う
+6,,,claim_token_hash,クレームトークンハッシュ,text,,,UNIQUE。ゲストCookieのトークンのSHA-256。紐付け後・失効時はNULL
+7,,,created_at,作成日時,timestamptz,○,now(),
+,,,,,,,,アバター色・イニシャルは id / display_name から導出するため列を持たない
+,,,,,,,,
+events,,,,,,,,
+No,PK,FK,カラム名,項目名,データ型,NOT NULL,デフォルト,備考
+1,○,,id,ID,uuid,○,gen_random_uuid(),
+2,,,title,イベント名,text,○,,
+3,,,place,場所,text,,,
+4,,,start_date,開始日,timestamptz,○,,
+5,,,end_date,終了日,timestamptz,,,日帰りはNULL
+6,,,status,公開状態,event_status,○,'DRAFT',DRAFT / PUBLISHED
+7,,users.id,created_by_id,作成者ID,uuid,○,,
+8,,,created_at,作成日時,timestamptz,○,now(),
+,,,,,,,,「終了」は end_date < now() の導出。列として保存しない
+,,,,,,,,
+event_members,,,,,,,,
+No,PK,FK,カラム名,項目名,データ型,NOT NULL,デフォルト,備考
+1,○,,id,ID,uuid,○,gen_random_uuid(),
+2,,events.id,event_id,イベントID,uuid,○,,ON DELETE CASCADE
+3,,users.id,user_id,ユーザーID,uuid,○,,
+4,,,role,権限,member_role,○,'MEMBER',OWNER / MEMBER
+5,,,is_guest,ゲストフラグ,boolean,○,false,招待リンクからの参加でtrue
+6,,,gear_memo,積載装備メモ（上書き）,text,,,NULLなら users.gear_memo を使う
+7,,,joined_at,参加日時,timestamptz,○,now(),
+8,,,left_at,離脱日時,timestamptz,,,論理削除。NULL = 参加中。退出・オーナーによる削除で日時をセットし、再参加時はNULLに戻す
+9,,invites.id,invited_via,招待ID,uuid,,,どの招待リンク経由か
+,,,,,,,,UNIQUE(event_id, user_id) ※再参加は新規作成せず既存行のleft_atをNULLに戻す
+,,,,,,,,INDEX(event_id, left_at)
+,,,,,,,,メンバーは物理削除しない。参加中の判定は常に left_at IS NULL
+,,,,,,,,
+items,,,,,,,,
+No,PK,FK,カラム名,項目名,データ型,NOT NULL,デフォルト,備考
+1,○,,id,ID,uuid,○,gen_random_uuid(),
+2,,events.id,event_id,イベントID,uuid,○,,ON DELETE CASCADE
+3,,,kind,種別,item_kind,○,,SHARED（共同装備）/ RENTAL（貸し借り）
+4,,,name,アイテム名,text,○,,
+5,,,size,サイズ,item_size,○,'M',S 小物 / M 中くらい / L かさばる。表示ラベルのみ
+6,,event_members.id,requester_id,借り手ID,uuid,,,RENTAL のみ。SHARED はNULL
+7,,lendable_gears.id,source_gear_id,起点ギアID,uuid,,,登録ギア宛のリクエストの場合。NULL = 宛先なしの募集
+8,,event_members.id,carrier_id,運搬担当ID,uuid,,,未割り当てはNULL。早い者勝ち（carrier_id IS NULL の条件付き更新で確定）
+9,,,accepted_at,担当確定日時,timestamptz,,,宛先指定の依頼で未承諾ならNULL
+10,,,packed_at,積み込み日時,timestamptz,,,NULLなら未積載
+11,,event_members.id,created_by_id,登録者ID,uuid,○,,
+12,,,created_at,作成日時,timestamptz,○,now(),
+,,,,,,,,CHECK: kind = 'RENTAL' のとき requester_id IS NOT NULL
+,,,,,,,,早い者勝ちのため立候補テーブルは持たない
+,,,,,,,,表示ステータス（確定/引き受け確認中/募集中）は carrier_id・accepted_at からの導出。列として保存しない
+,,,,,,,,
+lendable_gears,,,,,,,,
+No,PK,FK,カラム名,項目名,データ型,NOT NULL,デフォルト,備考
+1,○,,id,ID,uuid,○,gen_random_uuid(),
+2,,events.id,event_id,イベントID,uuid,○,,イベント単位。ユーザー台帳は持たない
+3,,event_members.id,member_id,所有者ID,uuid,○,,
+4,,,name,ギア名,text,○,,
+5,,,size,サイズ,item_size,○,'M',
+,,,,,,,,
+notifications,,,,,,,,
+No,PK,FK,カラム名,項目名,データ型,NOT NULL,デフォルト,備考
+1,○,,id,ID,uuid,○,gen_random_uuid(),
+2,,events.id,event_id,イベントID,uuid,○,,イベント詳細のベルはこの列で絞り込む
+3,,event_members.id,recipient_id,宛先メンバーID,uuid,○,,通知ページはこの列で絞り込む
+4,,,type,通知種別,notif_type,○,,ASK / ACCEPTED / DECLINED / WITHDRAWN / REQUEST_CANCELLED / SHARED_ADDED / MEMBER_JOINED / SCHEDULE_CHANGED
+5,,event_members.id,actor_id,実行者ID,uuid,,,
+6,,items.id,item_id,対象アイテムID,uuid,,,REQUEST_CANCELLED ではNULL（アイテムが削除されるため）
+7,,,payload,付加情報,jsonb,,,DECLINED は reason、WITHDRAWN は reason、REQUEST_CANCELLED は itemName/reason、SCHEDULE_CHANGED は field/from/to
+8,,,read_at,既読日時,timestamptz,,,
+9,,,resolved_at,対応日時,timestamptz,,,ASK への承諾・辞退で日時をセット
+10,,,created_at,作成日時,timestamptz,○,now(),相対時刻「12分前」はこの値から表示
+,,,,,,,,文面（title / body）は保存しない。クライアントで type + 参照 + payload から生成
+,,,,,,,,
+invites,,,,,,,,
+No,PK,FK,カラム名,項目名,データ型,NOT NULL,デフォルト,備考
+1,○,,id,ID,uuid,○,gen_random_uuid(),
+2,,events.id,event_id,イベントID,uuid,○,,ON DELETE CASCADE
+3,,,token,招待トークン,text,○,,UNIQUE。URLに載る。IDとは別に暗号学的乱数で生成
+4,,event_members.id,created_by_id,発行者ID,uuid,○,,
+5,,,expires_at,有効期限,timestamptz,,,
+6,,,revoked_at,失効日時,timestamptz,,,オーナーによる無効化
+7,,,created_at,作成日時,timestamptz,○,now(),

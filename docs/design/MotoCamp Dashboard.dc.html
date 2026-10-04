@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/organic-05df4399-2545-42d8-a736-030508ad6606/styles.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caprasimo&amp;family=Figtree:wght@400;500;600;700&amp;family=Zen+Maru+Gothic:wght@400;500;700&amp;display=swap">
+<style>
+body{margin:0;background:var(--color-bg);color:var(--color-text);font-family:'Figtree','Zen Maru Gothic',system-ui,sans-serif}
+*{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+a{color:var(--color-accent-700);text-decoration:none}
+a:hover{color:var(--color-accent-600)}
+button,input{font-family:inherit}
+input,button,textarea,select{box-sizing:border-box}
+input{accent-color:var(--color-accent-600)}
+input[type=date]{-webkit-appearance:none;appearance:none;box-sizing:border-box!important;min-width:0}
+input[type=date]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:.6;filter:sepia(.5) saturate(3) hue-rotate(-10deg)}
+input[type=date]::-webkit-calendar-picker-indicator:hover{opacity:1}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}
+@keyframes popIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</helmet>
+<div style="min-height:100vh;background:radial-gradient(120% 50% at 50% 0%, #fbf4e6 0%, var(--color-bg) 60%)">
+
+  <header style="position:sticky;top:0;z-index:20;background:color-mix(in srgb, var(--color-bg) 88%, transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--color-divider)">
+    <div style="max-width: 1080px; margin: 0 auto; padding: 12px clamp(14px,3vw,28px); display: flex; align-items: center; gap: 12px; position: relative">
+      <div style="font-family:'Caprasimo',serif;font-size:17px;color:var(--color-accent-700);flex:none">MotoCamp Pack</div>
+      <div style="flex:1;min-width:0"></div>
+      <a href="./MotoCamp Notifications.dc.html" title="通知" style="flex:none;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:999px;border:1px solid var(--color-neutral-300);background:transparent;color:var(--color-neutral-800);cursor:pointer;position:relative" style-hover="background:var(--color-surface);color:var(--color-text)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10a6 6 0 0112 0c0 5 2 6 2 6H4s2-1 2-6"></path><path d="M10.5 20a1.8 1.8 0 003 0"></path></svg>
+        <span style="position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--color-accent-600);color:var(--color-accent-100);border:2px solid var(--color-bg);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">5</span>
+      </a>
+      <div style="flex:none;position:relative">
+        <button type="button" onClick="{{ toggleAccount }}" aria-haspopup="menu" aria-expanded="{{ accountOpen }}" style="{{ accountBtnStyle }}" style-hover="background:var(--color-surface)">
+          <span style="width:28px;height:28px;border-radius:999px;background:var(--color-accent-2-600);color:var(--color-accent-2-100);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700">山田</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-700)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="{{ chevronStyle }}"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+
+        <sc-if value="{{ accountOpen }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div onClick="{{ closeAccount }}" style="position:fixed;inset:0;z-index:30"></div>
+            <div role="menu" style="position:absolute;top:calc(100% + 8px);right:0;z-index:31;width:232px;padding:7px;border-radius:var(--radius-md);background:var(--color-surface);border:1px solid var(--color-divider);box-shadow:var(--shadow-lg);animation:popIn .14s ease both">
+
+              <div style="display:flex;gap:10px;align-items:center;padding:9px 10px 11px">
+                <span style="flex:none;width:34px;height:34px;border-radius:999px;background:var(--color-accent-2-600);color:var(--color-accent-2-100);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700">山田</span>
+                <div style="min-width:0">
+                  <div style="font-size:13.5px;font-weight:700;line-height:1.3">山田 拓也</div>
+                  <div style="font-size:11.5px;color:var(--color-neutral-700);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">takuya@example.com</div>
+                </div>
+              </div>
+
+              <div style="height:1px;background:var(--color-divider);margin:0 4px 6px"></div>
+
+              <button type="button" role="menuitem" onClick="{{ goProfile }}" style="{{ menuItemStyle }}" style-hover="background:var(--color-neutral-200)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="12" cy="8" r="3.6"></circle><path d="M4.8 20c.9-3.5 3.7-5.4 7.2-5.4s6.3 1.9 7.2 5.4"></path></svg>
+                <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;text-align:left">
+                  <span style="white-space:nowrap">プロフィール設定</span>
+                  <span style="font-size:10.5px;font-weight:500;color:var(--color-neutral-600);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ bikeSummary }}</span>
+                </span>
+              </button>
+
+              <button type="button" role="menuitem" onClick="{{ logout }}" style="{{ logoutItemStyle }}" style-hover="background:var(--color-accent-100)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M15 17l4-5-4-5M19 12H9M11 4H6.5A1.5 1.5 0 005 5.5v13A1.5 1.5 0 006.5 20H11"></path></svg>
+                <span style="flex:1;text-align:left">ログアウト</span>
+              </button>
+
+            </div>
+          </div>
+        </sc-if>
+      </div>
+   </div>
+  </header>
+
+  <main style="max-width:1080px;margin:0 auto;padding:clamp(20px,3vw,34px) clamp(14px,3vw,28px) 96px">
+
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px;margin-bottom:clamp(20px,3vw,28px)">
+      <div style="flex:1 1 300px;min-width:0">
+        <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:6px">{{ todayLabel }}</div>
+        <h1 style="margin:0;font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:clamp(22px,3.2vw,30px);line-height:1.3;font-weight:400">おかえりなさい、拓也さん</h1>
+      </div>
+      <button type="button" onClick="{{ openNew }}" style="flex:none;display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 20px;border-radius:999px;border:none;background:var(--color-accent-600);color:var(--color-neutral-100);font-size:14px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm)" style-hover="background:var(--color-accent-700)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+        イベントを作成
+      </button>
+    </div>
+
+    <div style="display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));margin-bottom:clamp(24px,4vw,34px)">
+      <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+        <a href="{{ s.href }}" style="{{ s.cardStyle }}" style-hover="box-shadow:var(--shadow-sm)">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">
+            <span style="font-size:11.5px;color:var(--color-neutral-700);min-width:0">{{ s.label }}</span>
+            <sc-if value="{{ s.alert }}" hint-placeholder-val="{{ false }}">
+              <span style="flex:none;width:7px;height:7px;border-radius:999px;background:#a8422b"></span>
+            </sc-if>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:5px">
+            <span style="{{ s.valueStyle }}">{{ s.value }}</span>
+            <span style="font-size:12px;color:var(--color-neutral-700)">{{ s.unit }}</span>
+          </div>
+          <div style="font-size:10.5px;line-height:1.5;color:var(--color-neutral-600);margin-top:6px">{{ s.note }}</div>
+        </a>
+      </sc-for>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+        <button type="button" onClick="{{ t.onTap }}" style="{{ t.style }}">
+          {{ t.label }}
+          <span style="{{ t.countStyle }}">{{ t.count }}</span>
+        </button>
+      </sc-for>
+      <span style="flex:1;min-width:12px"></span>
+      <div style="display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:999px;background:var(--color-surface);border:1px solid var(--color-divider);min-width:180px;flex:0 1 240px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-600)" stroke-width="2.6" stroke-linecap="round" style="flex:none"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
+        <input value="{{ query }}" onChange="{{ onQuery }}" placeholder="イベントを検索" style="flex:1;min-width:0;border:none;background:transparent;outline:none;font-size:13px;color:var(--color-text)">
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <sc-for list="{{ events }}" as="e" hint-placeholder-count="3">
+        <a href="./MotoCamp Pack Web v2.dc.html" style="{{ e.cardStyle }}" style-hover="box-shadow:var(--shadow-md);transform:translateY(-2px)">
+          <div style="display:flex;gap:clamp(12px,2vw,18px);align-items:flex-start;flex-wrap:wrap">
+
+            <div style="{{ e.dateBoxStyle }}">
+              <span style="font-size:10.5px;font-weight:600;letter-spacing:.08em;opacity:.85">{{ e.month }}</span>
+              <span style="font-size:24px;font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums">{{ e.day }}</span>
+              <span style="font-size:10.5px;opacity:.85">{{ e.weekday }}</span>
+            </div>
+
+            <div style="flex:1 1 220px;min-width:0">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px">
+                <span style="{{ e.statusStyle }}">{{ e.statusLabel }}</span>
+                <span style="font-size:11.5px;color:var(--color-neutral-600)">{{ e.range }}</span>
+              </div>
+              <div style="{{ e.titleStyle }}">{{ e.title }}</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:7px;font-size:12px;color:var(--color-neutral-700)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 21s7-6.3 7-11a7 7 0 10-14 0c0 4.7 7 11 7 11z"></path><circle cx="12" cy="10" r="2.4"></circle></svg>
+                <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ e.place }}</span>
+              </div>
+            </div>
+
+            <div style="flex:0 0 auto;display:flex;flex-direction:column;gap:9px;min-width:150px">
+              <div style="display:flex;align-items:center;gap:7px">
+                <div style="display:flex;gap:4px">
+                  <sc-for list="{{ e.members }}" as="m" hint-placeholder-count="3">
+                    <span style="{{ m.style }}">{{ m.initials }}</span>
+                  </sc-for>
+                </div>
+                <span style="font-size:11.5px;color:var(--color-neutral-700);white-space:nowrap">{{ e.memberLabel }}</span>
+              </div>
+              <div>
+                <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:4px">
+                  <span style="font-size:11px;color:var(--color-neutral-700)">積み込み</span>
+                  <span style="font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--color-neutral-800)">{{ e.packedLabel }}</span>
+                </div>
+                <div style="height:7px;border-radius:999px;background:var(--color-neutral-300);overflow:hidden">
+                  <div style="{{ e.barStyle }}"></div>
+                </div>
+              </div>
+              <sc-if value="{{ e.hasWarning }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:#a8422b">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 4l9 16H3l9-16z"></path><path d="M12 10v4M12 17h.01"></path></svg>
+                  {{ e.warningText }}
+                </div>
+              </sc-if>
+            </div>
+
+          </div>
+        </a>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="text-align:center;padding:clamp(40px,8vw,70px) 20px;border-radius:var(--radius-lg);border:1.5px dashed var(--color-neutral-300);background:color-mix(in srgb, var(--color-surface) 60%, transparent)">
+        <div style="width:52px;height:52px;margin:0 auto 14px;border-radius:999px;background:var(--color-accent-200);display:flex;align-items:center;justify-content:center;color:var(--color-accent-700)">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20l9-16 9 16H3z"></path><path d="M9 20l3-5.5 3 5.5"></path></svg>
+        </div>
+        <div style="font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:16px;margin-bottom:6px">{{ emptyTitle }}</div>
+        <div style="font-size:12.5px;color:var(--color-neutral-700);line-height:1.7;max-width:300px;margin:0 auto">{{ emptyBody }}</div>
+      </div>
+    </sc-if>
+
+  </main>
+
+  <sc-if value="{{ newOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeNew }}" style="position:fixed;inset:0;z-index:40;background:color-mix(in srgb, #2e2b25 45%, transparent);display:flex;align-items:center;justify-content:center;padding:20px;animation:popIn .2s ease both">
+      <div onClick="{{ stop }}" style="width:100%;max-width:420px;max-height:min(88vh,780px);overflow:auto;background:var(--color-surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:22px">
+        <div style="font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:17px;margin-bottom:16px">新しいイベント</div>
+        <div style="display:flex;flex-direction:column;gap:13px">
+          <label style="display:block">
+            <span style="display:block;font-size:12px;font-weight:600;color:var(--color-neutral-800);margin-bottom:6px">イベント名</span>
+            <input value="{{ newTitle }}" onChange="{{ onNewTitle }}" placeholder="例）伊豆 1泊2日 キャンプツーリング" style="{{ modalInputStyle }}" style-focus="background:var(--color-neutral-100);border-color:var(--color-accent-500)">
+          </label>
+
+          <div>
+            <div style="display:flex;gap:10px">
+              <label style="flex:1;min-width:0">
+                <span style="display:block;font-size:12px;font-weight:600;color:var(--color-neutral-800);margin-bottom:6px">出発日</span>
+                <input value="{{ newStart }}" onChange="{{ onNewStart }}" type="date" min="2026-09-14" style="{{ dateInputStyle }}" style-focus="background:var(--color-neutral-100);border-color:var(--color-accent-500)">
+              </label>
+              <label style="flex:1;min-width:0">
+                <span style="display:block;font-size:12px;font-weight:600;color:var(--color-neutral-800);margin-bottom:6px">帰着日</span>
+                <input value="{{ newEnd }}" onChange="{{ onNewEnd }}" type="date" min="{{ endMin }}" style="{{ dateInputStyle }}" style-focus="background:var(--color-neutral-100);border-color:var(--color-accent-500)">
+              </label>
+            </div>
+            <div style="{{ dateHintStyle }}">{{ dateHint }}</div>
+          </div>
+
+          <label style="display:block">
+            <span style="display:flex;align-items:baseline;gap:6px;font-size:12px;font-weight:600;color:var(--color-neutral-800);margin-bottom:6px">
+              目的地
+              <span style="font-size:11px;font-weight:500;color:var(--color-neutral-600)">任意</span>
+            </span>
+            <input value="{{ newPlace }}" onChange="{{ onNewPlace }}" placeholder="例）朝霧ジャンボリー" style="{{ modalInputStyle }}" style-focus="background:var(--color-neutral-100);border-color:var(--color-accent-500)">
+          </label>
+
+          <div style="padding:14px;border-radius:var(--radius-md);background:var(--color-accent-2-100);border:1px solid var(--color-accent-2-200)">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-2-800)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="5.5" cy="17" r="3.2"></circle><circle cx="18.5" cy="17" r="3.2"></circle><path d="M8.7 17h6.1l-3.3-6.4H7.2M14.8 10.6h2.2l1.5 6.4M11.5 10.6l2-3.1h2.6"></path></svg>
+              <span style="font-size:12.5px;font-weight:700;color:var(--color-accent-2-800)">あなたのバイク・積載装備</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <label style="min-width:0">
+                <span style="display:block;font-size:11.5px;font-weight:600;color:var(--color-accent-2-800);margin-bottom:5px">車種</span>
+                <input value="{{ bikeName }}" onChange="{{ onBikeName }}" placeholder="例）SEROW 250" style="{{ modalInputStyle }}" style-focus="background:var(--color-neutral-100);border-color:var(--color-accent-2-600)">
+              </label>
+              <label style="min-width:0">
+                <span style="display:block;font-size:11.5px;font-weight:600;color:var(--color-accent-2-800);margin-bottom:5px">積載装備のメモ</span>
+                <input value="{{ gearMemo }}" onChange="{{ onGearMemo }}" placeholder="例）リアキャリア＋40Lシートバッグ" style="{{ modalInputStyle }}" style-focus="background:var(--color-neutral-100);border-color:var(--color-accent-2-600)">
+              </label>
+            </div>
+            <div style="{{ bikeNoteStyle }}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-4.5M12 8.2h.01"></path></svg>
+              <span style="flex:1">{{ bikeNote }}</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:9px;margin-top:20px">
+          <button type="button" onClick="{{ closeNew }}" style="flex:1;height:46px;border-radius:999px;border:1px solid var(--color-neutral-300);background:transparent;color:var(--color-neutral-800);font-size:14px;font-weight:600;cursor:pointer" style-hover="background:var(--color-neutral-200)">キャンセル</button>
+          <button type="button" onClick="{{ createNew }}" style="flex:1.4;height:46px;border-radius:999px;border:none;background:var(--color-accent-600);color:var(--color-neutral-100);font-size:14px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm)" style-hover="background:var(--color-accent-700)">作成する</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;profileBike&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;SEROW 250&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;プロフィール初期値&quot;,&quot;label&quot;:&quot;車種（空にすると未登録状態）&quot;},&quot;profileGearMemo&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;リアキャリア＋40Lバッグ、長物は横積み可&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const EVENTS = [
+  { id: 1, title: '富士山麓 1泊2日 キャンプツーリング', place: '朝霧ジャンボリーオートキャンプ場', month: 'OCT', day: '12', weekday: 'SAT', range: '10/12 – 10/13', status: 'upcoming', packed: 18, total: 32, members: ['山田 拓也', '佐々木 健二', '川瀬 美咲'], askMe: 2, unresolved: 1, lendOut: 3, warning: '引き受け確認中 2件' },
+  { id: 2, title: '道志みち 日帰りソロ', place: '道の駅どうし / 山伏峠', month: 'OCT', day: '25', weekday: 'SUN', range: '10/25', status: 'upcoming', packed: 4, total: 14, members: ['山田 拓也'], askMe: 0, unresolved: 0, lendOut: 0, warning: '' },
+  { id: 3, title: '紀伊半島 3泊 林道キャンプ', place: '大台ヶ原 ～ 熊野', month: 'NOV', day: '02', weekday: 'MON', range: '11/2 – 11/5', status: 'draft', packed: 0, total: 8, members: ['山田 拓也', '佐々木 健二', '川瀬 美咲', '堀内 涼', '坂田 綾'], askMe: 1, unresolved: 2, lendOut: 1, warning: '' },
+  { id: 4, title: '奥多摩 焚き火ミーティング', place: '氷川キャンプ場', month: 'SEP', day: '06', weekday: 'SUN', range: '9/6 – 9/7', status: 'done', packed: 26, total: 26, members: ['山田 拓也', '佐々木 健二'], askMe: 0, unresolved: 0, lendOut: 0, warning: '' },
+  { id: 5, title: '房総 海沿いツーリング', place: '岩井海岸 / 房総フラワーライン', month: 'AUG', day: '16', weekday: 'SAT', range: '8/16 – 8/17', status: 'done', packed: 21, total: 21, members: ['山田 拓也', '川瀬 美咲', '堀内 涼'], askMe: 0, unresolved: 0, lendOut: 0, warning: '' }
+];
+
+class Component extends DCLogic {
+  state = { tab: 'upcoming', query: '', newOpen: false, newTitle: '', newStart: '', newEnd: '', newPlace: '', bike: null, memo: null, accountOpen: false };
+
+  fmtJa(iso) {
+    if (!iso) return '';
+    const d = new Date(iso + 'T00:00:00');
+    if (isNaN(d)) return '';
+    return (d.getMonth() + 1) + '月' + d.getDate() + '日 (' + '日月火水木金土'[d.getDay()] + ')';
+  }
+
+  nights() {
+    const { newStart, newEnd } = this.state;
+    if (!newStart || !newEnd) return null;
+    const a = new Date(newStart + 'T00:00:00'), b = new Date(newEnd + 'T00:00:00');
+    const n = Math.round((b - a) / 86400000);
+    return n < 0 ? -1 : n;
+  }
+
+  filtered() {
+    const { tab, query } = this.state;
+    const q = query.trim();
+    return EVENTS.filter(e => {
+      const inTab = tab === 'all' ? true : tab === 'done' ? e.status === 'done' : e.status !== 'done';
+      const inQ = !q || (e.title + e.place).toLowerCase().includes(q.toLowerCase());
+      return inTab && inQ;
+    });
+  }
+
+  renderVals() {
+    const { tab, query, newOpen } = this.state;
+    const active = EVENTS.filter(e => e.status !== 'done');
+    const avatarColors = ['var(--color-accent-2-600)', 'var(--color-accent-600)', 'var(--color-accent-2-700)', 'var(--color-neutral-700)', 'var(--color-accent-500)'];
+
+    const statusMeta = {
+      upcoming: { label: '準備中', bg: 'var(--color-accent-200)', fg: 'var(--color-accent-800)' },
+      draft: { label: '下書き', bg: 'var(--color-neutral-200)', fg: 'var(--color-neutral-800)' },
+      done: { label: '完了', bg: 'var(--color-accent-2-200)', fg: 'var(--color-accent-2-800)' }
+    };
+
+    const tabDef = [
+      { key: 'upcoming', label: '予定', count: active.length },
+      { key: 'done', label: '完了', count: EVENTS.filter(e => e.status === 'done').length },
+      { key: 'all', label: 'すべて', count: EVENTS.length }
+    ];
+
+    const list = this.filtered();
+    const askMe = active.reduce((a, e) => a + (e.askMe || 0), 0);
+    const unresolved = active.reduce((a, e) => a + (e.unresolved || 0), 0);
+    const lendOut = active.reduce((a, e) => a + (e.lendOut || 0), 0);
+    const askTop = active.slice().sort((x, y) => (y.askMe || 0) - (x.askMe || 0))[0];
+
+    const modalInput = 'box-sizing:border-box;width:100%;height:44px;padding:0 13px;border-radius:var(--radius-md);border:1.5px solid var(--color-neutral-300);background:var(--color-neutral-200);color:var(--color-text);font-size:14px;outline:none;transition:border-color .15s,background .15s';
+
+    const pBike = this.props.profileBike ?? 'SEROW 250';
+    const pMemo = this.props.profileGearMemo ?? 'リアキャリア＋40Lバッグ、長物は横積み可';
+    const bike = this.state.bike ?? pBike;
+    const memo = this.state.memo ?? pMemo;
+    const fromProfile = !!pBike && this.state.bike === null && this.state.memo === null;
+
+    const n = this.nights();
+    const badRange = n === -1;
+    const dateHint = badRange
+      ? '帰着日は出発日より後の日付を選んでください。'
+      : n === null
+        ? (this.state.newStart ? this.fmtJa(this.state.newStart) + ' 出発' : '日付をタップしてカレンダーから選択')
+        : n === 0
+          ? this.fmtJa(this.state.newStart) + '・日帰り'
+          : this.fmtJa(this.state.newStart) + ' 〜 ' + this.fmtJa(this.state.newEnd) + '・' + n + '泊' + (n + 1) + '日';
+
+    const statCard = 'display:block;padding:15px 16px;border-radius:var(--radius-md);background:var(--color-surface);border:1px solid var(--color-divider);color:inherit;text-decoration:none;transition:box-shadow .16s';
+    const detailHref = './MotoCamp Pack Web v2.dc.html';
+    const bigVal = 'font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1';
+
+    return {
+      todayLabel: '2026年9月14日 (月)',
+      stats: [
+        { key: 'ask', label: '自分への確認待ち', value: String(askMe), unit: '件', href: detailHref, alert: askMe > 0, note: askMe ? (askTop ? askTop.title.slice(0, 12) + '… ほか' : '') : '返答が必要な依頼はありません', cardStyle: statCard + (askMe ? ';border-color:#d9a021;background:#fdf4e0' : ''), valueStyle: bigVal + (askMe ? ';color:#a8422b' : '') },
+        { key: 'open', label: '未解決の貸し借り', value: String(unresolved), unit: '件', href: detailHref, alert: false, note: unresolved ? '貸せる人がまだ決まっていません' : 'すべて貸し手が決まっています', cardStyle: statCard, valueStyle: bigVal + (unresolved ? ';color:var(--color-accent-700)' : '') },
+        { key: 'lend', label: '自分が貸すギア', value: String(lendOut), unit: '点', href: detailHref, alert: false, note: '自分のバイクで運ぶ約束をした分', cardStyle: statCard, valueStyle: bigVal },
+        { key: 'ev', label: '予定中のイベント', value: String(active.length), unit: '件', href: detailHref, alert: false, note: '準備中・下書きを含む', cardStyle: statCard, valueStyle: bigVal }
+      ],
+
+      tabs: tabDef.map(t => {
+        const on = t.key === tab;
+        return {
+          key: t.key, label: t.label, count: t.count,
+          onTap: () => this.setState({ tab: t.key }),
+          style: 'display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 16px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:' + (on ? '700' : '500') + ';border:1px solid ' + (on ? 'transparent' : 'var(--color-neutral-300)') + ';background:' + (on ? 'var(--color-accent-600)' : 'transparent') + ';color:' + (on ? 'var(--color-neutral-100)' : 'var(--color-neutral-800)'),
+          countStyle: 'font-size:11px;font-variant-numeric:tabular-nums;padding:1px 7px;border-radius:999px;background:' + (on ? 'color-mix(in srgb, #fff 26%, transparent)' : 'var(--color-neutral-200)')
+        };
+      }),
+
+      query,
+      onQuery: (e) => this.setState({ query: e.target.value }),
+
+      events: list.map(e => {
+        const pct = e.total ? Math.round((e.packed / e.total) * 100) : 0;
+        const sm = statusMeta[e.status];
+        const done = e.status === 'done';
+        return {
+          key: e.id,
+          title: e.title, place: e.place, month: e.month, day: e.day, weekday: e.weekday, range: e.range,
+          cardStyle: 'display:block;padding:clamp(14px,2.4vw,18px);border-radius:var(--radius-lg);background:var(--color-surface);border:1px solid var(--color-divider);box-shadow:var(--shadow-sm);color:inherit;text-decoration:none;transition:box-shadow .18s,transform .18s;' + (done ? 'opacity:.72' : ''),
+          dateBoxStyle: 'flex:none;width:62px;padding:9px 0;border-radius:var(--radius-md);display:flex;flex-direction:column;align-items:center;gap:1px;background:' + (done ? 'var(--color-neutral-300)' : 'var(--color-accent-600)') + ';color:' + (done ? 'var(--color-neutral-800)' : 'var(--color-neutral-100)'),
+          statusStyle: 'font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;background:' + sm.bg + ';color:' + sm.fg,
+          statusLabel: sm.label,
+          titleStyle: 'font-family:"Zen Maru Gothic","Figtree",sans-serif;font-size:clamp(15px,1.9vw,17px);line-height:1.45;font-weight:500;text-wrap:pretty' + (done ? ';text-decoration:line-through;text-decoration-color:var(--color-neutral-400)' : ''),
+          members: e.members.slice(0, 4).map((m, i) => ({
+            key: m + i, initials: m.replace(/\s+/g, '').slice(0, 2), title: m,
+            style: 'flex:none;width:30px;height:30px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:.01em;color:var(--color-neutral-100);background:' + avatarColors[i % avatarColors.length]
+          })),
+          memberLabel: e.members.length + '名',
+          packedLabel: e.packed + ' / ' + e.total,
+          barStyle: 'height:100%;width:' + pct + '%;border-radius:999px;background:' + (pct === 100 ? 'var(--color-accent-2-600)' : 'var(--color-accent-500)'),
+          hasWarning: !!e.warning,
+          warningText: e.warning
+        };
+      }),
+
+      isEmpty: list.length === 0,
+      emptyTitle: query ? '該当するイベントがありません' : 'まだイベントがありません',
+      emptyBody: query ? 'キーワードを変えて検索してみてください。' : '「イベントを作成」から、次のツーリングの積載リストを作りましょう。',
+
+      accountOpen: this.state.accountOpen,
+      toggleAccount: () => this.setState({ accountOpen: !this.state.accountOpen }),
+      closeAccount: () => this.setState({ accountOpen: false }),
+      accountBtnStyle: 'display:flex;align-items:center;gap:8px;height:40px;padding:0 6px;border-radius:999px;cursor:pointer;transition:background .15s;border:1px solid ' + (this.state.accountOpen ? 'var(--color-neutral-400)' : 'var(--color-neutral-300)') + ';background:' + (this.state.accountOpen ? 'var(--color-surface)' : 'transparent'),
+      chevronStyle: 'margin-right:6px;transition:transform .18s;transform:rotate(' + (this.state.accountOpen ? '180deg' : '0deg') + ')',
+      menuItemStyle: 'display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border:none;border-radius:calc(var(--radius-md) - 5px);background:transparent;color:var(--color-neutral-900);font-size:13.5px;font-weight:600;cursor:pointer;transition:background .13s',
+      logoutItemStyle: 'display:flex;align-items:center;gap:10px;width:100%;padding:10px 10px;border:none;border-radius:calc(var(--radius-md) - 5px);background:transparent;color:var(--color-accent-700);font-size:13.5px;font-weight:600;cursor:pointer;transition:background .13s',
+      bikeSummary: pBike || '車種が未設定',
+      goProfile: () => { window.location.href = './MotoCamp Profile.dc.html'; },
+      logout: () => { window.location.href = './MotoCamp Auth.dc.html'; },
+
+      newOpen,
+      openNew: () => this.setState({ newOpen: true }),
+      closeNew: () => this.setState({ newOpen: false }),
+      stop: (ev) => ev.stopPropagation(),
+      createNew: () => {
+        if (badRange) return;
+        window.location.href = './MotoCamp Pack Web v2.dc.html';
+      },
+      modalInputStyle: modalInput,
+      dateInputStyle: modalInput + ';padding-right:8px',
+      newTitle: this.state.newTitle, newStart: this.state.newStart, newEnd: this.state.newEnd,
+      onNewTitle: (e) => this.setState({ newTitle: e.target.value }),
+      onNewStart: (e) => {
+        const v = e.target.value;
+        const end = this.state.newEnd && this.state.newEnd < v ? v : this.state.newEnd;
+        this.setState({ newStart: v, newEnd: end });
+      },
+      onNewEnd: (e) => this.setState({ newEnd: e.target.value }),
+      endMin: this.state.newStart || '2026-09-14',
+      dateHint,
+      dateHintStyle: 'margin-top:7px;font-size:11.5px;line-height:1.6;color:' + (badRange ? '#a8422b' : 'var(--color-neutral-700)'),
+
+      newPlace: this.state.newPlace,
+      onNewPlace: (e) => this.setState({ newPlace: e.target.value }),
+
+      bikeName: bike,
+      gearMemo: memo,
+      onBikeName: (e) => this.setState({ bike: e.target.value }),
+      onGearMemo: (e) => this.setState({ memo: e.target.value }),
+      bikeNote: fromProfile
+        ? 'プロフィールの設定を初期値にしています。積載装備のメモはこのイベントだけ変更できます（車種はプロフィールに保存）。'
+        : 'プロフィールに車種が未登録です。入力した内容はプロフィールにも保存されます。',
+      bikeNoteStyle: 'display:flex;gap:6px;align-items:flex-start;margin-top:9px;font-size:11px;line-height:1.6;color:' + (fromProfile ? 'var(--color-accent-2-800)' : '#a8422b')
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/organic-05df4399-2545-42d8-a736-030508ad6606/styles.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Figtree:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<style>
+body{margin:0;background:var(--color-bg);color:var(--color-text);font-family:'Figtree','Zen Maru Gothic',system-ui,sans-serif;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+*{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+input,button,textarea,select{box-sizing:border-box;font-family:inherit}
+a{color:var(--color-accent-700);text-decoration:none}
+a:hover{color:var(--color-accent-600)}
+input{accent-color:var(--color-accent-600)}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}
+@keyframes popIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:clamp(18px,4vw,40px) clamp(14px,4vw,24px) 60px;background:radial-gradient(120% 55% at 50% 0%, #fbf4e6 0%, var(--color-bg) 62%)">
+
+  <div style="width:100%;max-width:440px">
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:clamp(18px,3vw,26px)">
+      <span style="width:26px;height:26px;border-radius:8px;background:var(--color-accent-600);display:flex;align-items:center;justify-content:center;flex:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fdf8ef" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17" r="3.2"></circle><circle cx="18.5" cy="17" r="3.2"></circle><path d="M8.7 17h6.1l-3.3-6.4H7.2M14.8 10.6h2.2l1.5 6.4M11.5 10.6l2-3.1h2.6"></path></svg>
+      </span>
+      <span style="font-family:'Caprasimo',serif;font-size:15px;color:var(--color-accent-700)">MotoCamp Pack</span>
+    </div>
+
+    <div style="{{ shellStyle }}">
+      <sc-if value="{{ isValid }}" hint-placeholder-val="{{ true }}">
+        <div style="text-align:center;padding:12px 10px 14px">
+          <div style="font-size:12.5px;color:var(--color-accent-800);line-height:1.6"><strong style="font-weight:700">{{ hostName }}</strong> さんから招待が届きました</div>
+        </div>
+      </sc-if>
+
+      <div style="border-radius:var(--radius-lg);background:var(--color-surface);border:1px solid var(--color-divider);box-shadow:var(--shadow-md);overflow:hidden">
+
+        <sc-if value="{{ isValid }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:clamp(18px,3.5vw,24px);border-bottom:1px solid var(--color-divider)">
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="flex:none;width:58px;padding:9px 0;border-radius:var(--radius-md);background:var(--color-accent-600);color:var(--color-neutral-100);display:flex;flex-direction:column;align-items:center;gap:1px">
+              <span style="font-size:10px;font-weight:600;letter-spacing:.08em;opacity:.85">OCT</span>
+              <span style="font-size:22px;font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums">12</span>
+              <span style="font-size:10px;opacity:.85">SAT</span>
+            </div>
+            <div style="flex:1;min-width:0">
+              <div style="font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:clamp(16px,2.4vw,18px);line-height:1.45;text-wrap:pretty">富士山麓 1泊2日 キャンプツーリング</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:var(--color-neutral-700)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 21s7-6.3 7-11a7 7 0 10-14 0c0 4.7 7 11 7 11z"></path><circle cx="12" cy="10" r="2.4"></circle></svg>
+                <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">朝霧ジャンボリーオートキャンプ場</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:6px;font-size:12px;color:var(--color-neutral-700)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><rect x="3.5" y="5" width="17" height="15" rx="2.5"></rect><path d="M8 3.5v3M16 3.5v3M3.5 10h17"></path></svg>
+                <span>10/12 (土) 〜 10/13 (日)・1泊2日</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:9px;margin-top:16px;padding-top:15px;border-top:1px solid var(--color-divider)">
+            <div style="display:flex;flex:none;gap:4px">
+              <sc-for list="{{ members }}" as="m" hint-placeholder-count="3">
+                <span style="{{ m.style }}" title="{{ m.title }}">{{ m.initials }}</span>
+              </sc-for>
+            </div>
+            <span style="flex:1;min-width:0;font-size:12px;color:var(--color-neutral-700);line-height:1.6">{{ memberSummary }}</span>
+          </div>
+        </div>
+        </sc-if>
+
+        <div style="padding:clamp(18px,3.5vw,24px)">
+
+          <sc-if value="{{ isLoggedIn }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:15px;margin-bottom:13px">このアカウントで参加しますか？</div>
+              <div style="display:flex;gap:11px;align-items:center;padding:13px 14px;border-radius:var(--radius-md);background:var(--color-accent-2-100);border:1px solid var(--color-accent-2-200);margin-bottom:14px">
+                <span style="flex:none;width:38px;height:38px;border-radius:999px;background:var(--color-accent-2-600);color:var(--color-accent-2-100);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700">山田</span>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13.5px;font-weight:700;line-height:1.35">山田 拓也</div>
+                  <div style="font-size:11.5px;color:var(--color-accent-2-800);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">SEROW 250・リアキャリア＋40Lシートバッグ</div>
+                </div>
+              </div>
+              <button type="button" onClick="{{ join }}" style="{{ primaryStyle }}" style-hover="background:var(--color-accent-700)">このアカウントで参加する</button>
+              <button type="button" onClick="{{ goGuest }}" style="{{ ghostStyle }}" style-hover="background:var(--color-neutral-200)">別の名前でゲスト参加</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isChoose }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:15px;margin-bottom:6px">参加方法を選んでください</div>
+              <div style="font-size:12px;line-height:1.7;color:var(--color-neutral-700);margin-bottom:16px">アカウントがなくても、名前だけで参加できます。</div>
+
+              <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+                <sc-for list="{{ routes }}" as="r" hint-placeholder-count="2">
+                  <button type="button" onClick="{{ r.onTap }}" style="{{ r.style }}" style-hover="border-color:var(--color-accent-500)">
+                    <span style="{{ r.iconStyle }}">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path style="{{ r.pathA }}" d="M12 8v-.01"></path><path d="{{ r.icon }}"></path></svg>
+                    </span>
+                    <span style="flex:1;min-width:0;text-align:left">
+                      <span style="display:block;font-size:14px;font-weight:700;line-height:1.35">{{ r.title }}</span>
+                      <span style="display:block;font-size:11.5px;font-weight:500;line-height:1.6;color:var(--color-neutral-700);margin-top:3px">{{ r.desc }}</span>
+                    </span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-600)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M9 6l6 6-6 6"></path></svg>
+                  </button>
+                </sc-for>
+              </div>
+
+              <div style="display:flex;gap:8px;align-items:flex-start;font-size:11.5px;line-height:1.7;color:var(--color-neutral-700)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-4.5M12 8.2h.01"></path></svg>
+                <span style="flex:1">ゲスト参加でも、あとからアカウントを作れば追加した装備をそのまま引き継げます。</span>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isGuest }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <button type="button" onClick="{{ back }}" style="display:inline-flex;align-items:center;gap:5px;margin-bottom:12px;padding:0;border:none;background:transparent;color:var(--color-neutral-700);font-size:12px;font-weight:600;cursor:pointer" style-hover="color:var(--color-accent-700)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6l-6 6 6 6"></path></svg>
+                参加方法を選び直す
+              </button>
+              <div style="font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:15px;margin-bottom:14px">ゲストとして参加</div>
+
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <label style="display:block">
+                  <span style="display:block;font-size:12px;font-weight:600;color:var(--color-neutral-800);margin-bottom:6px">表示名</span>
+                  <input value="{{ guestName }}" onChange="{{ onGuestName }}" placeholder="例）菊池 翔" style="{{ inputStyle }}" style-focus="background:var(--color-neutral-100);border-color:var(--color-accent-500)">
+                  <span style="display:block;font-size:11px;color:var(--color-neutral-600);margin-top:6px;line-height:1.6">メンバー一覧に表示されます。</span>
+                </label>
+
+                <div style="padding:14px;border-radius:var(--radius-md);background:var(--color-accent-2-100);border:1px solid var(--color-accent-2-200)">
+                  <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+                    <span style="font-size:12.5px;font-weight:700;color:var(--color-accent-2-800)">バイクと積載装備</span>
+                    <span style="font-size:11px;font-weight:500;color:var(--color-accent-2-800);opacity:.8">任意</span>
+                  </div>
+                  <div style="font-size:11.5px;line-height:1.7;color:var(--color-accent-2-800);opacity:.9;margin-bottom:13px">入力すると、共同装備の運搬や貸し借りを頼まれたときに判断しやすくなります。あとから変更できます。</div>
+                  <label style="display:block;margin-bottom:11px">
+                    <span style="display:block;font-size:11.5px;font-weight:600;color:var(--color-accent-2-800);margin-bottom:5px">車種</span>
+                    <input value="{{ guestBike }}" onChange="{{ onGuestBike }}" placeholder="例）CRF250L" style="{{ inputStyle }}" style-focus="background:var(--color-neutral-100);border-color:var(--color-accent-2-600)">
+                  </label>
+                  <label style="display:block">
+                    <span style="display:block;font-size:11.5px;font-weight:600;color:var(--color-accent-2-800);margin-bottom:5px">積載装備のメモ</span>
+                    <input value="{{ guestCarry }}" onChange="{{ onGuestCarry }}" placeholder="例：リアキャリア＋40Lシートバッグ" style="{{ inputStyle }}" style-focus="background:var(--color-neutral-100);border-color:var(--color-accent-2-600)">
+                  </label>
+                  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:10px">
+                    <sc-for list="{{ carryPresets }}" as="c" hint-placeholder-count="6">
+                      <button type="button" onClick="{{ c.onAdd }}" style="{{ c.style }}" style-hover="background:var(--color-surface)">＋{{ c.label }}</button>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <button type="button" onClick="{{ join }}" style="{{ guestSubmitStyle }}" style-hover="background:var(--color-accent-700)">このイベントに参加する</button>
+
+                <sc-if value="{{ guestError }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;gap:8px;align-items:flex-start;padding:11px 13px;border-radius:var(--radius-md);background:var(--color-accent-200);color:var(--color-accent-800);font-size:12.5px;line-height:1.6">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4.5M12 16h.01"></path></svg>
+                    <span style="flex:1">表示名を入力してください。</span>
+                  </div>
+                </sc-if>
+
+                <div style="font-size:11px;line-height:1.7;color:var(--color-neutral-600);text-align:center">
+                  参加すると<a href="#">利用規約</a>に同意したものとみなされます。
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isReturning }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="display:flex;gap:11px;align-items:center;padding:13px 14px;border-radius:var(--radius-md);background:var(--color-accent-100);border:1px solid var(--color-accent-200);margin-bottom:14px">
+                <span style="flex:none;width:38px;height:38px;border-radius:999px;background:var(--color-accent-600);color:var(--color-neutral-100);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700">菊池</span>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13.5px;font-weight:700;line-height:1.35">菊池 翔 さんとして参加中</div>
+                  <div style="font-size:11.5px;color:var(--color-accent-800);margin-top:2px">ゲスト・担当装備 6点（うち貸し出し 2点）</div>
+                </div>
+              </div>
+              <button type="button" onClick="{{ join }}" style="{{ primaryStyle }}" style-hover="background:var(--color-accent-700)">イベントを開く</button>
+              <button type="button" onClick="{{ goChoose }}" style="{{ ghostStyle }}" style-hover="background:var(--color-neutral-200)">別のアカウントで参加し直す</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isExpired }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;padding:12px 4px 4px">
+              <div style="width:52px;height:52px;margin:0 auto 14px;border-radius:999px;background:var(--color-neutral-200);display:flex;align-items:center;justify-content:center;color:var(--color-neutral-700)">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.5V12l3 2"></path></svg>
+              </div>
+              <div style="font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:16px;margin-bottom:8px">この招待リンクは使えません</div>
+              <div style="font-size:12.5px;line-height:1.8;color:var(--color-neutral-700);max-width:300px;margin:0 auto 18px">有効期限が切れているか、主催者によって無効化されました。主催者に新しいリンクをリクエストしてください。</div>
+              <a href="./MotoCamp Auth.dc.html" style="display:inline-flex;align-items:center;justify-content:center;height:46px;padding:0 22px;border-radius:999px;border:1px solid var(--color-neutral-300);color:var(--color-neutral-800);font-size:13.5px;font-weight:600" style-hover="background:var(--color-neutral-200)">ログインして確認する</a>
+            </div>
+          </sc-if>
+
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:22px;padding:14px 16px;border-radius:var(--radius-md);border:1px dashed var(--color-neutral-300)">
+      <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:9px">状態プレビュー（実装時は自動判定）</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <sc-for list="{{ states }}" as="s" hint-placeholder-count="4">
+          <button type="button" onClick="{{ s.onTap }}" style="{{ s.style }}">{{ s.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:520,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = { view: 'choose', guestName: '', guestBike: '', guestCarry: '', err: false };
+
+  renderVals() {
+    const { view } = this.state;
+    const input = 'width:100%;height:46px;padding:0 14px;border-radius:var(--radius-md);border:1.5px solid var(--color-neutral-300);background:var(--color-neutral-200);color:var(--color-text);font-size:14.5px;outline:none;transition:border-color .15s,background .15s';
+    const avatarColors = ['var(--color-accent-2-600)', 'var(--color-accent-600)', 'var(--color-accent-2-700)'];
+
+    const routeDef = [
+      { key: 'guest', title: 'アカウントなしで参加', desc: '名前だけで参加。担当装備の追加・編集ができます', icon: 'M12 21s7-6.3 7-11a7 7 0 10-14 0c0 4.7 7 11 7 11z', tint: 'var(--color-accent-100)', fg: 'var(--color-accent-800)' },
+      { key: 'login', title: 'アカウントでログインして参加', desc: 'プロフィールのバイク・積載装備をそのまま使えます', icon: 'M15 12H5m4-4l-4 4 4 4M13 4h4.5A1.5 1.5 0 0119 5.5v13a1.5 1.5 0 01-1.5 1.5H13', tint: 'var(--color-accent-2-100)', fg: 'var(--color-accent-2-800)' }
+    ];
+
+    const stateDef = [
+      { key: 'choose', label: '未ログイン' },
+      { key: 'loggedin', label: 'ログイン済み' },
+      { key: 'guest', label: 'ゲスト入力' },
+      { key: 'returning', label: '再訪（Cookieあり）' },
+      { key: 'expired', label: '期限切れ' }
+    ];
+
+    return {
+      hostName: '山田 拓也',
+      members: ['山田 拓也', '佐々木 健二', '川瀬 美咲'].map((m, i) => ({
+        key: m, initials: m.replace(/\s+/g, '').slice(0, 2), title: m,
+        style: 'flex:none;width:30px;height:30px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--color-neutral-100);background:' + avatarColors[i % 3]
+      })),
+      memberSummary: '3名が参加中・共同装備 32点のうち 18点が積み込み済み',
+
+      isValid: view !== 'expired',
+      shellStyle: 'padding:' + (view === 'expired' ? '8px' : '6px 8px 8px') + ';border-radius:calc(var(--radius-lg) + 6px);animation:popIn .35s ease both;background:' + (view === 'expired' ? 'transparent' : 'color-mix(in srgb, var(--color-accent-200) 55%, transparent)'),
+
+      isChoose: view === 'choose',
+      isLoggedIn: view === 'loggedin',
+      isGuest: view === 'guest',
+      isReturning: view === 'returning',
+      isExpired: view === 'expired',
+
+      routes: routeDef.map(r => ({
+        key: r.key, title: r.title, desc: r.desc, icon: r.icon, pathA: 'opacity:0',
+        onTap: () => this.setState({ view: r.key === 'guest' ? 'guest' : 'loggedin', err: false }),
+        style: 'display:flex;align-items:center;gap:13px;width:100%;padding:14px;border-radius:var(--radius-md);border:1.5px solid var(--color-neutral-300);background:var(--color-surface);cursor:pointer;transition:border-color .15s;color:var(--color-neutral-900)',
+        iconStyle: 'flex:none;width:40px;height:40px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:' + r.tint + ';color:' + r.fg
+      })),
+
+      inputStyle: input,
+      guestName: this.state.guestName,
+      guestBike: this.state.guestBike,
+      guestCarry: this.state.guestCarry,
+      onGuestName: (e) => this.setState({ guestName: e.target.value, err: false }),
+      onGuestBike: (e) => this.setState({ guestBike: e.target.value }),
+      onGuestCarry: (e) => this.setState({ guestCarry: e.target.value }),
+      carryPresets: ['トップケース', 'サイドバッグ', 'シートバッグ', 'リアキャリア', 'タンクバッグ', '長物OK'].map(p => ({
+        key: p, label: p,
+        onAdd: () => this.setState(st => ({ guestCarry: st.guestCarry.trim() ? st.guestCarry.trim() + '、' + p : p })),
+        style: 'height:32px;padding:0 12px;border-radius:999px;cursor:pointer;font-size:11.5px;font-weight:600;transition:background .13s;border:1px dashed var(--color-accent-2-300);background:transparent;color:var(--color-accent-2-800)'
+      })),
+      guestError: this.state.err,
+
+      primaryStyle: 'width:100%;height:50px;border-radius:999px;border:none;background:var(--color-accent-600);color:var(--color-neutral-100);font-size:15px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm);transition:background .15s',
+      guestSubmitStyle: 'width:100%;height:50px;border-radius:999px;border:none;background:var(--color-accent-600);color:var(--color-neutral-100);font-size:15px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm);transition:background .15s',
+      ghostStyle: 'width:100%;height:46px;margin-top:9px;border-radius:999px;border:none;background:transparent;color:var(--color-neutral-700);font-size:13px;font-weight:600;cursor:pointer;transition:background .15s',
+
+      join: () => {
+        if (view === 'guest' && !this.state.guestName.trim()) return this.setState({ err: true });
+        window.location.href = './MotoCamp Pack Web v2.dc.html';
+      },
+      goGuest: () => this.setState({ view: 'guest', err: false }),
+      goChoose: () => this.setState({ view: 'choose', err: false }),
+      back: () => this.setState({ view: 'choose', err: false }),
+
+      states: stateDef.map(s => {
+        const on = s.key === view;
+        return {
+          key: s.key, label: s.label,
+          onTap: () => this.setState({ view: s.key, err: false }),
+          style: 'height:32px;padding:0 13px;border-radius:999px;cursor:pointer;font-size:11.5px;font-weight:' + (on ? '700' : '500') + ';border:1px solid ' + (on ? 'var(--color-accent-600)' : 'var(--color-neutral-300)') + ';background:' + (on ? 'var(--color-accent-100)' : 'transparent') + ';color:' + (on ? 'var(--color-accent-800)' : 'var(--color-neutral-700)')
+        };
+      })
+    };
+  }
+}
+
+</script>
+</body>
+</html>

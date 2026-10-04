@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/organic-05df4399-2545-42d8-a736-030508ad6606/styles.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Figtree:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<style>
+body{margin:0;background:var(--color-bg);color:var(--color-text);font-family:'Figtree','Zen Maru Gothic',system-ui,sans-serif;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+*{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+input,button{box-sizing:border-box;font-family:inherit}
+a{color:var(--color-accent-700);text-decoration:none}
+a:hover{color:var(--color-accent-600)}
+:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}
+@keyframes popIn{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:clamp(18px,4vw,40px) clamp(14px,4vw,24px);background:radial-gradient(120% 55% at 50% 0%, #fbf4e6 0%, var(--color-bg) 62%)">
+
+  <div style="width:100%;max-width:420px;background:var(--color-surface);border-radius:var(--radius-lg);border:1px solid var(--color-divider);box-shadow:var(--shadow-lg);overflow:hidden;animation:popIn .26s ease both">
+
+    <div style="padding:clamp(20px,4vw,26px) clamp(18px,3.5vw,24px) 0">
+      <div style="{{ badgeStyle }}">{{ badgeLabel }}</div>
+      <div style="font-family:'Zen Maru Gothic','Figtree',sans-serif;font-size:clamp(17px,2.6vw,19px);line-height:1.45;margin-top:12px;text-wrap:pretty">{{ heading }}</div>
+      <div style="font-size:12.5px;line-height:1.8;color:var(--color-neutral-700);margin-top:8px">{{ subheading }}</div>
+    </div>
+
+    <div style="padding:clamp(16px,3vw,20px) clamp(18px,3.5vw,24px) clamp(18px,3.5vw,24px)">
+
+      <div style="border-radius:var(--radius-md);border:1px solid var(--color-divider);overflow:hidden">
+        <div style="display:flex;gap:11px;align-items:center;padding:13px 14px;background:var(--color-neutral-200)">
+          <span style="flex:none;width:36px;height:36px;border-radius:999px;background:var(--color-accent-600);color:var(--color-neutral-100);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">菊池</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:700;line-height:1.35">菊池 翔（ゲスト）</div>
+            <div style="font-size:11px;color:var(--color-neutral-700);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">富士山麓 1泊2日 キャンプツーリング</div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:1px;padding:4px 0;background:var(--color-surface)">
+          <sc-for list="{{ rows }}" as="r" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px">
+              <span style="{{ r.dotStyle }}"></span>
+              <span style="flex:1;min-width:0;font-size:12.5px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.label }}</span>
+              <span style="flex:none;font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--color-neutral-800)">{{ r.value }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <sc-if value="{{ isMerge }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:10px;margin:12px 2px">
+          <span style="flex:none;width:28px;height:28px;border-radius:999px;background:var(--color-accent-2-200);color:var(--color-accent-2-800);display:flex;align-items:center;justify-content:center">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M7 14l5 5 5-5"></path></svg>
+          </span>
+          <span style="flex:1;font-size:11.5px;line-height:1.6;color:var(--color-neutral-700)">このイベントには既にあなたのメンバー枠があります。装備はそこへ統合されます。</span>
+        </div>
+        <div style="display:flex;gap:11px;align-items:center;padding:13px 14px;border-radius:var(--radius-md);background:var(--color-accent-2-100);border:1px solid var(--color-accent-2-200)">
+          <span style="flex:none;width:36px;height:36px;border-radius:999px;background:var(--color-accent-2-600);color:var(--color-accent-2-100);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">菊池</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:700;line-height:1.35;color:var(--color-accent-2-800)">菊池 翔（アカウント）</div>
+            <div style="font-size:11px;color:var(--color-accent-2-800);opacity:.85;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">既存の担当装備 2点・CRF250L（リアキャリア＋サイドバッグ）</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ hasProfileNote }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:9px;align-items:flex-start;margin-top:14px;padding:12px 13px;border-radius:var(--radius-md);background:var(--color-accent-100);border:1px solid var(--color-accent-200)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-800)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-4.5M12 8.2h.01"></path></svg>
+          <span style="flex:1;font-size:11.5px;line-height:1.7;color:var(--color-accent-800)">{{ profileNote }}</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:9px;align-items:flex-start;margin-top:14px;padding:12px 13px;border-radius:var(--radius-md);background:var(--color-accent-200)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-800)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4.5M12 16h.01"></path></svg>
+          <span style="flex:1;font-size:11.5px;line-height:1.7;color:var(--color-accent-800)">引き継ぎの有効期限が切れているか、既に別のアカウントへ引き継がれています。主催者に招待し直してもらってください。</span>
+        </div>
+      </sc-if>
+
+      <div style="display:flex;flex-direction:column;gap:9px;margin-top:18px">
+        <button type="button" onClick="{{ confirm }}" disabled="{{ busy }}" style="{{ primaryStyle }}" style-hover="background:var(--color-accent-700)">
+          <sc-if value="{{ busy }}" hint-placeholder-val="{{ false }}">
+            <span style="width:15px;height:15px;border-radius:999px;border:2px solid color-mix(in srgb, #fff 45%, transparent);border-top-color:#fff;animation:spin .7s linear infinite"></span>
+          </sc-if>
+          {{ primaryLabel }}
+        </button>
+        <button type="button" onClick="{{ skip }}" style="{{ ghostStyle }}" style-hover="background:var(--color-neutral-200)">{{ ghostLabel }}</button>
+      </div>
+
+      <div style="font-size:10.5px;line-height:1.7;color:var(--color-neutral-600);text-align:center;margin-top:14px">{{ footnote }}</div>
+
+    </div>
+  </div>
+
+  <div style="width:100%;max-width:420px;padding:14px 16px;border-radius:var(--radius-md);border:1px dashed var(--color-neutral-300)">
+    <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:9px">状態プレビュー（実装時は自動判定）</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <sc-for list="{{ states }}" as="s" hint-placeholder-count="4">
+        <button type="button" onClick="{{ s.onTap }}" style="{{ s.style }}">{{ s.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:500,&quot;height&quot;:820}}">
+class Component extends DCLogic {
+  state = { view: 'signup', busy: false };
+
+  renderVals() {
+    const { view, busy } = this.state;
+    const isMerge = view === 'merge';
+    const isError = view === 'error';
+    const isLogin = view === 'login';
+
+    const copy = {
+      signup: {
+        badge: 'アカウント作成が完了しました',
+        head: 'ゲストで追加した装備を、このアカウントに引き継ぎますか？',
+        sub: '引き継ぐと、別の端末からでも同じ装備を編集できるようになります。',
+        primary: '引き継いで続ける',
+        ghost: 'あとで引き継ぐ',
+        note: 'ゲストの記録は、この端末のセッションが残っている間だけ引き継げます。'
+      },
+      login: {
+        badge: 'ログインしました',
+        head: 'このイベントの担当装備を、ログイン中のアカウントに引き継ぎますか？',
+        sub: '引き継がない場合、装備はゲストのまま残ります。',
+        primary: 'このアカウントに引き継ぐ',
+        ghost: 'ゲストのまま続ける',
+        note: '引き継ぎはあとからイベント画面でも実行できます。'
+      },
+      merge: {
+        badge: 'ログインしました',
+        head: '2つのメンバー枠をひとつにまとめますか？',
+        sub: 'ゲストで追加した装備が、既存のメンバー枠へ移動します。この操作は取り消せません。',
+        primary: 'まとめて統合する',
+        ghost: 'キャンセル',
+        note: '担当・リクエスト・通知は既存の枠に付け替わり、ゲストの枠はイベントから外れます。自分から自分への貸し借りになるものは削除されます。'
+      },
+      error: {
+        badge: '引き継ぎできませんでした',
+        head: 'この引き継ぎリンクは使用できません',
+        sub: 'セッションの有効期限が切れているか、既に処理済みの可能性があります。',
+        primary: 'ダッシュボードへ',
+        ghost: 'サポートに問い合わせる',
+        note: '装備データは削除されていません。主催者から招待し直してもらえば復旧できます。'
+      }
+    }[view];
+
+    const dot = (c) => 'flex:none;width:7px;height:7px;border-radius:999px;background:' + c;
+
+    return {
+      badgeLabel: copy.badge,
+      badgeStyle: 'display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:4px 11px;border-radius:999px;background:' + (isError ? 'var(--color-accent-200)' : 'var(--color-accent-2-200)') + ';color:' + (isError ? 'var(--color-accent-800)' : 'var(--color-accent-2-800)'),
+      heading: copy.head,
+      subheading: copy.sub,
+
+      rows: [
+        { key: 'a', label: '追加した装備', value: '6点', dotStyle: dot('var(--color-accent-600)') },
+        { key: 'b', label: '積み込み済み', value: '4点', dotStyle: dot('var(--color-accent-2-600)') },
+        { key: 'c', label: '他メンバーに貸す分', value: '2点', dotStyle: dot('var(--color-neutral-500)') }
+      ],
+
+      isMerge, isError,
+      hasProfileNote: view === 'signup',
+      profileNote: 'ゲスト参加時に入力した CRF250L（リアキャリア＋サイドバッグ）を、プロフィールの積載装備メモの初期値として保存します。',
+
+      busy,
+      primaryLabel: busy ? '引き継いでいます…' : copy.primary,
+      ghostLabel: copy.ghost,
+      footnote: copy.note,
+      primaryStyle: 'display:flex;align-items:center;justify-content:center;gap:9px;width:100%;height:50px;border-radius:999px;border:none;font-size:14.5px;font-weight:700;cursor:' + (busy ? 'default' : 'pointer') + ';box-shadow:var(--shadow-sm);transition:background .15s;color:var(--color-neutral-100);background:' + (busy ? 'var(--color-accent-500)' : 'var(--color-accent-600)'),
+      ghostStyle: 'width:100%;height:46px;border-radius:999px;border:1px solid var(--color-neutral-300);background:transparent;color:var(--color-neutral-800);font-size:13.5px;font-weight:600;cursor:pointer;transition:background .15s',
+
+      confirm: () => {
+        if (busy) return;
+        if (isError) { window.location.href = './MotoCamp Dashboard.dc.html'; return; }
+        this.setState({ busy: true });
+        setTimeout(() => { window.location.href = './MotoCamp Pack Web v2.dc.html'; }, 900);
+      },
+      skip: () => { window.location.href = './MotoCamp Dashboard.dc.html'; },
+
+      states: [
+        { key: 'signup', label: '新規登録後' },
+        { key: 'login', label: '既存ログイン後' },
+        { key: 'merge', label: 'メンバー枠の統合' },
+        { key: 'error', label: 'トークン失効' }
+      ].map(s => {
+        const on = s.key === view;
+        return {
+          key: s.key, label: s.label,
+          onTap: () => this.setState({ view: s.key, busy: false }),
+          style: 'height:32px;padding:0 13px;border-radius:999px;cursor:pointer;font-size:11.5px;font-weight:' + (on ? '700' : '500') + ';border:1px solid ' + (on ? 'var(--color-accent-600)' : 'var(--color-neutral-300)') + ';background:' + (on ? 'var(--color-accent-100)' : 'transparent') + ';color:' + (on ? 'var(--color-accent-800)' : 'var(--color-neutral-700)')
+        };
+      })
+    };
+  }
+}
+
+</script>
+</body>
+</html>
