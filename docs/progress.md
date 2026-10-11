@@ -6,14 +6,16 @@
 
 ## 0. セットアップ
 
-- [ ] create-next-app（TypeScript, App Router, `src/`, Tailwind v4, ESLint）
-- [ ] Prisma 導入、`.env.local`（DATABASE_URL / DIRECT_URL）
+- [x] create-next-app（TypeScript, App Router, `src/`, Tailwind v4, ESLint）— 2026-10-04 Next.js 16.3 / React 19.2。`src/` へ移動し `@/*` を `./src/*` に変更
+- [ ] Prisma 7 導入（`prisma.config.ts`・`@prisma/adapter-pg`・生成先 `src/generated/prisma` を .gitignore）、`.env.local`（DATABASE_URL / DIRECT_URL）
 - [ ] `docs/schema.md` の内容で `prisma/schema.prisma` を作成
 - [ ] 初回マイグレーション（Supabase）
-- [ ] Supabase の Data API を無効化し、`curl .../rest/v1/User` で弾かれることを確認
+- [ ] CHECK 制約のマイグレーション（`--create-only` で手書き。`docs/schema.md`「CHECK 制約」）
+- [ ] Supabase の Data API を無効化し、`curl .../rest/v1/users` で弾かれることを確認
 - [ ] シード（`docs/design` のサンプルデータ: 3名・富士山麓イベント など）
 - [ ] デザイントークンを `src/app/globals.css` へ移植、Tailwind `@theme` 連携
 - [ ] フォント（Caprasimo / Figtree / Zen Maru Gothic）、lucide-react
+- [ ] README の骨組み（概要・技術スタック・開発中である旨）。機能ができるごとに更新
 
 ## 1. 認証・セッション
 
@@ -22,15 +24,17 @@
 - [ ] ゲストクレームトークン（生成・ハッシュ保存・Cookie）
 - [ ] `getCurrentUser()`（Auth / ゲスト Cookie 両対応）
 - [ ] `requireMember(eventId)`（`leftAt: null` 判定）
-- [ ] 未ログイン時のリダイレクト（middleware）
+- [ ] 未ログイン時のリダイレクト（`src/proxy.ts`。Next.js 16 で middleware から改名）
 
 ## 2. 共通ロジック（`lib/`）
 
-- [ ] `derive/`: itemStatus / effectiveGearMemo / avatarColor / initials / progress / eventPhase（下書き・準備中・完了）
+- [ ] `derive/`: itemStatus / effectiveGearMemo / avatarColor / initials / progress / eventPhase（下書き・準備中・完了。「今日」は引数で受け取る）
+- [ ] 日付ヘルパ（日本時間の「今日」、`date` 列と日付文字列の変換）。サーバーのローカル時刻に頼らない
 - [ ] `permissions.ts`: `assertCan(action, member, item?)`
 - [ ] `notify.ts`: 宛先解決（actor 以外の参加者など）と一括作成
 - [ ] 通知文面の生成（type + payload → タイトル・本文）
 - [ ] Server Action の戻り値型・エラー型（`AlreadyTakenError` など）
+- [ ] 入力制約の定数と zod スキーマ（`docs/screens.md`「入力項目の制約」。上限は DB の `varchar(n)` と一致させる）
 
 ## 3. 共通UI（`components/ui/`）
 
@@ -105,4 +109,12 @@
 
 - [ ] 空状態・ローディング・エラー表示
 - [ ] `docs/screens.md`「要確認」の解消
-- [ ] Vercel デプロイ
+- [ ] ER 図（Mermaid。`docs/schema.md` と README に掲載）
+- [ ] README.md の仕上げ（概要・スクショ・デモ URL・技術スタックと選定理由・設計で工夫した点・ER 図・ローカル起動手順・開発の進め方・AI の使い方）
+- [ ] デモ環境の構築
+  - [ ] デモ用 Supabase プロジェクト（開発用と分ける）+ Vercel デプロイ
+  - [ ] デモデータの投入（シードをデモ環境にも流せるようにする）
+  - [ ] デモアカウント（オーナーのイベントと、メンバーとして参加するイベントの両方を持たせる）
+  - [ ] ログイン画面に「デモアカウントで試す」導線（デモ環境のみ）
+  - [ ] デモアカウントの保護（パスワード変更・アカウント削除を無効化）
+  - [ ] デモデータの定期リセット（初期データに戻す）

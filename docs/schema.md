@@ -1,6 +1,6 @@
 # MotoCamp Pack — 確定スキーマ
 
-前提スタック: Next.js App Router / Prisma / Supabase / Tailwind
+前提スタック: Next.js App Router / Prisma 7 / Supabase / Tailwind
 
 決定事項:
 - 「貸せるギア」はイベント単位（ユーザー台帳は持たない）
@@ -14,67 +14,80 @@
 - 宛先を指定しない貸し借り募集を許す（追加モーダルでメンバー指定なしを選べる）
 - 貸し借りリクエストの削除時は `REQUEST_CANCELLED` を通知
 - **主キーは UUID**。DB側の `gen_random_uuid()` で生成し、Supabase `auth.users.id` と型を揃える
+- ユーザーが入力する文字列は `varchar(n)` で上限を DB でも守らせる（上限は `docs/screens.md`「入力項目の制約」と一致）
+- 全テーブルに作成日時と `updated_at` を持たせる
+- 帰着日（`endDate`）は必須。日帰りは出発日と同じ日
+- 時刻を持つ列は `timestamptz`、出発日・帰着日は `date`。タイムゾーンは日本時間に固定し、完了は帰着日の翌日から（理由は「文字列の長さ・日時の方針」）
 
 ## テーブル
 
 ```prisma
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"   // import は "@/generated/prisma/client"
 }
 
+// Prisma 7 では接続 URL をスキーマに書けない
+// - migrate 用: prisma.config.ts の datasource.url = DIRECT_URL（直接接続 5432）
+// - アプリ実行時: lib/prisma.ts で new PrismaPg({ connectionString: DATABASE_URL })（プール経由 6543, ?pgbouncer=true）
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")   // プール経由（6543, ?pgbouncer=true）— アプリ実行時
-  directUrl = env("DIRECT_URL")     // 直接接続（5432）— prisma migrate 用
+  provider = "postgresql"
 }
 
 // アカウント（ゲストは authUid = null）
 model User {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  authUid     String?  @unique @db.Uuid  // Supabase auth.users.id（uuid）。auth スキーマへのリレーションは張らない
-  displayName String
-  bike        String?
-  gearMemo    String?                 // 既定の積載装備メモ
-  claimTokenHash String? @unique      // ゲストのクレームトークンの SHA-256。紐付け後・失効時は null
-  createdAt   DateTime @default(now())
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  authUid        String?  @unique @map("auth_uid") @db.Uuid  // Supabase auth.users.id（uuid）。auth スキーマへのリレーションは張らない
+  displayName    String   @map("display_name") @db.VarChar(20)
+  bike           String?  @db.VarChar(30)
+  gearMemo       String?  @map("gear_memo") @db.VarChar(100)  // 既定の積載装備メモ
+  claimTokenHash String?  @unique @map("claim_token_hash")    // ゲストのクレームトークンの SHA-256。紐付け後・失効時は null
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   members        EventMember[]
   createdEvents  Event[]      @relation("EventCreatedBy")
+
+  @@map("users")
 }
 
 model Event {
   id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title       String
-  place       String?
-  startDate   DateTime
-  endDate     DateTime?
-  status      EventStatus @default(DRAFT)   // DRAFT | PUBLISHED
-  createdById String @db.Uuid
-  createdAt   DateTime    @default(now())
+  title       String      @db.VarChar(50)
+  place       String?     @db.VarChar(50)
+  startDate   DateTime    @map("start_date") @db.Date
+  endDate     DateTime    @map("end_date") @db.Date    // 日帰りは startDate と同じ日
+  status      EventStatus @default(DRAFT)     // DRAFT | PUBLISHED
+  createdById String      @map("created_by_id") @db.Uuid
+  createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  createdBy     User           @relation("EventCreatedBy", fields: [createdById], references: [id])
+  createdBy     User           @relation("EventCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
   members       EventMember[]
   items         Item[]
   lendables     LendableGear[]
   invites       Invite[]
   notifications Notification[]
+
+  @@map("events")
 }
-// 「終了」は endDate < now() からの導出。保存しない
+// 「終了（完了）」は endDate < 今日（日本時間）からの導出。保存しない
 
 model EventMember {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  eventId    String @db.Uuid
-  userId     String @db.Uuid
-  role       Role     @default(MEMBER)  // OWNER | MEMBER
-  isGuest    Boolean  @default(false)
-  gearMemo   String?                    // イベント単位の上書き。null なら User.gearMemo
-  joinedAt   DateTime @default(now())
-  leftAt     DateTime?                  // 論理削除。null = 参加中
-  invitedVia String? @db.Uuid           // 経由した招待リンク
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventId    String    @map("event_id") @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  role       Role      @default(MEMBER)              // OWNER | MEMBER
+  isGuest    Boolean   @default(false) @map("is_guest")
+  gearMemo   String?   @map("gear_memo") @db.VarChar(100)  // イベント単位の上書き。null なら User.gearMemo
+  joinedAt   DateTime  @default(now()) @map("joined_at") @db.Timestamptz(3)   // 作成日時を兼ねる
+  leftAt     DateTime? @map("left_at") @db.Timestamptz(3)                     // 論理削除。null = 参加中
+  invitedVia String?   @map("invited_via") @db.Uuid        // 経由した招待リンク
+  updatedAt  DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   event      Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user       User    @relation(fields: [userId], references: [id])
-  invite     Invite? @relation("InviteJoins", fields: [invitedVia], references: [id])
+  user       User    @relation(fields: [userId], references: [id], onDelete: Restrict)
+  invite     Invite? @relation("InviteJoins", fields: [invitedVia], references: [id], onDelete: SetNull)
 
   // Item への3つの経路は名前で区別する
   requestedItems Item[] @relation("ItemRequester")
@@ -90,6 +103,7 @@ model EventMember {
 
   @@unique([eventId, userId])
   @@index([eventId, leftAt])
+  @@map("event_members")
 }
 // 参加中の判定は常に leftAt: null
 // 実効メモ = member.gearMemo ?? user.gearMemo
@@ -97,55 +111,62 @@ model EventMember {
 
 model Item {
   id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  eventId      String @db.Uuid
-  kind         ItemKind                   // SHARED | RENTAL
-  name         String
-  size         Size      @default(M)      // S | M | L
-  requesterId  String? @db.Uuid           // RENTAL のみ（借り手）
-  sourceGearId String? @db.Uuid           // 登録ギア宛のリクエストなら。null = 宛先なしの募集
-  carrierId    String? @db.Uuid           // 運搬担当。null = 未割り当て
-  acceptedAt   DateTime?                  // 担当確定時刻。宛先指定の依頼で未承諾なら null
-  packedAt     DateTime?                  // 積み込み済み時刻
-  createdById  String @db.Uuid
-  createdAt    DateTime  @default(now())
+  eventId      String    @map("event_id") @db.Uuid
+  kind         ItemKind                                   // SHARED | RENTAL
+  name         String    @db.VarChar(30)
+  size         Size      @default(M)                      // S | M | L
+  requesterId  String?   @map("requester_id") @db.Uuid    // RENTAL のみ（借り手）。SHARED は null
+  sourceGearId String?   @map("source_gear_id") @db.Uuid  // 登録ギア宛のリクエストなら。null = 宛先なしの募集
+  carrierId    String?   @map("carrier_id") @db.Uuid      // 運搬担当。null = 未割り当て
+  acceptedAt   DateTime? @map("accepted_at") @db.Timestamptz(3)              // 担当確定時刻。宛先指定の依頼で未承諾なら null
+  packedAt     DateTime? @map("packed_at") @db.Timestamptz(3)                // 積み込み済み時刻
+  createdById  String    @map("created_by_id") @db.Uuid
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   event      Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  requester  EventMember?  @relation("ItemRequester",  fields: [requesterId],  references: [id])
-  carrier    EventMember?  @relation("ItemCarrier",    fields: [carrierId],    references: [id])
-  createdBy  EventMember   @relation("ItemCreatedBy",  fields: [createdById],  references: [id])
+  requester  EventMember?  @relation("ItemRequester",  fields: [requesterId],  references: [id], onDelete: Restrict)
+  carrier    EventMember?  @relation("ItemCarrier",    fields: [carrierId],    references: [id], onDelete: Restrict)
+  createdBy  EventMember   @relation("ItemCreatedBy",  fields: [createdById],  references: [id], onDelete: Restrict)
   sourceGear LendableGear? @relation(fields: [sourceGearId], references: [id], onDelete: SetNull)
 
   notifications Notification[]
 
   @@index([eventId, kind])
+  @@map("items")
 }
-// CHECK: kind = 'RENTAL' なら requesterId IS NOT NULL
+// CHECK（DB のみ。下記「CHECK 制約」）: RENTAL なら requesterId 必須、SHARED なら requesterId は null
 // 早い者勝ちのため立候補テーブルは持たない。担当は carrierId の1列のみ
 
 // イベント内で「貸せます」と登録されたギア
 model LendableGear {
-  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  eventId  String @db.Uuid
-  memberId String @db.Uuid
-  name     String
-  size     Size   @default(M)
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventId   String   @map("event_id") @db.Uuid
+  memberId  String   @map("member_id") @db.Uuid
+  name      String   @db.VarChar(30)
+  size      Size     @default(M)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   event   Event       @relation(fields: [eventId],  references: [id], onDelete: Cascade)
   member  EventMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
   request Item[]      // このギア宛の貸し借りリクエスト
+
+  @@map("lendable_gears")
 }
 
 model Notification {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  eventId     String @db.Uuid
-  recipientId String @db.Uuid             // 宛先メンバー
+  eventId     String    @map("event_id") @db.Uuid
+  recipientId String    @map("recipient_id") @db.Uuid  // 宛先メンバー
   type        NotifType
-  actorId     String? @db.Uuid            // 操作した本人
-  itemId      String? @db.Uuid            // REQUEST_CANCELLED では null（アイテムが消えるため）
-  payload     Json?                       // 下記参照
-  readAt      DateTime?
-  resolvedAt  DateTime?                   // ASK への対応済み（承諾・辞退）
-  createdAt   DateTime  @default(now())
+  actorId     String?   @map("actor_id") @db.Uuid      // 操作した本人
+  itemId      String?   @map("item_id") @db.Uuid       // REQUEST_CANCELLED では null（アイテムが消えるため）
+  payload     Json?                                    // 下記参照
+  readAt      DateTime? @map("read_at") @db.Timestamptz(3)
+  resolvedAt  DateTime? @map("resolved_at") @db.Timestamptz(3)            // ASK への対応済み（承諾・辞退）
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   event     Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
   recipient EventMember  @relation("NotifRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
@@ -154,27 +175,67 @@ model Notification {
 
   @@index([recipientId, readAt])
   @@index([eventId, recipientId])
+  @@map("notifications")
 }
 
 model Invite {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  eventId     String @db.Uuid
-  token       String    @unique         // 暗号学的乱数で生成（ID とは別の秘密値）
-  createdById String @db.Uuid
-  expiresAt   DateTime?
-  revokedAt   DateTime?
-  createdAt   DateTime  @default(now())
+  eventId     String    @map("event_id") @db.Uuid
+  token       String    @unique                     // 暗号学的乱数で生成（ID とは別の秘密値）
+  createdById String    @map("created_by_id") @db.Uuid
+  expiresAt   DateTime? @map("expires_at") @db.Timestamptz(3)
+  revokedAt   DateTime? @map("revoked_at") @db.Timestamptz(3)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   event     Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  createdBy EventMember   @relation("InviteCreatedBy", fields: [createdById], references: [id])
+  createdBy EventMember   @relation("InviteCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
   joins     EventMember[] @relation("InviteJoins")
+
+  @@map("invites")
 }
 
-enum EventStatus { DRAFT PUBLISHED }
-enum Role        { OWNER MEMBER }
-enum ItemKind    { SHARED RENTAL }
-enum Size        { S M L }
-enum NotifType   { ASK ACCEPTED DECLINED WITHDRAWN REQUEST_CANCELLED SHARED_ADDED MEMBER_JOINED SCHEDULE_CHANGED }
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+
+  @@map("event_status")
+}
+
+enum Role {
+  OWNER
+  MEMBER
+
+  @@map("member_role")
+}
+
+enum ItemKind {
+  SHARED
+  RENTAL
+
+  @@map("item_kind")
+}
+
+enum Size {
+  S
+  M
+  L
+
+  @@map("item_size")
+}
+
+enum NotifType {
+  ASK
+  ACCEPTED
+  DECLINED
+  WITHDRAWN
+  REQUEST_CANCELLED
+  SHARED_ADDED
+  MEMBER_JOINED
+  SCHEDULE_CHANGED
+
+  @@map("notif_type")
+}
 ```
 
 ## ID の方針
@@ -184,6 +245,61 @@ enum NotifType   { ASK ACCEPTED DECLINED WITHDRAWN REQUEST_CANCELLED SHARED_ADDE
 - `authUid` も `uuid`。`auth.users` へのリレーションは張らない（`auth` スキーマは Prisma の管理外。`prisma migrate` で触らない）
 - URL に載るIDは推測しにくいが秘密ではない。アクセス制御は必ず所属判定（`assertCan`）で行う
 - 招待の `token` はIDと別に暗号学的乱数で生成する（`crypto.randomBytes(24).toString('base64url')` など）
+
+## 命名の方針
+
+- Prisma 側（コードで使う名前）: モデルは PascalCase、フィールドは camelCase（Prisma の推奨）
+- DB 側（実際のテーブル・列・enum 型）: snake_case。`@@map`（テーブル・enum 型）と `@map`（列）で対応付ける
+- アプリのコードは常に camelCase（`prisma.item.findMany({ where: { requesterId } })`）。snake_case を使うのは SQL を直接書くとき（手書きのマイグレーション・Supabase の SQL エディタ・`$queryRaw`）だけ
+- 理由: SQL で引用符が不要になり（`"requesterId"` → `requester_id`）、ダッシュボードでも読みやすい。モデル自体を snake_case で書くと生成されるクライアントまで snake_case になり TS の慣習と混ざるため、`@map` で分ける
+- **2語以上の名前のフィールドを足すときは `@map` を付ける**（1語の名前は不要）。付け忘れるとその列だけ camelCase になるため、適用前に `migration.sql` の列名を確認する
+- 主キー・外部キー・インデックスの制約名は Prisma が DB 側の名前から生成する（`items_pkey`, `items_requester_id_fkey` など）
+
+## 文字列の長さ・日時の方針
+
+**文字列の長さ**
+- ユーザーが入力する文字列は `varchar(n)`（`@db.VarChar(n)`）にし、上限を DB でも守らせる。上限値は `docs/screens.md`「入力項目の制約」と一致させ、アプリ側は1つの定数ファイルから zod に渡す
+- 理由: PostgreSQL では `text` と `varchar(n)` に性能差はなく、違いは上限を DB が強制するかだけ。アプリの検証をすり抜けた値も DB で止める（onDelete の Restrict・CHECK 制約と同じ「DB が最後の砦」の方針）。CHECK 制約と違い Prisma スキーマに書けるので、上限がスキーマに見える
+- `varchar(n)` はバイト数ではなく文字数で数える（日本語 50 文字 = 50）。上限を増やすのはマイグレーション1本で済む
+- プログラムが生成する値（`invites.token`, `users.claim_token_hash`）はユーザー入力ではないので `text` のまま
+
+| 列 | 上限 |
+| --- | --- |
+| `users.display_name` | 20 |
+| `users.bike` | 30 |
+| `users.gear_memo` / `event_members.gear_memo` | 100 |
+| `events.title` / `events.place` | 50 |
+| `items.name` / `lendable_gears.name` | 30 |
+
+**作成日時・更新日時**
+- 全テーブルに `created_at`（`event_members` は `joined_at` が兼ねる）と `updated_at` を持たせる
+- `updated_at` は Prisma の `@updatedAt`。Prisma Client が作成・更新のたびに自動で現在時刻を入れる。DB のトリガーではないため SQL を直接実行した場合は更新されないが、DB アクセスは Prisma のみなので十分
+- `updated_at` は「最後に何かが変わった時刻」。`accepted_at`・`packed_at`・`read_at` などの「その出来事が起きた時刻」とは役割が違うので両方持つ
+
+**日時の型**
+
+| 種類 | 列 | 型 |
+| --- | --- | --- |
+| 出来事が起きた瞬間 | `created_at` `updated_at` `joined_at` `left_at` `accepted_at` `packed_at` `read_at` `resolved_at` `expires_at` `revoked_at` | `timestamptz(3)`（`@db.Timestamptz(3)`） |
+| カレンダー上の日付 | `start_date` `end_date` | `date`（`@db.Date`） |
+
+*なぜ時刻の列は `timestamptz` か*
+- Prisma の `DateTime` は指定しないと `timestamp`（タイムゾーンなし）になる。Prisma は UTC で書き込むが、「UTC で入っている」という前提は DB に残らないため、ダッシュボードや SQL で扱うと時刻を取り違える原因になる
+- `timestamptz` は「世界共通のある瞬間」として保存し（中身は UTC）、表示時に地域の時刻へ変換する。PostgreSQL 公式 wiki「Don't Do This」でもタイムゾーンなしの `timestamp` は非推奨。Supabase の `auth.users` なども `timestamptz`
+- `(3)` はミリ秒精度。JS の `Date` の精度に合わせる（PostgreSQL の既定は 6 = マイクロ秒）
+
+*なぜ出発日・帰着日は `date` か*
+- 出発日・帰着日は「何日か」であって「ある瞬間」ではない
+- 瞬間の型に入れると「どの地域の 0 時か」が問題になる。例: `2026-10-13` を UTC の 0 時で保存すると日本時間では 10/13 の 9:00。「帰着日 < 現在時刻」で完了を判定すると、まだ旅行中の 10/13 朝 9 時に「完了」と表示されてしまう
+- `date` なら日付そのものを保存でき、タイムゾーンの影響を受けない
+
+*タイムゾーンと完了判定*
+- アプリのタイムゾーンは日本時間（`Asia/Tokyo`）に固定する。UI は日本語で、利用者は日本国内を想定しているため
+- サーバー（Vercel）は UTC で動くので、サーバーのローカル時刻から日付を取らない。取ると日本時間の 0〜9 時は前日として扱われる
+- 完了 = `end_date < 今日（日本時間）`。帰着日の当日はまだ帰路の途中なので、翌日から完了とする
+- 導出関数は「今日」を引数で受け取る（`eventPhase(event, today)`）。現在時刻に依存しない純関数になり、日付を固定してテストできる
+- イベント作成時の「出発日は今日以降」も同じ「日本時間の今日」で判定する
+- Prisma は `date` 列を「その日の UTC 0 時」の `Date` として返す。日付の文字列と `Date` の変換は1つのヘルパにまとめ、各所で個別に変換しない
 
 ## 外部キー一覧
 
@@ -216,11 +332,39 @@ enum NotifType   { ASK ACCEPTED DECLINED WITHDRAWN REQUEST_CANCELLED SHARED_ADDE
 
 **onDelete の考え方**
 
+- **全リレーションで明示する**（Prisma の既定値に頼らない）。省略すると必須リレーションは Restrict、任意リレーション（`?`）は SetNull になり、同じ参照先でも列ごとに挙動が変わるため
 - `Cascade` — 親が消えたら意味を失うもの（イベント配下の全て、アイテム配下の通知）
 - `SetNull` — 参照が消えても本体は残すもの（退会メンバーが actor だった通知、貸せるギアが取り下げられたリクエスト）
 - `Restrict` — 履歴の整合性上、参照されている限り消させないもの（借り手・登録者・発行者）。**メンバーは物理削除しない**ため、実運用でこの制約に当たることはない
 
 > アイテム削除で関連通知は Cascade で消える。削除を知らせる `REQUEST_CANCELLED` は `itemId = null` で作り、品名を payload に残すことで Cascade の対象外にする。
+
+## CHECK 制約
+
+Prisma スキーマには CHECK を書く文法がないため、マイグレーションの SQL に手書きで追加する。
+
+| テーブル | 制約名 | 内容 |
+| --- | --- | --- |
+| items | `items_requester_kind_check` | RENTAL なら借り手必須、SHARED なら借り手なし |
+
+```sql
+ALTER TABLE items
+  ADD CONSTRAINT items_requester_kind_check
+  CHECK (
+    (kind = 'RENTAL' AND requester_id IS NOT NULL) OR
+    (kind = 'SHARED' AND requester_id IS NULL)
+  );
+```
+
+**入れ方**
+1. 初回マイグレーション（`init`）の後に `npx prisma migrate dev --create-only --name items_requester_kind_check`。スキーマに変更がないので空の `migration.sql` ができる
+2. 上の SQL を書き、`npx prisma migrate dev` で適用
+3. 借り手のいない RENTAL を入れて `violates check constraint "items_requester_kind_check"` になることを確認
+
+**注意**
+- `schema.prisma` には現れない。Item モデルのコメントで存在を示す
+- **`prisma db push` は使わない**。`migration.sql` を通らないので CHECK が作られない。常に `prisma migrate dev`
+- 両方向にした理由: アプリ側（zod）の検証をすり抜けたデータ（バグ・手作業）も DB で止める。片方向（RENTAL → 借り手必須）だけだと、SHARED に借り手が入っても通ってしまう
 
 ## ステータスの導出
 
@@ -316,7 +460,7 @@ if (count === 0) throw new AlreadyTakenError(); // UI:「先に他の人が引�
 - **Supabase の Data API は無効化する**（プロジェクト設定）。`supabase.from()` / `supabase.rpc()` は使わない
 - **RLS ポリシーは書かない**。Data API を閉じるため不要。権限は全て `assertCan` で検証する
 - Supabase は **Auth のみ**使用（Data API とは別サービスのため無効化の影響なし）
-- 確認: マイグレーション後、`curl "https://<project>.supabase.co/rest/v1/User" -H "apikey: <anon key>"` でデータが返らないこと
+- 確認: マイグレーション後、`curl "https://<project>.supabase.co/rest/v1/users" -H "apikey: <anon key>"` でデータが返らないこと
 
 ## リアルタイム更新
 
