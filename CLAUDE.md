@@ -42,6 +42,7 @@
   - v6 以前と書き方が違う: 接続 URL は `prisma.config.ts`（スキーマの `url` / `directUrl` は廃止）、generator は `prisma-client` + `output`、PrismaClient には `@prisma/adapter-pg` を渡す。学習データより新しい可能性があるので公式ドキュメントで確認する
 - Supabase は **Postgres と Auth のみ** 使用。**Data API は無効化する**（`docs/progress.md` 0. セットアップ）— `supabase.from()` / `supabase.rpc()` は使わない
 - Tailwind CSS v4
+- shadcn/ui（CLI で部品のソースを `src/components/ui/` にコピーする方式。土台は Radix UI + Tailwind）。Organic のデザインに合わせて調整して使う
 - zod（Server Action の入力検証）
 - アイコン: lucide-react（`strokeWidth={2.75}`）
 - フォント: Caprasimo（見出し英字）/ Figtree（本文英字）/ Zen Maru Gothic（日本語）— `next/font/google`
@@ -50,6 +51,7 @@
 
 ```
 prisma.config.ts           # Prisma CLI の設定: 接続 URL（DIRECT_URL）・シード。.env.local をここで読み込む
+components.json            # shadcn/ui の設定（init で生成）
 prisma/
   schema.prisma
   migrations/
@@ -69,13 +71,14 @@ src/
   actions/                 # Server Actions（ドメインごと: items.ts, members.ts, events.ts, invites.ts, notifications.ts, profile.ts）
   lib/
     prisma.ts              # PrismaClient シングルトン（@prisma/adapter-pg + DATABASE_URL）
+    utils.ts               # cn()（クラス名の結合。shadcn/ui の init で生成）
     supabase/server.ts     # Auth 用クライアントのみ
     session.ts             # getCurrentUser()（Supabase Auth or ゲスト Cookie）, requireMember(eventId)
     permissions.ts         # assertCan(action, member, item?)
     notify.ts              # 通知レコード作成ヘルパ
     derive/                # itemStatus, effectiveGearMemo, avatarColor, initials, progress — サーバー・クライアント共用の純関数
   components/
-    ui/                    # Button, Tag, Card, Dialog, Field, Avatar など共通パーツ
+    ui/                    # shadcn/ui から追加した部品（Organic に合わせて調整）+ アプリ固有の共通パーツ（Avatar, Header, GearMemoInput）
     <feature>/             # 画面固有パーツ（events/, dashboard/ ...）
 ```
 
@@ -88,6 +91,7 @@ src/
 - `docs/design/*.dc.html` は **デザインの参照用HTML**（Claude Design の書き出し）。ブラウザで直接開ける。コードはコピーせず、React + Tailwind で作り直す。`<sc-for>`, `<sc-if>`, `{{ }}`, `<x-import>`, `style-hover` などは独自記法なので持ち込まない
 - **デザイントークン**: `docs/design/_ds/organic-05df4399-2545-42d8-a736-030508ad6606/styles.css` の `:root` 変数（`--color-*`, `--radius-*`, `--shadow-*`, `--space-*`）。これを `src/app/globals.css` に移し、Tailwind v4 の `@theme` から `var(--color-...)` を参照する
 - hex・px を直書きしない。トークンにない値が要る場合は globals.css に変数を足す
+- **shadcn/ui の部品は初期の見た目のまま使わない。** shadcn の CSS 変数（`--background` / `--primary` / `--radius` など）を Organic のトークンに対応付け、部品ごとに角丸・フォーカス表示を下記に合わせる。使う部品のコード（props・バリアント）は読んで説明できるようにする
 - 角は大きく丸める（コンテナ `--radius-lg`、ボタン・入力は `rounded-full`）。フォーカスは `outline: 2px solid var(--color-accent); outline-offset: 2px`
 - UI の文言は日本語。デザインHTMLの文言をそのまま使う
 - デザインHTMLとスキーマが食い違う箇所は `docs/screens.md` の「要確認」を見る。スキーマ側を優先する
@@ -111,10 +115,19 @@ src/
 ## 作業の進め方
 
 - セッションの最初に `docs/progress.md` を確認し、今日やる項目を本人と決める。着手したら「実装中」にする
-- **作業が終わったら必ず `docs/progress.md` を更新する**（状態、完了日、残課題や判断したことを1行メモ）。Claude が更新内容を提案し、本人の了承を得てから書き込む
+- **作業が終わったら必ず `docs/progress.md` を更新する**（その機能の PR の中で。状態、完了日、残課題や判断したことを1行メモ）。Claude が更新内容を提案し、本人の了承を得てから書き込む
 - 仕様が決まっていない点に当たったら、推測で進めず `docs/screens.md` の「要確認」に追記して本人に確認する
 - 1つの項目が終わるごとにコミットできる粒度で進める。コミットメッセージの案は出してよいが、コミットは本人が行う
 - 設計上の判断をしたら、理由を `docs/progress.md` のメモか `docs/schema.md` に残す（ポートフォリオで説明できるように）
+
+**ブランチ・コミット・PR**
+- ブランチ運用は GitHub Flow。main は常に動く状態に保ち、直接コミットしない
+  （Git Flow にしなかった理由: 継続的にデプロイする Web アプリを1人で開発するため、release / hotfix ブランチは不要）
+- Issue ごとにブランチを切る: `<種類>/<Issue番号>-<内容>`（例: `feat/13-carry-shared-item`、`chore/1-prisma-setup`、`docs/4-readme`）
+  - 種類: feat（機能）/ fix（不具合）/ docs（ドキュメント）/ chore（環境構築・設定）/ refactor（整理）
+- コミットメッセージは接頭辞 + 日本語（例: `feat: 共同装備の運搬担当を早い者勝ちで確定する`）
+- PR はテンプレート（`.github/pull_request_template.md`）に沿って書き、本文に `Closes #N`。マージ方法は「Create a merge commit」（コミットの積み重ねを main に残すため）
+- PR の作成・マージは本人が行う。Claude は本文の案（特に「設計判断」）を出してよく、`gh pr diff` で差分を読んでレビューする
 
 ## コマンド
 
