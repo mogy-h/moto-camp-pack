@@ -135,10 +135,10 @@ src/
 npm run dev
 npx prisma migrate dev --name <name>
 npx prisma migrate dev --create-only --name <name>   # SQL を手書きするとき（CHECK 制約など）。編集後に migrate dev で適用
-npx prisma generate                                  # スキーマ変更後に Client を再生成
+npx prisma generate                                  # Client を再生成。Prisma 7.10 の migrate dev は自動で生成しないので、マイグレーション後に必ず実行する
 npx prisma studio
 npx prisma db seed
-npm run lint && npx tsc --noEmit
+npm run lint && npm run typecheck                    # typecheck = next typegen && tsc --noEmit（LayoutProps などルートの型を生成してから型チェック）
 ```
 
 `prisma db push` は使わない（`migration.sql` を通らず、手書きの CHECK 制約が作られない）。

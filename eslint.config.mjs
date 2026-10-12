@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Project-specific:
+    "docs/**", // デザイン参照用の書き出し（自分で書くコードではない）
+    "src/generated/**", // Prisma が生成するコード
   ]),
 ]);
 
