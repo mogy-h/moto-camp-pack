@@ -28,8 +28,8 @@ generator client {
 }
 
 // Prisma 7 では接続 URL をスキーマに書けない
-// - migrate 用: prisma.config.ts の datasource.url = DIRECT_URL（直接接続 5432）
-// - アプリ実行時: lib/prisma.ts で new PrismaPg({ connectionString: DATABASE_URL })（プール経由 6543, ?pgbouncer=true）
+// - migrate 用: prisma7.config.ts の datasource.url = DIRECT_URL（Session pooler 5432）
+// - アプリ実行時: lib/prisma.ts で new PrismaPg({ connectionString: DATABASE_URL })（Transaction pooler 6543, ?pgbouncer=true）
 datasource db {
   provider = "postgresql"
 }

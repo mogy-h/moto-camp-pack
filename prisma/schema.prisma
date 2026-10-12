@@ -1,0 +1,203 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+// 接続 URL は prisma7.config.ts（Prisma 7 ではスキーマに書けない）
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  authUid        String?  @unique @map("auth_uid") @db.Uuid
+  displayName    String   @map("display_name") @db.VarChar(20)
+  bike           String?  @db.VarChar(30)
+  gearMemo       String?  @map("gear_memo") @db.VarChar(100)
+  claimTokenHash String?  @unique @map("claim_token_hash")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  members       EventMember[]
+  createdEvents Event[]       @relation("EventCreatedBy")
+
+  @@map("users")
+}
+
+model Event {
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String      @db.VarChar(50)
+  place       String?     @db.VarChar(50)
+  startDate   DateTime    @map("start_date") @db.Date
+  endDate     DateTime    @map("end_date") @db.Date
+  status      EventStatus @default(DRAFT)
+  createdById String      @map("created_by_id") @db.Uuid
+  createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  createdBy     User           @relation("EventCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  members       EventMember[]
+  items         Item[]
+  lendables     LendableGear[]
+  invites       Invite[]
+  notifications Notification[]
+
+  @@map("events")
+}
+
+model EventMember {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventId    String    @map("event_id") @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  role       Role      @default(MEMBER)
+  isGuest    Boolean   @default(false) @map("is_guest")
+  gearMemo   String?   @map("gear_memo") @db.VarChar(100)
+  joinedAt   DateTime  @default(now()) @map("joined_at") @db.Timestamptz(3)
+  leftAt     DateTime? @map("left_at") @db.Timestamptz(3)
+  invitedVia String?   @map("invited_via") @db.Uuid
+  updatedAt  DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  event  Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user   User    @relation(fields: [userId], references: [id], onDelete: Restrict)
+  invite Invite? @relation("InviteJoins", fields: [invitedVia], references: [id], onDelete: SetNull)
+
+  requestedItems Item[] @relation("ItemRequester")
+  carriedItems   Item[] @relation("ItemCarrier")
+  createdItems   Item[] @relation("ItemCreatedBy")
+
+  lendables      LendableGear[]
+  createdInvites Invite[]       @relation("InviteCreatedBy")
+
+  receivedNotifications Notification[] @relation("NotifRecipient")
+  actedNotifications    Notification[] @relation("NotifActor")
+
+  @@unique([eventId, userId])
+  @@index([eventId, leftAt])
+  @@map("event_members")
+}
+
+// CHECK 制約 items_requester_kind_check はマイグレーション SQL で追加（docs/schema.md「CHECK 制約」）
+model Item {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventId      String    @map("event_id") @db.Uuid
+  kind         ItemKind
+  name         String    @db.VarChar(30)
+  size         Size      @default(M)
+  requesterId  String?   @map("requester_id") @db.Uuid
+  sourceGearId String?   @map("source_gear_id") @db.Uuid
+  carrierId    String?   @map("carrier_id") @db.Uuid
+  acceptedAt   DateTime? @map("accepted_at") @db.Timestamptz(3)
+  packedAt     DateTime? @map("packed_at") @db.Timestamptz(3)
+  createdById  String    @map("created_by_id") @db.Uuid
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  event      Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  requester  EventMember?  @relation("ItemRequester", fields: [requesterId], references: [id], onDelete: Restrict)
+  carrier    EventMember?  @relation("ItemCarrier", fields: [carrierId], references: [id], onDelete: Restrict)
+  createdBy  EventMember   @relation("ItemCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  sourceGear LendableGear? @relation(fields: [sourceGearId], references: [id], onDelete: SetNull)
+
+  notifications Notification[]
+
+  @@index([eventId, kind])
+  @@map("items")
+}
+
+model LendableGear {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventId   String   @map("event_id") @db.Uuid
+  memberId  String   @map("member_id") @db.Uuid
+  name      String   @db.VarChar(30)
+  size      Size     @default(M)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  event   Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  member  EventMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  request Item[]
+
+  @@map("lendable_gears")
+}
+
+model Notification {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventId     String    @map("event_id") @db.Uuid
+  recipientId String    @map("recipient_id") @db.Uuid
+  type        NotifType
+  actorId     String?   @map("actor_id") @db.Uuid
+  itemId      String?   @map("item_id") @db.Uuid
+  payload     Json?
+  readAt      DateTime? @map("read_at") @db.Timestamptz(3)
+  resolvedAt  DateTime? @map("resolved_at") @db.Timestamptz(3)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  event     Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  recipient EventMember  @relation("NotifRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  actor     EventMember? @relation("NotifActor", fields: [actorId], references: [id], onDelete: SetNull)
+  item      Item?        @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([recipientId, readAt])
+  @@index([eventId, recipientId])
+  @@map("notifications")
+}
+
+model Invite {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventId     String    @map("event_id") @db.Uuid
+  token       String    @unique
+  createdById String    @map("created_by_id") @db.Uuid
+  expiresAt   DateTime? @map("expires_at") @db.Timestamptz(3)
+  revokedAt   DateTime? @map("revoked_at") @db.Timestamptz(3)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  event     Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdBy EventMember   @relation("InviteCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  joins     EventMember[] @relation("InviteJoins")
+
+  @@map("invites")
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+
+  @@map("event_status")
+}
+
+enum Role {
+  OWNER
+  MEMBER
+
+  @@map("member_role")
+}
+
+enum ItemKind {
+  SHARED
+  RENTAL
+
+  @@map("item_kind")
+}
+
+enum Size {
+  S
+  M
+  L
+
+  @@map("item_size")
+}
+
+enum NotifType {
+  ASK
+  ACCEPTED
+  DECLINED
+  WITHDRAWN
+  REQUEST_CANCELLED
+  SHARED_ADDED
+  MEMBER_JOINED
+  SCHEDULE_CHANGED
+
+  @@map("notif_type")
+}

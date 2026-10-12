@@ -39,7 +39,7 @@
 
 - Next.js（App Router, TypeScript, `src/` ディレクトリ）。このリポジトリの Next.js は学習データより新しい可能性がある — API を使う前に `node_modules/next/dist/docs/` を確認する（AGENTS.md）
 - Prisma 7（PostgreSQL / Supabase）。スキーマ駆動。マイグレーションは `prisma migrate dev`（`prisma db push` は使わない — 手書きの CHECK 制約が作られないため）
-  - v6 以前と書き方が違う: 接続 URL は `prisma.config.ts`（スキーマの `url` / `directUrl` は廃止）、generator は `prisma-client` + `output`、PrismaClient には `@prisma/adapter-pg` を渡す。学習データより新しい可能性があるので公式ドキュメントで確認する
+  - v6 以前と書き方が違う: 接続 URL は `prisma7.config.ts`（スキーマの `url` / `directUrl` は廃止）、generator は `prisma-client` + `output`、PrismaClient には `@prisma/adapter-pg` を渡す。学習データより新しい可能性があるので公式ドキュメントで確認する
 - Supabase は **Postgres と Auth のみ** 使用。**Data API は無効化する**（`docs/progress.md` 0. セットアップ）— `supabase.from()` / `supabase.rpc()` は使わない
 - Tailwind CSS v4
 - shadcn/ui（CLI で部品のソースを `src/components/ui/` にコピーする方式。土台は Radix UI + Tailwind）。Organic のデザインに合わせて調整して使う
@@ -50,7 +50,7 @@
 ## ファイル構成
 
 ```
-prisma.config.ts           # Prisma CLI の設定: 接続 URL（DIRECT_URL）・シード。.env.local をここで読み込む
+prisma7.config.ts          # Prisma CLI の設定: 接続 URL（DIRECT_URL）・シード。.env.local をここで読み込む（prisma init が付けた名前のまま）
 components.json            # shadcn/ui の設定（init で生成）
 prisma/
   schema.prisma
@@ -135,21 +135,21 @@ src/
 npm run dev
 npx prisma migrate dev --name <name>
 npx prisma migrate dev --create-only --name <name>   # SQL を手書きするとき（CHECK 制約など）。編集後に migrate dev で適用
-npx prisma generate                                  # スキーマ変更後に Client を再生成
+npx prisma generate                                  # Client を再生成。Prisma 7.10 の migrate dev は自動で生成しないので、マイグレーション後に必ず実行する
 npx prisma studio
 npx prisma db seed
-npm run lint && npx tsc --noEmit
+npm run lint && npm run typecheck                    # typecheck = next typegen && tsc --noEmit（LayoutProps などルートの型を生成してから型チェック）
 ```
 
 `prisma db push` は使わない（`migration.sql` を通らず、手書きの CHECK 制約が作られない）。
 
 ## 環境変数（.env.local）
 
-Next.js は `.env.local` を自動で読むが、Prisma 7 の CLI は `.env` 系を一切自動で読まない。`prisma.config.ts` で `.env.local` を明示的に読み込む。
+Next.js は `.env.local` を自動で読むが、Prisma 7 の CLI は `.env` 系を一切自動で読まない。`prisma7.config.ts` で `.env.local` を明示的に読み込む。
 
 ```
-DATABASE_URL=        # Supabase プール経由（:6543, ?pgbouncer=true）— アプリ実行時。lib/prisma.ts の adapter に渡す
-DIRECT_URL=          # Supabase 直接接続（:5432）— prisma.config.ts の datasource.url（migrate 用）
+DATABASE_URL=        # Supabase Transaction pooler（:6543, ?pgbouncer=true）— アプリ実行時。lib/prisma.ts の adapter に渡す
+DIRECT_URL=          # Supabase Session pooler（:5432。Direct connection は IPv6 のみで WSL から届かないため）— prisma7.config.ts の datasource.url（migrate 用）
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
