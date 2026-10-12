@@ -8,11 +8,11 @@
 ## 0. セットアップ
 
 - [x] create-next-app（TypeScript, App Router, `src/`, Tailwind v4, ESLint）— 2026-10-04 Next.js 16.3 / React 19.2。`src/` へ移動し `@/*` を `./src/*` に変更
-- [ ] Prisma 7 導入（`prisma.config.ts`・`@prisma/adapter-pg`・生成先 `src/generated/prisma` を .gitignore）、`.env.local`（DATABASE_URL / DIRECT_URL）(#1)
-- [ ] `docs/schema.md` の内容で `prisma/schema.prisma` を作成 (#1)
-- [ ] 初回マイグレーション（Supabase）(#1)
-- [ ] CHECK 制約のマイグレーション（`--create-only` で手書き。`docs/schema.md`「CHECK 制約」）(#1)
-- [ ] Supabase の Data API を無効化し、`curl .../rest/v1/users` で弾かれることを確認 (#1)
+- [~] Prisma 7 導入（`prisma7.config.ts`・`@prisma/adapter-pg`・生成先 `src/generated/prisma` を .gitignore）、`.env.local`（DATABASE_URL / DIRECT_URL）(#1)
+- [~] `docs/schema.md` の内容で `prisma/schema.prisma` を作成 (#1)
+- [~] 初回マイグレーション（Supabase）(#1)
+- [~] CHECK 制約のマイグレーション（`--create-only` で手書き。`docs/schema.md`「CHECK 制約」）(#1)
+- [~] Supabase の Data API を無効化し、`curl .../rest/v1/users` で弾かれることを確認 (#1)
 - [ ] シード（`docs/design` のサンプルデータ: 3名・富士山麓イベント など）(#2)
 - [ ] デザイントークンを `src/app/globals.css` へ移植、Tailwind `@theme` 連携 (#3)
 - [ ] shadcn/ui 導入（`init`。shadcn の CSS 変数 `--background` / `--primary` / `--radius` などを Organic のトークンに対応付け）(#3)
