@@ -303,6 +303,10 @@ enum NotifType {
 
 ## 外部キー一覧
 
+ER 図は [`docs/ERD.md`](ERD.md)（`prisma/schema.prisma` から prisma-markdown で生成。`npx prisma generate` で更新される）。
+
+> ERD.md に出る `_EventMemberToInvite` は prisma-markdown の誤判定で、実在しないテーブル。`EventMember.createdInvites` と `Invite.joins` が互いをリストで参照しているため、別々の1対多（発行者 / 経由した参加）を多対多と判定している（v4.0.0 時点。`relationName` を比べていない）。
+
 | 子テーブル | FK列 | 参照先 | リレーション名 | onDelete | 必須 |
 | --- | --- | --- | --- | --- | --- |
 | Event | createdById | User.id | `EventCreatedBy` | Restrict | ○ |
