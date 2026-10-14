@@ -29,6 +29,7 @@
     "prisma": "^7.10.0",
     "prisma-markdown": "^4.0.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }
