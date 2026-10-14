@@ -3,17 +3,28 @@ generator client {
   output   = "../src/generated/prisma"
 }
 
+// ER 図（docs/ERD.md）を生成する。説明は /// コメントから
+generator markdown {
+  provider = "prisma-markdown"
+  output   = "../docs/ERD.md"
+  title    = "MotoCamp Pack"
+}
+
 // 接続 URL は prisma7.config.ts（Prisma 7 ではスキーマに書けない）
 datasource db {
   provider = "postgresql"
 }
 
+/// アカウント（ゲストは authUid = null）
 model User {
   id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  /// Supabase auth.users.id（uuid）。auth スキーマへのリレーションは張らない
   authUid        String?  @unique @map("auth_uid") @db.Uuid
   displayName    String   @map("display_name") @db.VarChar(20)
   bike           String?  @db.VarChar(30)
+  /// 既定の積載装備メモ
   gearMemo       String?  @map("gear_memo") @db.VarChar(100)
+  /// ゲストのクレームトークンの SHA-256。紐付け後・失効時は null
   claimTokenHash String?  @unique @map("claim_token_hash")
   createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
@@ -24,11 +35,15 @@ model User {
   @@map("users")
 }
 
+/// ツーリングのイベント
+///
+/// 「終了（完了）」は endDate < 今日（日本時間）からの導出。保存しない
 model Event {
   id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title       String      @db.VarChar(50)
   place       String?     @db.VarChar(50)
   startDate   DateTime    @map("start_date") @db.Date
+  /// 日帰りは startDate と同じ日
   endDate     DateTime    @map("end_date") @db.Date
   status      EventStatus @default(DRAFT)
   createdById String      @map("created_by_id") @db.Uuid
@@ -45,15 +60,26 @@ model Event {
   @@map("events")
 }
 
+/// イベントへの参加
+///
+/// 参加中の判定は常に leftAt: null
+///
+/// 実効メモ = member.gearMemo ?? user.gearMemo
+///
+/// アバター色・イニシャルは userId / displayName から決定的に導出（保存しない）
 model EventMember {
   id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   eventId    String    @map("event_id") @db.Uuid
   userId     String    @map("user_id") @db.Uuid
   role       Role      @default(MEMBER)
   isGuest    Boolean   @default(false) @map("is_guest")
+  /// イベント単位の上書き。null なら User.gearMemo
   gearMemo   String?   @map("gear_memo") @db.VarChar(100)
+  /// 作成日時を兼ねる
   joinedAt   DateTime  @default(now()) @map("joined_at") @db.Timestamptz(3)
+  /// 論理削除。null = 参加中
   leftAt     DateTime? @map("left_at") @db.Timestamptz(3)
+  /// 経由した招待リンク
   invitedVia String?   @map("invited_via") @db.Uuid
   updatedAt  DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
 
@@ -61,6 +87,7 @@ model EventMember {
   user   User    @relation(fields: [userId], references: [id], onDelete: Restrict)
   invite Invite? @relation("InviteJoins", fields: [invitedVia], references: [id], onDelete: SetNull)
 
+  // Item への3つの経路は名前で区別する
   requestedItems Item[] @relation("ItemRequester")
   carriedItems   Item[] @relation("ItemCarrier")
   createdItems   Item[] @relation("ItemCreatedBy")
@@ -68,6 +95,7 @@ model EventMember {
   lendables      LendableGear[]
   createdInvites Invite[]       @relation("InviteCreatedBy")
 
+  // Notification への2つの経路も同様
   receivedNotifications Notification[] @relation("NotifRecipient")
   actedNotifications    Notification[] @relation("NotifActor")
 
@@ -76,17 +104,26 @@ model EventMember {
   @@map("event_members")
 }
 
-// CHECK 制約 items_requester_kind_check はマイグレーション SQL で追加（docs/schema.md「CHECK 制約」）
+/// 共同装備（SHARED）と貸し借り（RENTAL）を1テーブルで持つ
+///
+/// CHECK 制約 items_requester_kind_check（マイグレーション SQL で追加。docs/schema.md「CHECK 制約」）: RENTAL なら requesterId 必須、SHARED なら requesterId は null
+///
+/// 早い者勝ちのため立候補テーブルは持たない。担当は carrierId の1列のみ
 model Item {
   id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   eventId      String    @map("event_id") @db.Uuid
   kind         ItemKind
   name         String    @db.VarChar(30)
   size         Size      @default(M)
+  /// RENTAL のみ（借り手）。SHARED は null
   requesterId  String?   @map("requester_id") @db.Uuid
+  /// 登録ギア宛のリクエストなら。null = 宛先なしの募集
   sourceGearId String?   @map("source_gear_id") @db.Uuid
+  /// 運搬担当。null = 未割り当て
   carrierId    String?   @map("carrier_id") @db.Uuid
+  /// 担当確定時刻。宛先指定の依頼で未承諾なら null
   acceptedAt   DateTime? @map("accepted_at") @db.Timestamptz(3)
+  /// 積み込み済み時刻
   packedAt     DateTime? @map("packed_at") @db.Timestamptz(3)
   createdById  String    @map("created_by_id") @db.Uuid
   createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -104,6 +141,7 @@ model Item {
   @@map("items")
 }
 
+/// イベント内で「貸せます」と登録されたギア
 model LendableGear {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   eventId   String   @map("event_id") @db.Uuid
@@ -115,20 +153,27 @@ model LendableGear {
 
   event   Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
   member  EventMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  /// このギア宛の貸し借りリクエスト
   request Item[]
 
   @@map("lendable_gears")
 }
 
+/// 通知（type + 参照ID + payload のみ保存し、文面はクライアントで生成）
 model Notification {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   eventId     String    @map("event_id") @db.Uuid
+  /// 宛先メンバー
   recipientId String    @map("recipient_id") @db.Uuid
   type        NotifType
+  /// 操作した本人
   actorId     String?   @map("actor_id") @db.Uuid
+  /// REQUEST_CANCELLED では null（アイテムが消えるため）
   itemId      String?   @map("item_id") @db.Uuid
+  /// type ごとの補足。形は docs/schema.md「通知の payload」
   payload     Json?
   readAt      DateTime? @map("read_at") @db.Timestamptz(3)
+  /// ASK への対応済み（承諾・辞退）
   resolvedAt  DateTime? @map("resolved_at") @db.Timestamptz(3)
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
@@ -143,9 +188,11 @@ model Notification {
   @@map("notifications")
 }
 
+/// 招待リンク
 model Invite {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   eventId     String    @map("event_id") @db.Uuid
+  /// 暗号学的乱数で生成（ID とは別の秘密値）
   token       String    @unique
   createdById String    @map("created_by_id") @db.Uuid
   expiresAt   DateTime? @map("expires_at") @db.Timestamptz(3)
