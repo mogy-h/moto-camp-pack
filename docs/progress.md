@@ -13,7 +13,9 @@
 - [x] 初回マイグレーション（Supabase）(#1) — 2026-10-12 Prisma 7.10 の `migrate dev` は Client を生成しないため、`prisma generate` を別に実行する
 - [x] CHECK 制約のマイグレーション（`--create-only` で手書き。`docs/schema.md`「CHECK 制約」）(#1) — 2026-10-12 3パターンの INSERT で、両方向の制約と外部キーより先に判定されることを確認
 - [x] Supabase の Data API を無効化し、`curl .../rest/v1/users` で弾かれることを確認 (#1) — 2026-10-12 無効化の前は公開キーで users が読めた（HTTP 200）→ 無効化の後は HTTP 503
+- [~] ER 図（prisma-markdown で `docs/ERD.md` を自動生成）(#28) — 2026-10-14 スキーマを理解し、シードの準備にするため #24 から前倒し。手書きにしなかったのは、`prisma generate` のたびに更新されてスキーマとずれないため
 - [ ] シード（`docs/design` のサンプルデータ: 3名・富士山麓イベント など）(#2)
+- [ ] Vercel へのデプロイ（GitHub 連携・環境変数・ビルド時の `prisma generate`・シードのデータで DB 接続を確認）(#29) — 2026-10-14 メンターの助言で #7 の前に実施。認証は Cookie・proxy・環境変数に頼る部分が多く、Supabase Auth のリダイレクト先に本番 URL が必要なため。接続先は開発用の Supabase（環境の分離は #25）
 - [ ] デザイントークンを `src/app/globals.css` へ移植、Tailwind `@theme` 連携 (#3)
 - [ ] shadcn/ui 導入（`init`。shadcn の CSS 変数 `--background` / `--primary` / `--radius` などを Organic のトークンに対応付け）(#3)
 - [ ] フォント（Caprasimo / Figtree / Zen Maru Gothic）、lucide-react (#3)
@@ -121,10 +123,9 @@ UI の土台は shadcn/ui。採用理由: モーダルやメニューのアク�
 
 - [ ] 空状態・ローディング・エラー表示 (#23)
 - [ ] `docs/screens.md`「要確認」の解消
-- [ ] ER 図（Mermaid。`docs/schema.md` と README に掲載）(#24)
 - [ ] README.md の仕上げ（概要・スクショ・デモ URL・技術スタックと選定理由・設計で工夫した点・ER 図・ローカル起動手順・開発の進め方・AI の使い方）(#24)
 - [ ] デモ環境の構築 (#25)
-  - [ ] デモ用 Supabase プロジェクト（開発用と分ける）+ Vercel デプロイ
+  - [ ] デモ用 Supabase プロジェクト（開発用と分ける）、Vercel の接続先を切り替え（初回デプロイは #29）
   - [ ] デモデータの投入（シードをデモ環境にも流せるようにする）
   - [ ] デモアカウント（オーナーのイベントと、メンバーとして参加するイベントの両方を持たせる）
   - [ ] ログイン画面に「デモアカウントで試す」導線（デモ環境のみ）
