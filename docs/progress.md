@@ -15,7 +15,7 @@
 - [x] Supabase の Data API を無効化し、`curl .../rest/v1/users` で弾かれることを確認 (#1) — 2026-10-12 無効化の前は公開キーで users が読めた（HTTP 200）→ 無効化の後は HTTP 503
 - [x] ER 図（prisma-markdown で `docs/ERD.md` を自動生成）(#28) — 2026-10-14 スキーマを理解し、シードの準備にするため #24 から前倒し。手書きにしなかったのは、`prisma generate` のたびに更新されてスキーマとずれないため。列の説明は `///` で schema.prisma に移した。ERD.md に実在しない `_EventMemberToInvite` が出る（prisma-markdown v4.0.0 の誤判定。schema.md に注記）→ #24 で README から図を見せる前に再検討
 - [x] シード（`docs/design` のサンプルデータ: 3名・富士山麓イベント など）(#2) — 2026-10-14 tsx で実行（prisma7.config.ts の migrations.seed）。lib/prisma.ts は server-only のため、seed.ts で DIRECT_URL の Client を作る。日付は日本時間の今日 + 10日（終了済みに見えないように）。デザインとスキーマの食い違い3点はスキーマに合わせた（seed.ts 冒頭のコメント）
-- [ ] Vercel へのデプロイ（GitHub 連携・環境変数・ビルド時の `prisma generate`・シードのデータで DB 接続を確認）(#29) — 2026-10-14 メンターの助言で #7 の前に実施。認証は Cookie・proxy・環境変数に頼る部分が多く、Supabase Auth のリダイレクト先に本番 URL が必要なため。接続先は開発用の Supabase（環境の分離は #25）
+- [~] Vercel へのデプロイ（GitHub 連携・環境変数・ビルド時の `prisma generate`・シードのデータで DB 接続を確認）(#29) — 2026-10-14 メンターの助言で #7 の前に実施。認証は Cookie・proxy・環境変数に頼る部分が多く、Supabase Auth のリダイレクト先に本番 URL が必要なため。2026-10-16 本番と開発で Supabase を分ける案は、無料枠（2プロジェクト）が別講座のプロジェクトで埋まっているため見送り。当面は本番・プレビューとも開発用 Supabase につなぎ、分離は #25
 - [ ] デザイントークンを `src/app/globals.css` へ移植、Tailwind `@theme` 連携 (#3)
 - [ ] shadcn/ui 導入（`init`。shadcn の CSS 変数 `--background` / `--primary` / `--radius` などを Organic のトークンに対応付け）(#3)
 - [ ] フォント（Caprasimo / Figtree / Zen Maru Gothic）、lucide-react (#3)
@@ -124,10 +124,10 @@ UI の土台は shadcn/ui。採用理由: モーダルやメニューのアク�
 - [ ] 空状態・ローディング・エラー表示 (#23)
 - [ ] `docs/screens.md`「要確認」の解消
 - [ ] README.md の仕上げ（概要・スクショ・デモ URL・技術スタックと選定理由・設計で工夫した点・ER 図・ローカル起動手順・開発の進め方・AI の使い方）(#24)
-- [ ] デモ環境の構築 (#25)
-  - [ ] デモ用 Supabase プロジェクト（開発用と分ける）、Vercel の接続先を切り替え（初回デプロイは #29）
-  - [ ] デモデータの投入（シードをデモ環境にも流せるようにする）
+- [ ] 本番環境の分離とデモアカウント (#25)
+  - [ ] 本番用 Supabase プロジェクト（無料枠が空いてから）: Data API の無効化・migrate deploy・Auth 設定、Vercel の Production の接続先を切り替え
+  - [ ] デモ用のデータをシードに追加し、本番に投入
   - [ ] デモアカウント（オーナーのイベントと、メンバーとして参加するイベントの両方を持たせる）
-  - [ ] ログイン画面に「デモアカウントで試す」導線（デモ環境のみ）
+  - [ ] ログイン画面に「デモアカウントで試す」導線（本番のみ）
   - [ ] デモアカウントの保護（パスワード変更・アカウント削除を無効化）
   - [ ] デモデータの定期リセット（初期データに戻す）
