@@ -28,9 +28,9 @@
 - [x] ER 図（prisma-markdown で `docs/ERD.md` を自動生成）(#28) — 2026-10-14 スキーマを理解し、シードの準備にするため #24 から前倒し。手書きにしなかったのは、`prisma generate` のたびに更新されてスキーマとずれないため。列の説明は `///` で schema.prisma に移した。ERD.md に実在しない `_EventMemberToInvite` が出る（prisma-markdown v4.0.0 の誤判定。schema.md に注記）→ #24 で README から図を見せる前に再検討
 - [x] シード（`docs/design` のサンプルデータ: 3名・富士山麓イベント など）(#2) — 2026-10-14 tsx で実行（prisma7.config.ts の migrations.seed）。lib/prisma.ts は server-only のため、seed.ts で DIRECT_URL の Client を作る。日付は日本時間の今日 + 10日（終了済みに見えないように）。デザインとスキーマの食い違い3点はスキーマに合わせた（seed.ts 冒頭のコメント）
 - [x] Vercel へのデプロイ（GitHub 連携・環境変数・ビルド時の `prisma generate`・シードのデータで DB 接続を確認）(#29) — 2026-10-14 メンターの助言で #7 の前に実施。認証は Cookie・proxy・環境変数に頼る部分が多く、Supabase Auth のリダイレクト先に本番 URL が必要なため。2026-10-16 本番と開発で Supabase を分ける案は、無料枠（2プロジェクト）が別講座のプロジェクトで埋まっているため見送り。当面は本番・プレビューとも開発用 Supabase につなぎ、分離は #25。2026-10-16 完了。next build は tsconfig の対象を全て型チェックするので、Prisma を使うページがなくても生成済みの Client が必要（postinstall で prisma generate）。仮ページは connection() で動的レンダリングにした（付けないとビルド時に静的生成され、実行時の DB 接続を確認できない）
-- [~] デザイントークンを `src/app/globals.css` へ移植、Tailwind `@theme` 連携 (#3)
-- [~] shadcn/ui 導入（`init`。shadcn の CSS 変数 `--background` / `--primary` / `--radius` などを Organic のトークンに対応付け）(#3)
-- [~] フォント（Caprasimo / Figtree / Zen Maru Gothic）、lucide-react (#3)
+- [x] デザイントークンを `src/app/globals.css` へ移植、Tailwind `@theme` 連携 (#3) — 2026-10-17 トークンは `@theme static` に直接置いた（Tailwind の名前空間と同じ名前なので、`:root` から `var()` で参照すると循環するため。static で未使用の変数も出力する）。`--spacing: 4.4px` で Organic の `--space-n` と Tailwind の `p-n` を一致させた
+- [x] shadcn/ui 導入（`init`。shadcn の CSS 変数 `--background` / `--primary` / `--radius` などを Organic のトークンに対応付け）(#3) — 2026-10-17 shadcn 4.21.4、Radix + Maia スタイル。shadcn の accent（ホバー背景）は Organic の accent（オレンジ）と名前がぶつかるので対応付けず、部品の `bg-accent` は #6 で置き換える。destructive は Organic に赤がないため accent-700 で代用（#6 で見直す）。ダークモードは使わない（`dark:` は `.dark` の下でだけ効く）
+- [x] フォント（Caprasimo / Figtree / Zen Maru Gothic）、lucide-react (#3) — 2026-10-17 デザインに合わせ、見出しは Zen Maru Gothic、Caprasimo はロゴだけ（`font-display`）。Zen Maru Gothic は日本語のサブセットを preload できないので `preload: false`。init が入れた Hugeicons は lucide に替えた
 
 ## 1. 認証・セッション
 
