@@ -1,26 +1,159 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ダークモードは使わない。shadcn の部品に含まれる dark: は .dark の下でだけ効くようにし、
+   OS がダークモードでも適用されないようにする（.dark はどこにも付けない） */
+@custom-variant dark (&:is(.dark *));
+
+/* ── Organic のデザイントークン ──────────────────────────────────────────
+   元: docs/design/_ds/organic-05df4399-2545-42d8-a736-030508ad6606/styles.css
+   Tailwind の名前空間（--color-* / --radius-* / --shadow-*）と同じ名前なので、そのまま
+   bg-surface・text-accent-700・rounded-lg・shadow-md などのクラスになる。
+   static: 使われていない変数も :root に出力し、var(--color-...) でいつでも参照できるようにする */
+@theme static {
+  --color-bg: #f5ead8;
+  --color-surface: #ebddc5;
+  --color-text: #201e1d;
+  --color-accent: #c67139;
+  --color-accent-2: #7a8a5e;
+  --color-divider: color-mix(in srgb, var(--color-text) 16%, transparent);
+
+  --color-neutral-100: #f9f4ed;
+  --color-neutral-200: #eee7db;
+  --color-neutral-300: #dcd3c4;
+  --color-neutral-400: #c0b6a5;
+  --color-neutral-500: #a19786;
+  --color-neutral-600: #82796a;
+  --color-neutral-700: #645c50;
+  --color-neutral-800: #474238;
+  --color-neutral-900: #2e2b25;
+
+  --color-accent-100: #fff2eb;
+  --color-accent-200: #ffe1d0;
+  --color-accent-300: #ffc6a5;
+  --color-accent-400: #f6a06b;
+  --color-accent-500: #d67f48;
+  --color-accent-600: #b2622d;
+  --color-accent-700: #8c491a;
+  --color-accent-800: #643312;
+  --color-accent-900: #402310;
+
+  --color-accent-2-100: #f0fae1;
+  --color-accent-2-200: #e1eecc;
+  --color-accent-2-300: #ccdbb2;
+  --color-accent-2-400: #aebf92;
+  --color-accent-2-500: #8fa073;
+  --color-accent-2-600: #728157;
+  --color-accent-2-700: #56633f;
+  --color-accent-2-800: #3d472b;
+  --color-accent-2-900: #272e1b;
+
+  /* accent（オレンジ）の上に載せる文字色。Organic の .btn-primary と同じ */
+  --color-accent-foreground: var(--color-bg);
+
+  /* 余白の基準。Organic の --space-n は n × 4.4px なので、Tailwind の p-3・gap-4 などが
+     そのまま --space-3・--space-4 と同じ値になる */
+  --spacing: 4.4px;
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 28px;
+
+  --shadow-sm: 0 1px 2px
+    color-mix(in srgb, var(--color-neutral-900) 14%, transparent);
+  --shadow-md: 0 3px 10px
+    color-mix(in srgb, var(--color-neutral-900) 16%, transparent);
+  --shadow-lg: 0 12px 32px
+    color-mix(in srgb, var(--color-neutral-900) 22%, transparent);
+
+  /* 本文の大きさ（Organic: 15px / 1.55） */
+  --text-base: 0.9375rem;
+  --text-base--line-height: 1.55;
 }
 
 @theme inline {
+  /* フォント。各変数（--font-figtree など）は layout.tsx の next/font で定義する。
+     デザインでは日本語の見出しに Zen Maru Gothic を使い、Caprasimo はロゴだけに使っている */
+  --font-sans:
+    var(--font-figtree), var(--font-zen-maru-gothic), system-ui, sans-serif;
+  --font-heading:
+    var(--font-zen-maru-gothic), var(--font-figtree), system-ui, sans-serif;
+  --font-display: var(--font-caprasimo), serif;
+
+  /* Organic の「rounded frame」（カード・ダイアログは lg の 1.15 倍）。xl 以上は shadcn の部品が使う */
+  --radius-xl: calc(var(--radius-lg) * 1.15);
+  --radius-2xl: calc(var(--radius-lg) * 1.8);
+  --radius-3xl: calc(var(--radius-lg) * 2.2);
+  --radius-4xl: calc(var(--radius-lg) * 2.6);
+
+  /* shadcn の部品が使う色（下の :root で Organic に対応付ける）。
+     accent は対応付けない: shadcn ではメニューのホバー背景だが、Organic ではオレンジの
+     アクセント色を指すため、Organic を優先する。部品の bg-accent は追加時に bg-muted などへ置き換える（#6） */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* shadcn の CSS 変数 → Organic のトークン */
+:root {
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-text);
+  --primary: var(--color-accent);
+  --primary-foreground: var(--color-accent-foreground);
+  --secondary: var(--color-neutral-200);
+  --secondary-foreground: var(--color-text);
+  --muted: var(--color-neutral-200);
+  --muted-foreground: color-mix(in srgb, var(--color-text) 55%, transparent);
+  /* Organic には赤がないため、アクセントの濃い色で代用する（#6 で見直す） */
+  --destructive: var(--color-accent-700);
+  --border: var(--color-divider);
+  --input: var(--color-divider);
+  --ring: var(--color-accent);
+  --radius: var(--radius-lg);
+}
+
+@layer base {
+  * {
+    @apply border-border;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    @apply bg-background text-base text-foreground;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    /* --font-heading は @theme inline なので var() では参照できない。@apply でクラスの値を使う */
+    @apply font-heading font-normal;
+    line-height: 1.3;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--color-accent) 30%, transparent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
 }

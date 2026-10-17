@@ -46,7 +46,7 @@
 - shadcn/ui（CLI で部品のソースを `src/components/ui/` にコピーする方式。土台は Radix UI + Tailwind）。Organic のデザインに合わせて調整して使う
 - zod（Server Action の入力検証）
 - アイコン: lucide-react（`strokeWidth={2.75}`）
-- フォント: Caprasimo（見出し英字）/ Figtree（本文英字）/ Zen Maru Gothic（日本語）— `next/font/google`
+- フォント: Figtree（本文の英字）/ Zen Maru Gothic（日本語・見出し）/ Caprasimo（ロゴ。`font-display`）— `next/font/google`
 
 ## ファイル構成
 
@@ -90,9 +90,10 @@ src/
 ## デザイン
 
 - `docs/design/*.dc.html` は **デザインの参照用HTML**（Claude Design の書き出し）。ブラウザで直接開ける。コードはコピーせず、React + Tailwind で作り直す。`<sc-for>`, `<sc-if>`, `{{ }}`, `<x-import>`, `style-hover` などは独自記法なので持ち込まない
-- **デザイントークン**: `docs/design/_ds/organic-05df4399-2545-42d8-a736-030508ad6606/styles.css` の `:root` 変数（`--color-*`, `--radius-*`, `--shadow-*`, `--space-*`）。これを `src/app/globals.css` に移し、Tailwind v4 の `@theme` から `var(--color-...)` を参照する
+- **デザイントークン**: `docs/design/_ds/organic-05df4399-2545-42d8-a736-030508ad6606/styles.css` の `:root` 変数（`--color-*`, `--radius-*`, `--shadow-*`, `--space-*`）。これを `src/app/globals.css` の `@theme static` に置く。Tailwind の名前空間と同じ名前なので `bg-surface`・`rounded-lg`・`shadow-md` などのクラスになり、`var(--color-...)` でも参照できる。余白は `--spacing: 4.4px`（`p-n` = Organic の `--space-n`）。shadcn の CSS 変数は `:root` で Organic のトークンに対応付ける
 - hex・px を直書きしない。トークンにない値が要る場合は globals.css に変数を足す
 - **shadcn/ui の部品は初期の見た目のまま使わない。** shadcn の CSS 変数（`--background` / `--primary` / `--radius` など）を Organic のトークンに対応付け、部品ごとに角丸・フォーカス表示を下記に合わせる。使う部品のコード（props・バリアント）は読んで説明できるようにする
+- shadcn の部品の `bg-accent`（ホバー背景）は、Organic の accent（オレンジ）と意味が違うので、`bg-muted` などに置き換える
 - 角は大きく丸める（コンテナ `--radius-lg`、ボタン・入力は `rounded-full`）。フォーカスは `outline: 2px solid var(--color-accent); outline-offset: 2px`
 - UI の文言は日本語。デザインHTMLの文言をそのまま使う
 - デザインHTMLとスキーマが食い違う箇所は `docs/screens.md` の「要確認」を見る。スキーマ側を優先する

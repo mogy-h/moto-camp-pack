@@ -3,7 +3,19 @@
 状態: `[ ]` 未着手 / `[~]` 実装中 / `[x]` 完了
 作業後は状態を更新し、必要なら行末に `— YYYY-MM-DD メモ` を追記する。
 各項目末尾の `(#N)` は GitHub Issue の番号。PR をマージして Issue を閉じたら、同じ PR で該当行を `[x]` にする。
-実装は本人が行う。Claude はメンターとして更新内容を提案し、本人の了承を得て書き込む。
+実装は本人が行う。Claude はメンターとして更新内容を提案し、本人の了承を得て書き込む（完了メモは PR 本文の案と一緒に書き込み、本人が差分で確認する）。
+
+## 優先順位（2026-10-17 決定）
+
+11月初旬（スクールの課題の期限）までに、中心の流れ（ログイン → イベント作成 → 招待 → 共同装備を早い者勝ちで分担 → 貸し借りを募集して引き受ける）が通しで動く状態を MVP とする。GitHub の Milestone「MVP」にも登録している。
+
+- **MVP（この順に作る）**: #3 → #5 → #6 → #7 → #10 → #11 → #12 → #13 → #18 → #15（宛先なしの募集と「自分が貸す」だけ）→ #24
+- **余裕があれば（上から順に）**: #17 通知の表示 → #20 退出・削除 → #19 イベント設定 → #14・#16 宛先を指定した貸し借り → #25 本番環境の分離とデモアカウント → #23 空状態・ローディング・エラー → #9 プロフィール
+- **今回は作らない**: #8 パスワードリセット、#21 ゲスト参加、#22 ゲスト→アカウントの引き継ぎ
+- 判断メモ
+  - 通知レコードの作成（`notify.ts`）は MVP の Action に含め、表示（#17）だけ後回しにする。後から表示を足すときに Action を直さずに済む
+  - #4（README の骨組み）は #24 にまとめた
+  - イベントの既定の状態を `DRAFT` から `PUBLISHED` に変える（#10 でスキーマと screens.md に反映）。下書きのままだと招待リンクから参加できず、初めてのオーナーが戸惑うため。招待リンクを送るタイミングはオーナーが決められるので、下書きで参加を止める必要は薄い
 
 ## 0. セットアップ
 
@@ -15,11 +27,10 @@
 - [x] Supabase の Data API を無効化し、`curl .../rest/v1/users` で弾かれることを確認 (#1) — 2026-10-12 無効化の前は公開キーで users が読めた（HTTP 200）→ 無効化の後は HTTP 503
 - [x] ER 図（prisma-markdown で `docs/ERD.md` を自動生成）(#28) — 2026-10-14 スキーマを理解し、シードの準備にするため #24 から前倒し。手書きにしなかったのは、`prisma generate` のたびに更新されてスキーマとずれないため。列の説明は `///` で schema.prisma に移した。ERD.md に実在しない `_EventMemberToInvite` が出る（prisma-markdown v4.0.0 の誤判定。schema.md に注記）→ #24 で README から図を見せる前に再検討
 - [x] シード（`docs/design` のサンプルデータ: 3名・富士山麓イベント など）(#2) — 2026-10-14 tsx で実行（prisma7.config.ts の migrations.seed）。lib/prisma.ts は server-only のため、seed.ts で DIRECT_URL の Client を作る。日付は日本時間の今日 + 10日（終了済みに見えないように）。デザインとスキーマの食い違い3点はスキーマに合わせた（seed.ts 冒頭のコメント）
-- [~] Vercel へのデプロイ（GitHub 連携・環境変数・ビルド時の `prisma generate`・シードのデータで DB 接続を確認）(#29) — 2026-10-14 メンターの助言で #7 の前に実施。認証は Cookie・proxy・環境変数に頼る部分が多く、Supabase Auth のリダイレクト先に本番 URL が必要なため。2026-10-16 本番と開発で Supabase を分ける案は、無料枠（2プロジェクト）が別講座のプロジェクトで埋まっているため見送り。当面は本番・プレビューとも開発用 Supabase につなぎ、分離は #25
-- [ ] デザイントークンを `src/app/globals.css` へ移植、Tailwind `@theme` 連携 (#3)
-- [ ] shadcn/ui 導入（`init`。shadcn の CSS 変数 `--background` / `--primary` / `--radius` などを Organic のトークンに対応付け）(#3)
-- [ ] フォント（Caprasimo / Figtree / Zen Maru Gothic）、lucide-react (#3)
-- [ ] README の骨組み（概要・技術スタック・開発中である旨）。機能ができるごとに更新 (#4)
+- [x] Vercel へのデプロイ（GitHub 連携・環境変数・ビルド時の `prisma generate`・シードのデータで DB 接続を確認）(#29) — 2026-10-14 メンターの助言で #7 の前に実施。認証は Cookie・proxy・環境変数に頼る部分が多く、Supabase Auth のリダイレクト先に本番 URL が必要なため。2026-10-16 本番と開発で Supabase を分ける案は、無料枠（2プロジェクト）が別講座のプロジェクトで埋まっているため見送り。当面は本番・プレビューとも開発用 Supabase につなぎ、分離は #25。2026-10-16 完了。next build は tsconfig の対象を全て型チェックするので、Prisma を使うページがなくても生成済みの Client が必要（postinstall で prisma generate）。仮ページは connection() で動的レンダリングにした（付けないとビルド時に静的生成され、実行時の DB 接続を確認できない）
+- [x] デザイントークンを `src/app/globals.css` へ移植、Tailwind `@theme` 連携 (#3) — 2026-10-17 トークンは `@theme static` に直接置いた（Tailwind の名前空間と同じ名前なので、`:root` から `var()` で参照すると循環するため。static で未使用の変数も出力する）。`--spacing: 4.4px` で Organic の `--space-n` と Tailwind の `p-n` を一致させた
+- [x] shadcn/ui 導入（`init`。shadcn の CSS 変数 `--background` / `--primary` / `--radius` などを Organic のトークンに対応付け）(#3) — 2026-10-17 shadcn 4.21.4、Radix + Maia スタイル。shadcn の accent（ホバー背景）は Organic の accent（オレンジ）と名前がぶつかるので対応付けず、部品の `bg-accent` は #6 で置き換える。destructive は Organic に赤がないため accent-700 で代用（#6 で見直す）。ダークモードは使わない（`dark:` は `.dark` の下でだけ効く）
+- [x] フォント（Caprasimo / Figtree / Zen Maru Gothic）、lucide-react (#3) — 2026-10-17 デザインに合わせ、見出しは Zen Maru Gothic、Caprasimo はロゴだけ（`font-display`）。Zen Maru Gothic は日本語のサブセットを preload できないので `preload: false`。init が入れた Hugeicons は lucide に替えた
 
 ## 1. 認証・セッション
 
@@ -87,7 +98,7 @@ UI の土台は shadcn/ui。採用理由: モーダルやメニューのアク�
 - [ ] updateItem / deleteItem (#12)
 
 **items（貸し借り）**
-- [ ] requestRental（宛先あり → asking + ASK / 宛先なし → open）(#15)
+- [ ] requestRental（宛先なし → open (#15)。宛先あり → asking + ASK は #16）
 - [ ] offerRental（open に「自分が貸す」、早い者勝ち、ACCEPTED）(#15)
 - [ ] acceptAsk（ACCEPTED、ASK を resolved）(#16)
 - [ ] declineAsk（open に戻す、DECLINED、ASK を resolved）(#16)
