@@ -73,6 +73,10 @@ src/
   lib/
     prisma.ts              # PrismaClient シングルトン（@prisma/adapter-pg + DATABASE_URL）
     utils.ts               # cn()（クラス名の結合。shadcn/ui の init で生成）
+    date.ts                # 日本時間の今日（todayInTokyo）、date 列と "YYYY-MM-DD" の変換
+    action-result.ts       # Server Action の戻り値の型（ActionResult）、ok / fail / toFailure
+    errors.ts              # AppError と、それを継承したエラー（AlreadyTakenError など）
+    validation/            # 入力制約の定数（LIMITS）と zod スキーマ
     supabase/server.ts     # Auth 用クライアントのみ
     session.ts             # getCurrentUser()（Supabase Auth or ゲスト Cookie）, requireMember(eventId)
     permissions.ts         # assertCan(action, member, item?)
@@ -141,6 +145,7 @@ npx prisma generate                                  # Client と docs/ERD.md �
 npx prisma studio
 npx prisma db seed
 npm run lint && npm run typecheck                    # typecheck = next typegen && tsc --noEmit（LayoutProps などルートの型を生成してから型チェック）
+npm test                                             # Vitest（src/**/*.test.ts）。npm run test:watch で変更を監視、-- --reporter=verbose で1件ずつ表示
 ```
 
 `prisma db push` は使わない（`migration.sql` を通らず、手書きの CHECK 制約が作られない）。
