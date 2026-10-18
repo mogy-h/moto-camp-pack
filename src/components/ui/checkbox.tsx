@@ -5,6 +5,8 @@ import { cn } from "cn"
 import { Checkbox as CheckboxPrimitive } from "radix-ui"
 import { CheckIcon } from "lucide-react"
 
+// デザインで使うチェックは「積み込み済み」の丸いチェックだけなので、その見た目にする（四角いチェックボックスはない）。
+// after: で押せる範囲を見た目より広げる（size-6 + 上下左右 2 = 44px。スマホで押しやすい大きさ）
 function Checkbox({
   className,
   ...props
@@ -13,7 +15,7 @@ function Checkbox({
     <CheckboxPrimitive.Root
       data-slot="checkbox"
       className={cn(
-        "peer relative flex size-4 shrink-0 items-center justify-center rounded-[6px] border border-input transition-shadow outline-none group-has-disabled/field:opacity-50 group-has-[:focus-visible]/field-label:ring-0 group-has-[:focus-visible]/field-label:not-data-checked:border-input after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:aria-checked:border-primary dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 data-checked:border-primary data-checked:bg-primary data-checked:text-primary-foreground group-has-[:focus-visible]/field-label:data-checked:border-primary dark:data-checked:bg-primary",
+        "peer relative flex size-6 shrink-0 items-center justify-center rounded-full border-2 border-neutral-400 text-accent-2-100 transition-colors after:absolute after:-inset-2 disabled:cursor-not-allowed disabled:opacity-45 aria-invalid:border-destructive data-checked:border-accent-2-600 data-checked:bg-accent-2-600",
         className
       )}
       {...props}
@@ -22,8 +24,7 @@ function Checkbox({
         data-slot="checkbox-indicator"
         className="grid place-content-center text-current transition-none [&>svg]:size-3.5"
       >
-        <CheckIcon
-        />
+        <CheckIcon strokeWidth={2.75} />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   )
