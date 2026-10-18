@@ -44,7 +44,7 @@
 ## 2. 共通ロジック（`lib/`）
 
 - [x] `derive/`: eventPhase（下書き・準備中・完了。「今日」は引数で受け取る）(#5) — 2026-10-18 ほかの導出関数は、使う画面の Issue で作る方針に変更（土台だけ先に作ると使い道が見えにくいため）。判定は 完了 → 下書き → 準備中 の順（下書きのまま帰着日を過ぎたら完了。screens.md に追記）。帰着日の当日・翌日の境目をテストで確認
-- [ ] `derive/`: initials / avatarColor (#6)
+- [~] `derive/`: initials / avatarColor (#6)
 - [ ] `derive/`: progress (#10)
 - [ ] `derive/`: itemStatus / effectiveGearMemo (#11)
 - [x] Vitest の導入（純関数のテスト）(#5) — 2026-10-18 Vitest 4.1。純関数だけをテストするので jsdom・Testing Library は入れていない。`@/` は `resolve.tsconfigPaths` で解決（プラグイン不要）
@@ -60,20 +60,20 @@
 UI の土台は shadcn/ui。採用理由: モーダルやメニューのアクセシビリティ対応（フォーカス管理・キーボード操作・読み上げ）は実績のある実装に任せ、その分の時間を早い者勝ち・権限チェックなどの中心ロジックに使うため。
 
 **shadcn/ui から追加し、Organic に合わせて調整する**（初期の見た目のまま使わない）
-- [ ] Button（primary / secondary / ghost / icon。`rounded-full`）(#6)
-- [ ] Badge（デザインの Tag）(#6)
-- [ ] Card (#6)
-- [ ] Dialog（モーダル）(#6)
-- [ ] Input / Textarea / Label / Checkbox (#6)
-- [ ] Toggle Group（S・M・L のセグメント）(#6)
+- [~] Button（primary / secondary / ghost / icon。`rounded-full`）(#6)
+- [~] Badge（デザインの Tag）(#6)
+- [~] Card (#6)
+- [~] Dialog（モーダル）(#6)
+- [~] Input / Textarea / Label / Checkbox (#6)
+- [~] Radio Group（S・M・L のセグメント）(#6) — 2026-10-18 Toggle Group から変更。RadioGroup はフォームの中で隠れた input を出力するので、Server Action に FormData のまま値が届く（ToggleGroup は button の集まりで、state と hidden input を自分で書く必要がある）。デザインの HTML も radio
 - [ ] Tabs (#10)
 - [ ] Popover（通知ポップオーバー）(#17)
 - [ ] Dropdown Menu（アカウントメニュー）(#10)
-- [ ] Sonner（トースト）(#6)
+- [~] Sonner（トースト）(#6)
 - [ ] Sheet（スマホの操作シート。必要になったら）(#12)
 
 **自作する（アプリ固有）**
-- [ ] Avatar / AvatarStack（色・イニシャルは `lib/derive/` から）(#6)
+- [~] Avatar / AvatarStack（色・イニシャルは `lib/derive/` から）(#6)
 - [ ] Header（戻る・ベル・アカウントメニュー）(#10)
 - [ ] GearMemoInput（テキスト + プリセットタグ）(#9)
 
