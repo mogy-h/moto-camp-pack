@@ -43,13 +43,17 @@
 
 ## 2. 共通ロジック（`lib/`）
 
-- [ ] `derive/`: itemStatus / effectiveGearMemo / avatarColor / initials / progress / eventPhase（下書き・準備中・完了。「今日」は引数で受け取る）(#5)
-- [ ] 日付ヘルパ（日本時間の「今日」、`date` 列と日付文字列の変換）。サーバーのローカル時刻に頼らない (#5)
+- [x] `derive/`: eventPhase（下書き・準備中・完了。「今日」は引数で受け取る）(#5) — 2026-10-18 ほかの導出関数は、使う画面の Issue で作る方針に変更（土台だけ先に作ると使い道が見えにくいため）。判定は 完了 → 下書き → 準備中 の順（下書きのまま帰着日を過ぎたら完了。screens.md に追記）。帰着日の当日・翌日の境目をテストで確認
+- [ ] `derive/`: initials / avatarColor (#6)
+- [ ] `derive/`: progress (#10)
+- [ ] `derive/`: itemStatus / effectiveGearMemo (#11)
+- [x] Vitest の導入（純関数のテスト）(#5) — 2026-10-18 Vitest 4.1。純関数だけをテストするので jsdom・Testing Library は入れていない。`@/` は `resolve.tsconfigPaths` で解決（プラグイン不要）
+- [x] 日付ヘルパ（日本時間の「今日」、`date` 列と日付文字列の変換）。サーバーのローカル時刻に頼らない (#5) — 2026-10-18 `src/lib/date.ts`。`Intl.DateTimeFormat` の `timeZone` で日本時間の日付を出す。`now` を引数にしてテストで時刻を固定し、UTC 15:00 の境目を確認
 - [ ] `permissions.ts`: `assertCan(action, member, item?)` (#12)
 - [ ] `notify.ts`: 宛先解決（actor 以外の参加者など）と一括作成 (#12)
 - [ ] 通知文面の生成（type + payload → タイトル・本文）(#17)
-- [ ] Server Action の戻り値型・エラー型（`AlreadyTakenError` など）(#5)
-- [ ] 入力制約の定数と zod スキーマ（`docs/screens.md`「入力項目の制約」。上限は DB の `varchar(n)` と一致させる）(#5)
+- [x] Server Action の戻り値型・エラー型（`AlreadyTakenError` など）(#5) — 2026-10-18 `toFailure` は AppError と zod のエラーだけメッセージを返し、想定外のエラーは中身を見せない。戻り値の形はルール 8 のまま（エラーの種類のコードは足さない。失敗時は毎回トースト + `router.refresh()` で足りる）
+- [x] 入力制約の定数と zod スキーマ（`docs/screens.md`「入力項目の制約」。上限は DB の `varchar(n)` と一致させる）(#5) — 2026-10-18 文字数は `Array.from` で数える（zod の `.max()` は絵文字を2文字と数えるため）。`LIMITS` と schema.prisma の `varchar(n)` の一致をテストで確認。パスワードは前後の空白を除かない。`createEventSchema` は「今日」を引数で受け取る
 
 ## 3. 共通UI（`components/ui/`）
 
@@ -78,7 +82,7 @@ UI の土台は shadcn/ui。採用理由: モーダルやメニューのアク�
 各 Action: 所属判定 → 権限 → zod → トランザクション（更新 + 通知）→ revalidatePath
 
 **events**
-- [ ] createEvent（作成者を OWNER で参加）(#10)
+- [ ] createEvent（作成者を OWNER で参加、`PUBLISHED` で作成）(#10)
 - [ ] updateEvent（日程・場所変更で SCHEDULE_CHANGED）— OWNER (#19)
 - [ ] publishEvent — OWNER (#19)
 

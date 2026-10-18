@@ -18,6 +18,6 @@ Closes #
 <!-- 画面に変更がある場合 -->
 
 ## チェックリスト
-- [ ] `npm run lint && npm run typecheck` が通る
+- [ ] `npm run lint && npm run typecheck && npm test` が通る
 - [ ] スキーマを変えた場合は `docs/schema.md` も更新した
 - [ ] `docs/progress.md` の該当行を `[x]` にした
