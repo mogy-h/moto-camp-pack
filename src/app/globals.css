@@ -49,6 +49,12 @@
   --color-accent-2-800: #3d472b;
   --color-accent-2-900: #272e1b;
 
+  /* 注意（未解決・未割り当て）。Organic にない色なので、イベント詳細のデザインの状態バッジから足した。
+     200 = 背景、500 = 枠線、800 = 文字（accent-2 の「確定」バッジと同じ段階の使い方） */
+  --color-warn-200: #f4dda1;
+  --color-warn-500: #d9a021;
+  --color-warn-800: #6d4a04;
+
   /* accent（オレンジ）の上に載せる文字色。Organic の .btn-primary と同じ */
   --color-accent-foreground: var(--color-bg);
 
@@ -70,6 +76,10 @@
   /* 本文の大きさ（Organic: 15px / 1.55） */
   --text-base: 0.9375rem;
   --text-base--line-height: 1.55;
+
+  /* タグ・バッジの文字（デザインでは 11px）。Tailwind の既定は text-xs（12px）が最小のため足した */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1.4;
 }
 
 @theme inline {
@@ -122,7 +132,7 @@
   --secondary-foreground: var(--color-text);
   --muted: var(--color-neutral-200);
   --muted-foreground: color-mix(in srgb, var(--color-text) 55%, transparent);
-  /* Organic には赤がないため、アクセントの濃い色で代用する（#6 で見直す） */
+  /* Organic には赤がないため、アクセントの濃い色で代用する（削除・退出のボタンを作る #20 で見直す） */
   --destructive: var(--color-accent-700);
   --border: var(--color-divider);
   --input: var(--color-divider);

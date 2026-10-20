@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Caprasimo, Figtree, Zen_Maru_Gothic } from "next/font/google";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -35,7 +36,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ja"
       className={`${figtree.variable} ${zenMaruGothic.variable} ${caprasimo.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        {/* トーストの表示先。どの画面からでも sonner の toast() で出せるよう、ルートに1つだけ置く */}
+        <Toaster position="top-center" />
+      </body>
     </html>
   );
 }

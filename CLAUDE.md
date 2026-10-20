@@ -98,7 +98,7 @@ src/
 - hex・px を直書きしない。トークンにない値が要る場合は globals.css に変数を足す
 - **shadcn/ui の部品は初期の見た目のまま使わない。** shadcn の CSS 変数（`--background` / `--primary` / `--radius` など）を Organic のトークンに対応付け、部品ごとに角丸・フォーカス表示を下記に合わせる。使う部品のコード（props・バリアント）は読んで説明できるようにする
 - shadcn の部品の `bg-accent`（ホバー背景）は、Organic の accent（オレンジ）と意味が違うので、`bg-muted` などに置き換える
-- 角は大きく丸める（コンテナ `--radius-lg`、ボタン・入力は `rounded-full`）。フォーカスは `outline: 2px solid var(--color-accent); outline-offset: 2px`
+- 角は大きく丸める（コンテナ `--radius-lg`、ボタン・タグは `rounded-full`、入力欄は `--radius-md`（画面のデザインに合わせる））。フォーカスは `outline: 2px solid var(--color-accent); outline-offset: 2px`（入力欄は枠線に重ねるため `outline-offset: 0`）
 - UI の文言は日本語。デザインHTMLの文言をそのまま使う
 - デザインHTMLとスキーマが食い違う箇所は `docs/screens.md` の「要確認」を見る。スキーマ側を優先する
 
