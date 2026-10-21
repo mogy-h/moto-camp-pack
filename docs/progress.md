@@ -34,12 +34,12 @@
 
 ## 1. 認証・セッション
 
-- [ ] Supabase Auth（メール + パスワード）: 登録・ログイン・ログアウト・パスワードリセット (#7, #8)
-- [ ] 登録時に `User` 作成（`authUid` 紐付け）(#7)
+- [~] Supabase Auth（メール + パスワード）: 登録・ログイン・ログアウト・パスワードリセット (#7, #8)
+- [~] 登録時に `User` 作成（`authUid` 紐付け）(#7)
 - [ ] ゲストクレームトークン（生成・ハッシュ保存・Cookie）(#21)
-- [ ] `getCurrentUser()`（Auth / ゲスト Cookie 両対応）(#7, #21)
+- [~] `getCurrentUser()`（Auth / ゲスト Cookie 両対応）(#7, #21)
 - [ ] `requireMember(eventId)`（`leftAt: null` 判定）(#11)
-- [ ] 未ログイン時のリダイレクト（`src/proxy.ts`。Next.js 16 で middleware から改名）(#7)
+- [~] 未ログイン時のリダイレクト（`src/proxy.ts`。Next.js 16 で middleware から改名）(#7)
 
 ## 2. 共通ロジック（`lib/`）
 
@@ -119,7 +119,7 @@ UI の土台は shadcn/ui。採用理由: モーダルやメニューのアク�
 
 ## 5. 画面
 
-- [ ] `/login`, `/signup` (#7)
+- [~] `/login`, `/signup` (#7)
 - [ ] `/profile` (#9)
 - [ ] `/`（ダッシュボード）(#10)
 - [ ] `/j/[token]`（招待・参加、5状態）(#18, #21)
