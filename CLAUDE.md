@@ -157,6 +157,6 @@ Next.js は `.env.local` を自動で読むが、Prisma 7 の CLI は `.env` 系
 ```
 DATABASE_URL=        # Supabase Transaction pooler（:6543, ?pgbouncer=true）— アプリ実行時。lib/prisma.ts の adapter に渡す
 DIRECT_URL=          # Supabase Session pooler（:5432。Direct connection は IPv6 のみで WSL から届かないため）— prisma7.config.ts の datasource.url（migrate 用）
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_SUPABASE_URL=              # https://<プロジェクトの ref>.supabase.co — lib/supabase/server.ts と proxy.ts（Auth のみ）
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=  # Publishable key（sb_publishable_...）。公開してよいキー。Supabase の新しい形式（古い anon key の代わり）
 ```
