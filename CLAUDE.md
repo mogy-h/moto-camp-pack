@@ -69,7 +69,7 @@ src/
       profile/
     j/[token]/             # 招待リンク
     claim/                 # ゲスト→アカウント引き継ぎ
-  actions/                 # Server Actions（ドメインごと: items.ts, members.ts, events.ts, invites.ts, notifications.ts, profile.ts）
+  actions/                 # Server Actions（ドメインごと: auth.ts, items.ts, members.ts, events.ts, invites.ts, notifications.ts, profile.ts）
   lib/
     prisma.ts              # PrismaClient シングルトン（@prisma/adapter-pg + DATABASE_URL）
     utils.ts               # cn()（クラス名の結合。shadcn/ui の init で生成）
