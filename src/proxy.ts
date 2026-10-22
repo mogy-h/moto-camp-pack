@@ -8,9 +8,14 @@ import { NextResponse, type NextRequest } from "next/server";
 // ログイン画面。ログイン済みの人が開いたらダッシュボードへ移す
 const AUTH_PAGES = ["/login", "/signup"];
 
-// ログインしていなくても開けるページ。/j/... は招待リンク（アカウントを持っていない人も開く。#18）
+// ログインしていなくても開けるページ。/terms は利用規約（新規登録の前に読む）、
+// /j/... は招待リンク（アカウントを持っていない人も開く。#18）
 function isPublicPath(pathname: string) {
-  return AUTH_PAGES.includes(pathname) || pathname.startsWith("/j/");
+  return (
+    AUTH_PAGES.includes(pathname) ||
+    pathname === "/terms" ||
+    pathname.startsWith("/j/")
+  );
 }
 
 export async function proxy(request: NextRequest) {
