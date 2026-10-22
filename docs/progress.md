@@ -34,12 +34,13 @@
 
 ## 1. 認証・セッション
 
-- [~] Supabase Auth（メール + パスワード）: 登録・ログイン・ログアウト・パスワードリセット (#7, #8)
-- [~] 登録時に `User` 作成（`authUid` 紐付け）(#7)
+- [x] Supabase Auth（メール + パスワード）: 登録・ログイン・ログアウト (#7) — 2026-10-22 登録時のメール確認は使わない（確認リンクの受け口が要らない。内蔵のメール送信には送信数の上限がある。#8 を作らないので、メールアドレスはログインの ID にしか使わない）。登録・ログイン・ログアウトは Server Action（`src/actions/auth.ts`）。Supabase のエラーは code で見分けて AppError にする（ログインの失敗では、メールとパスワードのどちらが違うかを言わない）。Supabase 側でもパスワードの最小文字数を 8 にした（公開キーで Auth の API を直接呼べるため）。キーは新しい形式の Publishable key。シードの3人を Admin API で Auth のアカウントと紐付けた（Secret key はシードだけが使い、Vercel には入れない）
+- [ ] パスワードリセット (#8)
+- [x] 登録時に `User` 作成（`authUid` 紐付け）(#7) — 2026-10-22 Auth と DB は1つのトランザクションにできないので、表示名を `user_metadata` にも入れ、`getCurrentUser` が `upsert` で作り直す（Prisma Studio で行を消して確認）。`auth.users` のトリガーは使わない（`auth` スキーマは Prisma の管理外）。schema.md への記録は次のブランチで行う
 - [ ] ゲストクレームトークン（生成・ハッシュ保存・Cookie）(#21)
-- [~] `getCurrentUser()`（Auth / ゲスト Cookie 両対応）(#7, #21)
+- [x] `getCurrentUser()`（Auth / ゲスト Cookie 両対応）(#7, #21) — 2026-10-22 Supabase Auth の分だけ（ゲスト Cookie は #21 で足す）。`cache()` で1回の表示につき1回だけ問い合わせる。`getClaims` のエラーは記録して `null`、Prisma のエラーは投げる（catch して `null` にすると、DB の障害がログアウトに見えるため）
 - [ ] `requireMember(eventId)`（`leftAt: null` 判定）(#11)
-- [~] 未ログイン時のリダイレクト（`src/proxy.ts`。Next.js 16 で middleware から改名）(#7)
+- [x] 未ログイン時のリダイレクト（`src/proxy.ts`。Next.js 16 で middleware から改名）(#7) — 2026-10-22 proxy はセッションの更新と、未ログイン → `/login`・ログイン済みで `/login` → `/` のリダイレクトだけ。認証の確認はサーバー側で行う（Next.js のドキュメントにも、Server Action は proxy を通らないことがあるとある）。`/login`・`/signup`・`/terms`・`/j/...` は公開。ログイン後に元のページへ戻す仕組み（`?next=`）は、#18 で URL の検証も含めて作る
 
 ## 2. 共通ロジック（`lib/`）
 
@@ -119,7 +120,7 @@ UI の土台は shadcn/ui。採用理由: モーダルやメニューのアク�
 
 ## 5. 画面
 
-- [~] `/login`, `/signup` (#7)
+- [x] `/login`, `/signup` (#7) — 2026-10-22 タブは2つの URL へのリンク。フォームは `useActionState`。表示名・メールアドレス・規約の同意は state で持つ（React 19 は送信後にフォームを空に戻すため）。`noValidate` で、検証のメッセージを zod の日本語にそろえる。`/terms`（利用規約とプライバシーポリシー）を追加。招待リンクの導線は #18 で決める（screens.md 要確認 5）。見た目は Claude、Action とつなぐ部分は本人
 - [ ] `/profile` (#9)
 - [ ] `/`（ダッシュボード）(#10)
 - [ ] `/j/[token]`（招待・参加、5状態）(#18, #21)
