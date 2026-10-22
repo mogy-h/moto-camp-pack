@@ -64,7 +64,7 @@ UI の土台は shadcn/ui。採用理由: モーダルやメニューのアク�
 - [x] Badge（デザインの Tag）(#6) — 2026-10-20 色ごとのバリアント（neutral / accent / accent-2 / warn）にし、どの状態にどの色を使うかは使う側で決める。Organic にない注意の色（warn）と 11px の文字（text-2xs）を globals.css に足した
 - [x] Card (#6) — 2026-10-20
 - [x] Dialog（モーダル）(#6) — 2026-10-20 Esc で閉じ、開いている間はフォーカスが中に留まることを確認。スマホでも収まるよう高さは画面の 88% まで
-- [x] Input / Textarea / Label / Checkbox (#6) — 2026-10-20 入力欄の角は画面のデザインに合わせて `--radius-md`（CLAUDE.md の「入力は rounded-full」を修正）。Checkbox は、デザインにある「積み込み済み」の丸いチェックの見た目にした（四角いチェックボックスはデザインにない）
+- [x] Input / Textarea / Label / Checkbox (#6) — 2026-10-20 入力欄の角は画面のデザインに合わせて `--radius-md`（CLAUDE.md の「入力は rounded-full」を修正）。Checkbox の初期の見た目は「積み込み済み」の丸いチェックにした（2026-10-21 訂正: 新規登録の規約同意は角の丸い四角なので、使う側で className を付けて変えている）
 - [x] Radio Group（S・M・L のセグメント）(#6) — 2026-10-18 Toggle Group から変更。RadioGroup はフォームの中で隠れた input を出力するので、Server Action に FormData のまま値が届く（ToggleGroup は button の集まりで、state と hidden input を自分で書く必要がある）。デザインの HTML も radio。2026-10-20 項目そのものを丸いボタンにし、選ばれた項目を塗る
 - [ ] Tabs (#10)
 - [ ] Popover（通知ポップオーバー）(#17)
