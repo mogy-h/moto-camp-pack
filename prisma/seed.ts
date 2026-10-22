@@ -8,7 +8,9 @@
 import { randomBytes } from "node:crypto";
 import { config } from "dotenv";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { PrismaClient, type Prisma } from "../src/generated/prisma/client";
+import { todayInTokyo } from "../src/lib/date";
 
 // lib/prisma.ts は server-only を読み込むため Next.js の外では使えない。migrate と同じ DIRECT_URL で接続する
 config({ path: ".env.local" });
@@ -21,10 +23,50 @@ function createPrismaClient() {
   return new PrismaClient({ adapter: new PrismaPg({ connectionString }) });
 }
 
-// 日本時間の今日（YYYY-MM-DD）。sv-SE ロケールは YYYY-MM-DD 形式で出力される
-// TODO: #5 の日付ヘルパができたら置き換える
-function todayInTokyo() {
-  return new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Tokyo" }).format(new Date());
+// ログインできるサンプルのアカウント（開発用。パスワードは3人とも同じ）
+const SEED_PASSWORD = "motocamp-dev";
+const SEED_ACCOUNTS = {
+  takuya: { email: "takuya@motocamp.test", displayName: "山田 拓也" },
+  kenji: { email: "kenji@motocamp.test", displayName: "佐々木 健二" },
+  misaki: { email: "misaki@motocamp.test", displayName: "川瀬 美咲" },
+} as const;
+
+type AuthUids = Record<keyof typeof SEED_ACCOUNTS, string>;
+
+// Supabase Auth の管理用 API を呼ぶクライアント。Secret key は全権限を持つので、
+// .env.local にだけ置き、NEXT_PUBLIC_ を付けず、Vercel にも入れない（シードは手元でしか実行しない）
+function createAdminClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const secretKey = process.env.SUPABASE_SECRET_KEY;
+  if (!url || !secretKey) {
+    throw new Error("NEXT_PUBLIC_SUPABASE_URL と SUPABASE_SECRET_KEY が設定されていません");
+  }
+  // ログインするためではなく管理用の API を呼ぶだけなので、セッションは保存しない
+  return createClient(url, secretKey, { auth: { autoRefreshToken: false, persistSession: false } });
+}
+
+// Auth のアカウントを用意し、その id（User.authUid に入れる値）を返す。
+// resetAll は DB の表しか消さないので、2回目以降はアカウントが残っている。そのときは作り直さず、
+// パスワードと表示名を上書きして、いつ実行しても同じ状態にする
+async function ensureAuthUser(admin: SupabaseClient, account: { email: string; displayName: string }) {
+  const attributes = {
+    password: SEED_PASSWORD,
+    email_confirm: true,
+    user_metadata: { display_name: account.displayName },
+  };
+
+  const { data, error } = await admin.auth.admin.createUser({ email: account.email, ...attributes });
+  if (!error) return data.user.id;
+  if (error.code !== "email_exists" && error.code !== "user_already_exists") throw error;
+
+  const { data: list, error: listError } = await admin.auth.admin.listUsers({ perPage: 1000 });
+  if (listError) throw listError;
+  const existing = list.users.find((user) => user.email === account.email);
+  if (!existing) throw new Error(`${account.email} のアカウントが見つかりません`);
+
+  const { error: updateError } = await admin.auth.admin.updateUserById(existing.id, attributes);
+  if (updateError) throw updateError;
+  return existing.id;
 }
 
 // date 列には「その日の UTC 0 時」の Date を渡す（docs/schema.md「文字列の長さ・日時の方針」）
@@ -54,16 +96,31 @@ async function resetAll(tx: Prisma.TransactionClient) {
   await tx.user.deleteMany();
 }
 
-async function seedFujiEvent(tx: Prisma.TransactionClient) {
-  // ログインとの紐付け（authUid）は #7 で行う
+async function seedFujiEvent(tx: Prisma.TransactionClient, authUids: AuthUids) {
+  // authUid で Auth のアカウントと紐付けるので、SEED_ACCOUNTS のメールアドレスでログインできる
   const kenjiUser = await tx.user.create({
-    data: { displayName: "佐々木 健二", bike: "CB400SF", gearMemo: "リアキャリア＋60Lシートバッグ、サイドバッグ左右" },
+    data: {
+      authUid: authUids.kenji,
+      displayName: SEED_ACCOUNTS.kenji.displayName,
+      bike: "CB400SF",
+      gearMemo: "リアキャリア＋60Lシートバッグ、サイドバッグ左右",
+    },
   });
   const misakiUser = await tx.user.create({
-    data: { displayName: "川瀬 美咲", bike: "Rebel 250", gearMemo: "タンデムシートに40Lバッグのみ" },
+    data: {
+      authUid: authUids.misaki,
+      displayName: SEED_ACCOUNTS.misaki.displayName,
+      bike: "Rebel 250",
+      gearMemo: "タンデムシートに40Lバッグのみ",
+    },
   });
   const takuyaUser = await tx.user.create({
-    data: { displayName: "山田 拓也", bike: "SEROW 250", gearMemo: "リアキャリア＋40Lバッグ、長物は横積み可" },
+    data: {
+      authUid: authUids.takuya,
+      displayName: SEED_ACCOUNTS.takuya.displayName,
+      bike: "SEROW 250",
+      gearMemo: "リアキャリア＋40Lバッグ、長物は横積み可",
+    },
   });
 
   // 終了済みに見えないよう、日付は日本時間の今日から10日後の1泊2日にする
@@ -223,16 +280,25 @@ async function seedFujiEvent(tx: Prisma.TransactionClient) {
 }
 
 async function main() {
+  // Auth のアカウントは、DB のトランザクションを始める前に用意する
+  // （外部の API の応答を待つ間、トランザクションを開いたままにしないため）
+  const admin = createAdminClient();
+  const authUids: AuthUids = {
+    takuya: await ensureAuthUser(admin, SEED_ACCOUNTS.takuya),
+    kenji: await ensureAuthUser(admin, SEED_ACCOUNTS.kenji),
+    misaki: await ensureAuthUser(admin, SEED_ACCOUNTS.misaki),
+  };
+
   const prisma = createPrismaClient();
   try {
     await prisma.$transaction(
       async (tx) => {
         await resetAll(tx);
-        await seedFujiEvent(tx);
+        await seedFujiEvent(tx, authUids);
       },
       { timeout: 60 * 1000 },
     );
-    console.log("シードを投入しました");
+    console.log(`シードを投入しました（ログイン: ${SEED_ACCOUNTS.takuya.email} / ${SEED_PASSWORD} など）`);
   } finally {
     await prisma.$disconnect();
   }

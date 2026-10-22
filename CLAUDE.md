@@ -159,4 +159,5 @@ DATABASE_URL=        # Supabase Transaction pooler（:6543, ?pgbouncer=true）�
 DIRECT_URL=          # Supabase Session pooler（:5432。Direct connection は IPv6 のみで WSL から届かないため）— prisma7.config.ts の datasource.url（migrate 用）
 NEXT_PUBLIC_SUPABASE_URL=              # https://<プロジェクトの ref>.supabase.co — lib/supabase/server.ts と proxy.ts（Auth のみ）
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=  # Publishable key（sb_publishable_...）。公開してよいキー。Supabase の新しい形式（古い anon key の代わり）
+SUPABASE_SECRET_KEY=                   # Secret key（sb_secret_...）。prisma/seed.ts だけが使う。全権限を持つので NEXT_PUBLIC_ を付けず、Vercel にも入れない
 ```
