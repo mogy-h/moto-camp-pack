@@ -34,17 +34,18 @@
 
 ## 1. 認証・セッション
 
-- [ ] Supabase Auth（メール + パスワード）: 登録・ログイン・ログアウト・パスワードリセット (#7, #8)
-- [ ] 登録時に `User` 作成（`authUid` 紐付け）(#7)
+- [x] Supabase Auth（メール + パスワード）: 登録・ログイン・ログアウト (#7) — 2026-10-22 登録時のメール確認は使わない（確認リンクの受け口が要らない。内蔵のメール送信には送信数の上限がある。#8 を作らないので、メールアドレスはログインの ID にしか使わない）。登録・ログイン・ログアウトは Server Action（`src/actions/auth.ts`）。Supabase のエラーは code で見分けて AppError にする（ログインの失敗では、メールとパスワードのどちらが違うかを言わない）。Supabase 側でもパスワードの最小文字数を 8 にした（公開キーで Auth の API を直接呼べるため）。キーは新しい形式の Publishable key。シードの3人を Admin API で Auth のアカウントと紐付けた（Secret key はシードだけが使い、Vercel には入れない）
+- [ ] パスワードリセット (#8)
+- [x] 登録時に `User` 作成（`authUid` 紐付け）(#7) — 2026-10-22 Auth と DB は1つのトランザクションにできないので、表示名を `user_metadata` にも入れ、`getCurrentUser` が `upsert` で作り直す（Prisma Studio で行を消して確認）。`auth.users` のトリガーは使わない（`auth` スキーマは Prisma の管理外）。schema.md への記録は次のブランチで行う
 - [ ] ゲストクレームトークン（生成・ハッシュ保存・Cookie）(#21)
-- [ ] `getCurrentUser()`（Auth / ゲスト Cookie 両対応）(#7, #21)
+- [x] `getCurrentUser()`（Auth / ゲスト Cookie 両対応）(#7, #21) — 2026-10-22 Supabase Auth の分だけ（ゲスト Cookie は #21 で足す）。`cache()` で1回の表示につき1回だけ問い合わせる。`getClaims` のエラーは記録して `null`、Prisma のエラーは投げる（catch して `null` にすると、DB の障害がログアウトに見えるため）
 - [ ] `requireMember(eventId)`（`leftAt: null` 判定）(#11)
-- [ ] 未ログイン時のリダイレクト（`src/proxy.ts`。Next.js 16 で middleware から改名）(#7)
+- [x] 未ログイン時のリダイレクト（`src/proxy.ts`。Next.js 16 で middleware から改名）(#7) — 2026-10-22 proxy はセッションの更新と、未ログイン → `/login`・ログイン済みで `/login` → `/` のリダイレクトだけ。認証の確認はサーバー側で行う（Next.js のドキュメントにも、Server Action は proxy を通らないことがあるとある）。`/login`・`/signup`・`/terms`・`/j/...` は公開。ログイン後に元のページへ戻す仕組み（`?next=`）は、#18 で URL の検証も含めて作る
 
 ## 2. 共通ロジック（`lib/`）
 
 - [x] `derive/`: eventPhase（下書き・準備中・完了。「今日」は引数で受け取る）(#5) — 2026-10-18 ほかの導出関数は、使う画面の Issue で作る方針に変更（土台だけ先に作ると使い道が見えにくいため）。判定は 完了 → 下書き → 準備中 の順（下書きのまま帰着日を過ぎたら完了。screens.md に追記）。帰着日の当日・翌日の境目をテストで確認
-- [~] `derive/`: initials / avatarColor (#6)
+- [x] `derive/`: initials / avatarColor (#6) — 2026-10-20 色は userId から決める（並び順や表示名から決めると、画面や名前の変更で同じ人の色が変わるため）。文字コードの合計をパレットの数（5色）で割った余り。イニシャルは `Intl.Segmenter` で見た目の1文字ずつ数える（つなげた絵文字も途中で切れない）。avatarColor のテストは具体的な色ではなく性質（同じ結果・必ずパレットのどれか・全色が使われる）を確かめる
 - [ ] `derive/`: progress (#10)
 - [ ] `derive/`: itemStatus / effectiveGearMemo (#11)
 - [x] Vitest の導入（純関数のテスト）(#5) — 2026-10-18 Vitest 4.1。純関数だけをテストするので jsdom・Testing Library は入れていない。`@/` は `resolve.tsconfigPaths` で解決（プラグイン不要）
@@ -60,20 +61,20 @@
 UI の土台は shadcn/ui。採用理由: モーダルやメニューのアクセシビリティ対応（フォーカス管理・キーボード操作・読み上げ）は実績のある実装に任せ、その分の時間を早い者勝ち・権限チェックなどの中心ロジックに使うため。
 
 **shadcn/ui から追加し、Organic に合わせて調整する**（初期の見た目のまま使わない）
-- [~] Button（primary / secondary / ghost / icon。`rounded-full`）(#6)
-- [~] Badge（デザインの Tag）(#6)
-- [~] Card (#6)
-- [~] Dialog（モーダル）(#6)
-- [~] Input / Textarea / Label / Checkbox (#6)
-- [~] Radio Group（S・M・L のセグメント）(#6) — 2026-10-18 Toggle Group から変更。RadioGroup はフォームの中で隠れた input を出力するので、Server Action に FormData のまま値が届く（ToggleGroup は button の集まりで、state と hidden input を自分で書く必要がある）。デザインの HTML も radio
+- [x] Button（primary / secondary / ghost / icon。`rounded-full`）(#6) — 2026-10-20 バリアントの名前は Organic に合わせた（shadcn の secondary はグレーで塗るボタンで、Organic の secondary（枠線だけ）と意味が違うため）。色は画面のデザイン（ダッシュボード）の値。フォーカスは shadcn の ring を外し、globals.css の outline に任せる。デザインの HTML からの転記は Claude が担当
+- [x] Badge（デザインの Tag）(#6) — 2026-10-20 色ごとのバリアント（neutral / accent / accent-2 / warn）にし、どの状態にどの色を使うかは使う側で決める。Organic にない注意の色（warn）と 11px の文字（text-2xs）を globals.css に足した
+- [x] Card (#6) — 2026-10-20
+- [x] Dialog（モーダル）(#6) — 2026-10-20 Esc で閉じ、開いている間はフォーカスが中に留まることを確認。スマホでも収まるよう高さは画面の 88% まで
+- [x] Input / Textarea / Label / Checkbox (#6) — 2026-10-20 入力欄の角は画面のデザインに合わせて `--radius-md`（CLAUDE.md の「入力は rounded-full」を修正）。Checkbox の初期の見た目は「積み込み済み」の丸いチェックにした（2026-10-21 訂正: 新規登録の規約同意は角の丸い四角なので、使う側で className を付けて変えている）
+- [x] Radio Group（S・M・L のセグメント）(#6) — 2026-10-18 Toggle Group から変更。RadioGroup はフォームの中で隠れた input を出力するので、Server Action に FormData のまま値が届く（ToggleGroup は button の集まりで、state と hidden input を自分で書く必要がある）。デザインの HTML も radio。2026-10-20 項目そのものを丸いボタンにし、選ばれた項目を塗る
 - [ ] Tabs (#10)
 - [ ] Popover（通知ポップオーバー）(#17)
 - [ ] Dropdown Menu（アカウントメニュー）(#10)
-- [~] Sonner（トースト）(#6)
+- [x] Sonner（トースト）(#6) — 2026-10-20 ダークモードを使わないので next-themes を外した。デザインにトーストがないため、色は Organic のトークンから選んだ。表示先は layout.tsx に1つ置く
 - [ ] Sheet（スマホの操作シート。必要になったら）(#12)
 
 **自作する（アプリ固有）**
-- [~] Avatar / AvatarStack（色・イニシャルは `lib/derive/` から）(#6)
+- [x] Avatar / AvatarStack（色・イニシャルは `lib/derive/` から）(#6) — 2026-10-20 受け取るのは `{ id, displayName }` だけ（Prisma の型に縛られないため）。読み上げはイニシャルではなく表示名。5人目以降は「+2」のようにまとめる（デザインに描かれていないため決めた）。担当者がいないときの丸は #13 で作る
 - [ ] Header（戻る・ベル・アカウントメニュー）(#10)
 - [ ] GearMemoInput（テキスト + プリセットタグ）(#9)
 
@@ -119,7 +120,7 @@ UI の土台は shadcn/ui。採用理由: モーダルやメニューのアク�
 
 ## 5. 画面
 
-- [ ] `/login`, `/signup` (#7)
+- [x] `/login`, `/signup` (#7) — 2026-10-22 タブは2つの URL へのリンク。フォームは `useActionState`。表示名・メールアドレス・規約の同意は state で持つ（React 19 は送信後にフォームを空に戻すため）。`noValidate` で、検証のメッセージを zod の日本語にそろえる。`/terms`（利用規約とプライバシーポリシー）を追加。招待リンクの導線は #18 で決める（screens.md 要確認 5）。見た目は Claude、Action とつなぐ部分は本人
 - [ ] `/profile` (#9)
 - [ ] `/`（ダッシュボード）(#10)
 - [ ] `/j/[token]`（招待・参加、5状態）(#18, #21)

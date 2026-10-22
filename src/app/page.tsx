@@ -2,15 +2,24 @@ import { connection } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Tent } from "lucide-react";
+import { signOut } from "@/actions/auth";
+import { getCurrentUser } from "@/lib/session";
 
 export default async function Home() {
   await connection();
+  const user = await getCurrentUser();
   const events = await prisma.event.findMany({
     include: { members: { include: { user: true } } },
   });
 
   return (
     <div>
+      <p>ログイン中: {user?.displayName}</p>
+      <form action={signOut}>
+        <Button type="submit" variant="secondary">
+          ログアウト
+        </Button>
+      </form>
       {events.map((event) => (
         <div key={event.id} className="bg-surface rounded-lg p-4 shadow-md">
           <h1 className="font-display text-2xl">MotoCamp Pack</h1>

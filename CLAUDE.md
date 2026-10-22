@@ -69,7 +69,7 @@ src/
       profile/
     j/[token]/             # 招待リンク
     claim/                 # ゲスト→アカウント引き継ぎ
-  actions/                 # Server Actions（ドメインごと: items.ts, members.ts, events.ts, invites.ts, notifications.ts, profile.ts）
+  actions/                 # Server Actions（ドメインごと: auth.ts, items.ts, members.ts, events.ts, invites.ts, notifications.ts, profile.ts）
   lib/
     prisma.ts              # PrismaClient シングルトン（@prisma/adapter-pg + DATABASE_URL）
     utils.ts               # cn()（クラス名の結合。shadcn/ui の init で生成）
@@ -157,6 +157,7 @@ Next.js は `.env.local` を自動で読むが、Prisma 7 の CLI は `.env` 系
 ```
 DATABASE_URL=        # Supabase Transaction pooler（:6543, ?pgbouncer=true）— アプリ実行時。lib/prisma.ts の adapter に渡す
 DIRECT_URL=          # Supabase Session pooler（:5432。Direct connection は IPv6 のみで WSL から届かないため）— prisma7.config.ts の datasource.url（migrate 用）
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_SUPABASE_URL=              # https://<プロジェクトの ref>.supabase.co — lib/supabase/server.ts と proxy.ts（Auth のみ）
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=  # Publishable key（sb_publishable_...）。公開してよいキー。Supabase の新しい形式（古い anon key の代わり）
+SUPABASE_SECRET_KEY=                   # Secret key（sb_secret_...）。prisma/seed.ts だけが使う。全権限を持つので NEXT_PUBLIC_ を付けず、Vercel にも入れない
 ```
