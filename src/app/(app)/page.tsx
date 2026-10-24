@@ -3,17 +3,25 @@ import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Tent } from "lucide-react";
 import { signOut } from "@/actions/auth";
-import { getCurrentUser } from "@/lib/session";
+import { Header, HeaderLogo } from "@/components/ui/header";
+import { requireUser } from "@/lib/session";
+import { AccountMenu } from "@/components/ui/account-menu";
 
 export default async function Home() {
   await connection();
-  const user = await getCurrentUser();
+  const user = await requireUser();
   const events = await prisma.event.findMany({
     include: { members: { include: { user: true } } },
   });
 
   return (
     <div>
+      <Header>
+        <HeaderLogo />
+        <div className="flex-1" />
+        <AccountMenu user={user} />
+      </Header>
+
       <p>ログイン中: {user?.displayName}</p>
       <form action={signOut}>
         <Button type="submit" variant="secondary">
