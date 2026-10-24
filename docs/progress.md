@@ -46,7 +46,7 @@
 
 - [x] `derive/`: eventPhase（下書き・準備中・完了。「今日」は引数で受け取る）(#5) — 2026-10-18 ほかの導出関数は、使う画面の Issue で作る方針に変更（土台だけ先に作ると使い道が見えにくいため）。判定は 完了 → 下書き → 準備中 の順（下書きのまま帰着日を過ぎたら完了。screens.md に追記）。帰着日の当日・翌日の境目をテストで確認
 - [x] `derive/`: initials / avatarColor (#6) — 2026-10-20 色は userId から決める（並び順や表示名から決めると、画面や名前の変更で同じ人の色が変わるため）。文字コードの合計をパレットの数（5色）で割った余り。イニシャルは `Intl.Segmenter` で見た目の1文字ずつ数える（つなげた絵文字も途中で切れない）。avatarColor のテストは具体的な色ではなく性質（同じ結果・必ずパレットのどれか・全色が使われる）を確かめる
-- [ ] `derive/`: progress (#10)
+- [~] `derive/`: progress (#10)
 - [ ] `derive/`: itemStatus / effectiveGearMemo (#11)
 - [x] Vitest の導入（純関数のテスト）(#5) — 2026-10-18 Vitest 4.1。純関数だけをテストするので jsdom・Testing Library は入れていない。`@/` は `resolve.tsconfigPaths` で解決（プラグイン不要）
 - [x] 日付ヘルパ（日本時間の「今日」、`date` 列と日付文字列の変換）。サーバーのローカル時刻に頼らない (#5) — 2026-10-18 `src/lib/date.ts`。`Intl.DateTimeFormat` の `timeZone` で日本時間の日付を出す。`now` を引数にしてテストで時刻を固定し、UTC 15:00 の境目を確認
@@ -67,15 +67,15 @@ UI の土台は shadcn/ui。採用理由: モーダルやメニューのアク�
 - [x] Dialog（モーダル）(#6) — 2026-10-20 Esc で閉じ、開いている間はフォーカスが中に留まることを確認。スマホでも収まるよう高さは画面の 88% まで
 - [x] Input / Textarea / Label / Checkbox (#6) — 2026-10-20 入力欄の角は画面のデザインに合わせて `--radius-md`（CLAUDE.md の「入力は rounded-full」を修正）。Checkbox の初期の見た目は「積み込み済み」の丸いチェックにした（2026-10-21 訂正: 新規登録の規約同意は角の丸い四角なので、使う側で className を付けて変えている）
 - [x] Radio Group（S・M・L のセグメント）(#6) — 2026-10-18 Toggle Group から変更。RadioGroup はフォームの中で隠れた input を出力するので、Server Action に FormData のまま値が届く（ToggleGroup は button の集まりで、state と hidden input を自分で書く必要がある）。デザインの HTML も radio。2026-10-20 項目そのものを丸いボタンにし、選ばれた項目を塗る
-- [ ] Tabs (#10)
+- [~] Tabs (#10)
 - [ ] Popover（通知ポップオーバー）(#17)
-- [ ] Dropdown Menu（アカウントメニュー）(#10)
+- [~] Dropdown Menu（アカウントメニュー）(#10)
 - [x] Sonner（トースト）(#6) — 2026-10-20 ダークモードを使わないので next-themes を外した。デザインにトーストがないため、色は Organic のトークンから選んだ。表示先は layout.tsx に1つ置く
 - [ ] Sheet（スマホの操作シート。必要になったら）(#12)
 
 **自作する（アプリ固有）**
 - [x] Avatar / AvatarStack（色・イニシャルは `lib/derive/` から）(#6) — 2026-10-20 受け取るのは `{ id, displayName }` だけ（Prisma の型に縛られないため）。読み上げはイニシャルではなく表示名。5人目以降は「+2」のようにまとめる（デザインに描かれていないため決めた）。担当者がいないときの丸は #13 で作る
-- [ ] Header（戻る・ベル・アカウントメニュー）(#10)
+- [~] Header（戻る・ベル・アカウントメニュー）(#10)
 - [ ] GearMemoInput（テキスト + プリセットタグ）(#9)
 
 ## 4. Server Actions（`actions/`）
@@ -83,7 +83,7 @@ UI の土台は shadcn/ui。採用理由: モーダルやメニューのアク�
 各 Action: 所属判定 → 権限 → zod → トランザクション（更新 + 通知）→ revalidatePath
 
 **events**
-- [ ] createEvent（作成者を OWNER で参加、`PUBLISHED` で作成）(#10)
+- [~] createEvent（作成者を OWNER で参加、`PUBLISHED` で作成）(#10)
 - [ ] updateEvent（日程・場所変更で SCHEDULE_CHANGED）— OWNER (#19)
 - [ ] publishEvent — OWNER (#19)
 
@@ -122,7 +122,7 @@ UI の土台は shadcn/ui。採用理由: モーダルやメニューのアク�
 
 - [x] `/login`, `/signup` (#7) — 2026-10-22 タブは2つの URL へのリンク。フォームは `useActionState`。表示名・メールアドレス・規約の同意は state で持つ（React 19 は送信後にフォームを空に戻すため）。`noValidate` で、検証のメッセージを zod の日本語にそろえる。`/terms`（利用規約とプライバシーポリシー）を追加。招待リンクの導線は #18 で決める（screens.md 要確認 5）。見た目は Claude、Action とつなぐ部分は本人
 - [ ] `/profile` (#9)
-- [ ] `/`（ダッシュボード）(#10)
+- [~] `/`（ダッシュボード）(#10)
 - [ ] `/j/[token]`（招待・参加、5状態）(#18, #21)
 - [ ] `/events/[eventId]`（イベント詳細）
   - [ ] ヘッダー・メンバーカード・絞り込み (#11)
