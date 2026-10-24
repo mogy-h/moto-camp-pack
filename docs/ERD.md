@@ -141,7 +141,7 @@ Properties as follows:
 - `place`:
 - `start_date`:
 - `end_date`: 日帰りは startDate と同じ日
-- `status`:
+- `status`: 既定は PUBLISHED（理由は docs/progress.md「優先順位」）。DRAFT の扱いは docs/screens.md 要確認 7
 - `created_by_id`:
 - `created_at`:
 - `updated_at`:

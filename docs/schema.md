@@ -57,7 +57,7 @@ model Event {
   place       String?     @db.VarChar(50)
   startDate   DateTime    @map("start_date") @db.Date
   endDate     DateTime    @map("end_date") @db.Date    // 日帰りは startDate と同じ日
-  status      EventStatus @default(DRAFT)     // DRAFT | PUBLISHED
+  status      EventStatus @default(PUBLISHED)     // DRAFT | PUBLISHED
   createdById String      @map("created_by_id") @db.Uuid
   createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
