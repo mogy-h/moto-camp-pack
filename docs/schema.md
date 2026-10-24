@@ -521,6 +521,26 @@ await prisma.eventMember.update({
 - 離脱中に解除された運搬担当は自動では戻さない（空いていれば再度「自分が運ぶ」で取れる）
 - MEMBER_JOINED 通知は再参加でも発行する
 
+## Auth のアカウントと User の作り方
+
+メールアドレスとパスワードは Supabase Auth（`auth.users`）が持ち、アプリのデータは `User` が持つ。`User.authUid = auth.users.id` で紐付ける。
+
+**新規登録**（`signUp`、`src/actions/auth.ts`）
+1. `supabase.auth.signUp` で Auth のアカウントを作る。表示名は `options.data`（= `user_metadata.display_name`）にも入れておく
+2. `prisma.user.create` で `User { authUid, displayName }` を作る
+
+Auth と DB は別のサービスなので、1 と 2 を1つのトランザクションにはできない。2 が失敗すると、Auth のアカウントだけがあって `User` がない状態になる。
+
+**`User` がないときの作り直し**（`getCurrentUser`、`src/lib/session.ts`）
+- ログイン中のユーザーを返すときに、`authUid` で `User` を `upsert` する。ない場合は `user_metadata.display_name` を表示名にして作る（使えない値なら「名無しさん」）
+- `update: {}` にして、既にある `User` は書き換えない（プロフィールで変えた表示名を、登録時の値で上書きしないため）
+- 2 が失敗しても、次に画面を開いたときに `User` ができる（Prisma Studio で行を消して確認）
+
+**`auth.users` のトリガーで作らない理由**
+- `auth` スキーマは Supabase が管理していて、Prisma の管理外。トリガーを置くと、`User` を作る処理が schema.prisma とマイグレーションの外に出てしまう
+
+ゲストの `User`（`authUid = null`）は招待リンクからの参加で作る（「ゲスト参加の扱い」）。シードの3人は Admin API で Auth のアカウントを作り、`authUid` を入れる（`prisma/seed.ts`）。
+
 ## ゲスト参加の扱い
 
 1. `/j/[token]` で Invite を検証（`expiresAt`, `revokedAt`）
