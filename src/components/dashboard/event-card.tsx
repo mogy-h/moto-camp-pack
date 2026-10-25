@@ -148,4 +148,4 @@ function EventCard({ event, phase, members, progress }: EventCardProps) {
   );
 }
 
-export { EventCard, type EventPhase };
+export { EventCard, type EventCardProps, type EventPhase };

@@ -6,7 +6,7 @@ import { todayInTokyo } from "@/lib/date";
 import { eventPhase } from "@/lib/derive/eventPhase";
 import { progress } from "@/lib/derive/progress";
 import { Greeting } from "@/components/dashboard/greeting";
-import { EventCard } from "@/components/dashboard/event-card";
+import { EventList } from "@/components/dashboard/event-list";
 
 export default async function Home() {
   const today = todayInTokyo();
@@ -51,17 +51,15 @@ export default async function Home() {
 
       <main className="mx-auto w-full max-w-page px-3 pt-4.5 pb-22 sm:px-6 sm:pt-7.5">
         <Greeting displayName={user.displayName} today={today} />
-        <div className="flex flex-col gap-2.75">
-          {events.map((event) => (
-            <EventCard
-              key={event.id}
-              event={event}
-              phase={eventPhase(event, today)}
-              members={event.members.map((member) => member.user)}
-              progress={progress(event.items)}
-            />
-          ))}
-        </div>
+
+        <EventList
+          cards={events.map((event) => ({
+            event,
+            phase: eventPhase(event, today),
+            members: event.members.map((member) => member.user),
+            progress: progress(event.items),
+          }))}
+        />
       </main>
     </>
   );
