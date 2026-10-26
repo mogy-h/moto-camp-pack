@@ -7,6 +7,7 @@ import { eventPhase } from "@/lib/derive/eventPhase";
 import { progress } from "@/lib/derive/progress";
 import { Greeting } from "@/components/dashboard/greeting";
 import { EventList } from "@/components/dashboard/event-list";
+import { CreateEventDialog } from "@/components/dashboard/create-event-dialog";
 
 export default async function Home() {
   const today = todayInTokyo();
@@ -50,7 +51,12 @@ export default async function Home() {
       </Header>
 
       <main className="mx-auto w-full max-w-page px-3 pt-4.5 pb-22 sm:px-6 sm:pt-7.5">
-        <Greeting displayName={user.displayName} today={today} />
+        <Greeting displayName={user.displayName} today={today}>
+          <CreateEventDialog
+            profile={{ bike: user.bike, gearMemo: user.gearMemo }}
+            today={today}
+          />
+        </Greeting>
 
         <EventList
           cards={events.map((event) => ({
