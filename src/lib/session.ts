@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import type { JwtPayload } from "@supabase/supabase-js";
 import { LIMITS } from "@/lib/validation/limits";
+import { redirect } from "next/navigation";
 
 const FALLBACK_DISPLAY_NAME = "名無しさん";
 
@@ -31,10 +32,19 @@ export const getCurrentUser = cache(async () => {
 
   const authUid = data.claims.sub;
   const displayName = displayNameFrom(data.claims);
+  const email = data.claims.email ?? null;
 
-  return prisma.user.upsert({
+  const user = await prisma.user.upsert({
     where: { authUid },
     update: {},
     create: { authUid, displayName },
   });
+
+  return { ...user, email };
 });
+
+export async function requireUser() {
+  const user = await getCurrentUser();
+  if (user === null) return redirect("/login");
+  return user;
+}
