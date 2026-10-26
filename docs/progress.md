@@ -39,15 +39,15 @@
 - [x] 登録時に `User` 作成（`authUid` 紐付け）(#7) — 2026-10-22 Auth と DB は1つのトランザクションにできないので、表示名を `user_metadata` にも入れ、`getCurrentUser` が `upsert` で作り直す（Prisma Studio で行を消して確認）。`auth.users` のトリガーは使わない（`auth` スキーマは Prisma の管理外）。schema.md への記録は次のブランチで行う → 2026-10-24 #10 で schema.md「Auth のアカウントと User の作り方」に記録
 - [ ] ゲストクレームトークン（生成・ハッシュ保存・Cookie）(#21)
 - [x] `getCurrentUser()`（Auth / ゲスト Cookie 両対応）(#7, #21) — 2026-10-22 Supabase Auth の分だけ（ゲスト Cookie は #21 で足す）。`cache()` で1回の表示につき1回だけ問い合わせる。`getClaims` のエラーは記録して `null`、Prisma のエラーは投げる（catch して `null` にすると、DB の障害がログアウトに見えるため）。2026-10-25 #10 でメールアドレス（Supabase の claims。DB に列は持たない）も返すようにし、ログイン必須の画面・Action 用に `requireUser()`（未ログインなら `/login` へ）を足した
-- [ ] `requireMember(eventId)`（`leftAt: null` 判定）(#11)
-- [x] 未ログイン時のリダイレクト（`src/proxy.ts`。Next.js 16 で middleware から改名）(#7) — 2026-10-22 proxy はセッションの更新と、未ログイン → `/login`・ログイン済みで `/login` → `/` のリダイレクトだけ。認証の確認はサーバー側で行う（Next.js のドキュメントにも、Server Action は proxy を通らないことがあるとある）。`/login`・`/signup`・`/terms`・`/j/...` は公開。ログイン後に元のページへ戻す仕組み（`?next=`）は、#18 で URL の検証も含めて作る
+- [~] `requireMember(eventId)`（`leftAt: null` 判定）(#11)
+- [~] 未ログイン時のリダイレクト（`src/proxy.ts`。Next.js 16 で middleware から改名）(#7) — 2026-10-22 proxy はセッションの更新と、未ログイン → `/login`・ログイン済みで `/login` → `/` のリダイレクトだけ。認証の確認はサーバー側で行う（Next.js のドキュメントにも、Server Action は proxy を通らないことがあるとある）。`/login`・`/signup`・`/terms`・`/j/...` は公開。ログイン後に元のページへ戻す仕組み（`?next=`）は、#18 で URL の検証も含めて作る
 
 ## 2. 共通ロジック（`lib/`）
 
 - [x] `derive/`: eventPhase（下書き・準備中・完了。「今日」は引数で受け取る）(#5) — 2026-10-18 ほかの導出関数は、使う画面の Issue で作る方針に変更（土台だけ先に作ると使い道が見えにくいため）。判定は 完了 → 下書き → 準備中 の順（下書きのまま帰着日を過ぎたら完了。screens.md に追記）。帰着日の当日・翌日の境目をテストで確認
 - [x] `derive/`: initials / avatarColor (#6) — 2026-10-20 色は userId から決める（並び順や表示名から決めると、画面や名前の変更で同じ人の色が変わるため）。文字コードの合計をパレットの数（5色）で割った余り。イニシャルは `Intl.Segmenter` で見た目の1文字ずつ数える（つなげた絵文字も途中で切れない）。avatarColor のテストは具体的な色ではなく性質（同じ結果・必ずパレットのどれか・全色が使われる）を確かめる
 - [x] `derive/`: progress (#10) — 2026-10-24 アイテムの `packedAt` を取得して JS で数える（1イベント数十件なので DB の集計にしない。#11 のイベント詳細でも同じ関数を使える）。割合は丸めずに `ratio`（0〜1）で返す（バーの幅は小数でよく、丸めると 199/200 が 100% に見える）。0件は 0（0 ÷ 0 の NaN を防ぐ。この分岐は空の配列のテストだけが確かめている）。バーの色は `ratio === 1` で判定
-- [ ] `derive/`: itemStatus / effectiveGearMemo (#11)
+- [~] `derive/`: itemStatus / effectiveGearMemo (#11)
 - [x] Vitest の導入（純関数のテスト）(#5) — 2026-10-18 Vitest 4.1。純関数だけをテストするので jsdom・Testing Library は入れていない。`@/` は `resolve.tsconfigPaths` で解決（プラグイン不要）
 - [x] 日付ヘルパ（日本時間の「今日」、`date` 列と日付文字列の変換）。サーバーのローカル時刻に頼らない (#5) — 2026-10-18 `src/lib/date.ts`。`Intl.DateTimeFormat` の `timeZone` で日本時間の日付を出す。`now` を引数にしてテストで時刻を固定し、UTC 15:00 の境目を確認
 - [ ] `permissions.ts`: `assertCan(action, member, item?)` (#12)
@@ -93,7 +93,7 @@ UI の土台は shadcn/ui。採用理由: モーダルやメニューのアク�
 - [ ] joinAsGuest（User + EventMember + Cookie、MEMBER_JOINED）(#21)
 - [ ] leaveEvent / removeMember（離脱処理一式を1トランザクション、WITHDRAWN / REQUEST_CANCELLED）(#20)
 - [ ] claimGuest（新規: authUid 紐付け / 既存: 付け替え or 統合。schema.md 参照）(#22)
-- [ ] updateEventGearMemo（本人）(#11)
+- [~] updateEventGearMemo（本人）(#11)
 
 **items（共同装備）**
 - [ ] addSharedItem（SHARED_ADDED）(#12)
@@ -125,13 +125,13 @@ UI の土台は shadcn/ui。採用理由: モーダルやメニューのアク�
 - [x] `/`（ダッシュボード）(#10) — 2026-10-25 自分が参加中（`members: { some: { userId, leftAt: null } }`）のイベントだけを出す。ログインの確認はレイアウトではなく各ページの `requireUser()`（レイアウトはページを移動しても描き直されないため。Next.js のドキュメント）。タブ（予定 = 完了以外 / 完了 / すべて）と検索（タイトル・場所）は、全件を Client Component に渡してブラウザで絞り込む（数十件なので軽い。絞り込みの状態は URL に残さない）。状態・進捗は page で計算してカードに渡す。作成モーダルはフォームを別のコンポーネントにし、閉じると入力とエラーが消える（アンマウントで state が消える）。成功したら `useActionState` に渡す関数の中で結果を見て閉じる。集計カードは後回し（「自分への確認待ち」は宛先付きの依頼 #16 がないと常に 0 のため）。日付の案内（「1泊2日」）は省いた
 - [ ] `/j/[token]`（招待・参加、5状態）(#18, #21)
 - [ ] `/events/[eventId]`（イベント詳細）
-  - [ ] ヘッダー・メンバーカード・絞り込み (#11)
+  - [~] ヘッダー・メンバーカード・絞り込み (#11)
   - [ ] 貸し借りセクション (#14, #15, #16)
   - [ ] 共同装備セクション (#12, #13)
   - [ ] 追加・編集・操作シートのモーダル (#12)
   - [ ] 通知ポップオーバー・招待モーダル (#17, #18)
   - [ ] イベント設定モーダル（オーナー: 基本情報・メンバー・招待リンク / メンバー: 退出）(#19, #20)
-  - [ ] タブ復帰時の `router.refresh()` (#11)
+  - [~] タブ復帰時の `router.refresh()` (#11)
 - [ ] `/notifications` (#17)
 - [ ] `/claim` (#22)
 

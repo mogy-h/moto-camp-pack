@@ -384,10 +384,7 @@ function itemStatus(item) {
 
 早い者勝ちのため `pending`（確定待ち）と `clash`（重複・要調整）は廃止。
 
-ダッシュボードの `packed / total` も集計値:
-```sql
-count(*) filter (where packed_at is not null), count(*)  -- group by event_id
-```
+ダッシュボードの `packed / total` も導出値。`lib/derive/progress` が、アイテムの `packedAt` から数える（0件のときの割合は 0）。1イベントのアイテムは数十件なので DB で集計せず、イベント詳細でも同じ関数を使う（#10）
 
 ## 割り当てのフロー
 
