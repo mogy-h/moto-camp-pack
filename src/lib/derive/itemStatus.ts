@@ -1,4 +1,4 @@
-export type ItemStatus = "fixed" | "asking" | "unassigned" | "open";
+export type ItemStatus = "confirmed" | "asking" | "unassigned" | "open";
 
 export function itemStatus(item: {
   kind: "SHARED" | "RENTAL";
@@ -7,11 +7,11 @@ export function itemStatus(item: {
 }): ItemStatus {
   switch (item.kind) {
     case "RENTAL":
-      if (item.carrierId && item.acceptedAt) return "fixed";
+      if (item.carrierId && item.acceptedAt) return "confirmed";
       if (item.carrierId) return "asking";
       return "open";
     case "SHARED":
-      if (item.carrierId) return "fixed";
+      if (item.carrierId) return "confirmed";
       return "unassigned";
   }
 }

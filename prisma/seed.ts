@@ -209,7 +209,7 @@ async function seedFujiEvent(tx: Prisma.TransactionClient, authUids: AuthUids) {
   const firewood = await shared("炭・薪", "L", kenji.id);
   await shared("LEDランタン ×2", "S", takuya.id);
 
-  // 貸し借り: lender.accepted で確定（fixed）/ 引き受け確認中（asking）、lender なしで募集中（open）。登録者は借り手
+  // 貸し借り: lender.accepted で確定（confirmed）/ 引き受け確認中（asking）、lender なしで募集中（open）。登録者は借り手
   const rental = async (
     name: string,
     size: Size,

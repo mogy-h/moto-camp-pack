@@ -376,7 +376,7 @@ ALTER TABLE items
 
 ```ts
 function itemStatus(item) {
-  if (item.carrierId && item.acceptedAt) return 'fixed';   // 確定
+  if (item.carrierId && item.acceptedAt) return 'confirmed'; // 確定
   if (item.carrierId)                    return 'asking';  // 引き受け確認中（宛先指定の依頼のみ）
   return item.kind === 'SHARED' ? 'unassigned' : 'open';   // 担当者募集中
 }
@@ -400,16 +400,16 @@ if (count === 0) throw new AlreadyTakenError(); // UI:「先に他の人が引�
 
 **共同装備（SHARED）**
 1. 誰でも追加 → `unassigned` + SHARED_ADDED 通知
-2. 「自分が運ぶ」→ 条件付き更新で `carrierId = self, acceptedAt = now()` → `fixed`
+2. 「自分が運ぶ」→ 条件付き更新で `carrierId = self, acceptedAt = now()` → `confirmed`
 3. 担当者が降りる → `carrierId = null, acceptedAt = null, packedAt = null` → `unassigned` + 全員に WITHDRAWN 通知
 
 **貸し借り（RENTAL）**
 1. 借り手がリクエストを作成（`requesterId = self`）。追加モーダルで宛先を選ぶ
    - 宛先あり（登録ギア宛）→ `carrierId = 所有者, acceptedAt = null` → `asking` + 所有者に ASK 通知
    - 宛先なし（募集）→ `open`
-2. `open` への「貸せます」→ 条件付き更新で即確定 → `fixed` + 借り手に ACCEPTED 通知
+2. `open` への「貸せます」→ 条件付き更新で即確定 → `confirmed` + 借り手に ACCEPTED 通知
 3. `asking` を受けた所有者
-   - 承諾 → `acceptedAt = now()` → `fixed` + 借り手に ACCEPTED 通知、ASK 通知の `resolvedAt` を埋める
+   - 承諾 → `acceptedAt = now()` → `confirmed` + 借り手に ACCEPTED 通知、ASK 通知の `resolvedAt` を埋める
    - 辞退 → `carrierId = null` → `open`（他の人が貸せる状態になる）+ 借り手に DECLINED 通知、ASK 通知の `resolvedAt` を埋める
 4. 確定後に担当者が降りる → `carrierId = null, acceptedAt = null, packedAt = null` → `open` + 全員に WITHDRAWN 通知
 5. 借り手が取り下げる → アイテム削除 + REQUEST_CANCELLED 通知
