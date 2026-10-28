@@ -7,6 +7,10 @@ import { eventPhase } from "@/lib/derive/eventPhase";
 import { progress } from "@/lib/derive/progress";
 import { itemStatus } from "@/lib/derive/itemStatus";
 import { effectiveGearMemo } from "@/lib/derive/effectiveGearMemo";
+import { PackProgress } from "@/components/events/pack-progress";
+import { EventHeading } from "@/components/events/event-heading";
+import { AttentionAlert } from "@/components/events/attention-alert";
+import { EventBoard } from "@/components/events/event-board";
 
 export default async function EventPage(props: PageProps<"/events/[eventId]">) {
   const { eventId } = await props.params;
@@ -80,23 +84,39 @@ export default async function EventPage(props: PageProps<"/events/[eventId]">) {
       },
       bike: member.user.bike,
       gearMemo: effectiveGearMemo(member, member.user),
-      confirmedCount: carried.filter((item) => item.status === "confirmed").length,
+      confirmedCount: carried.filter((item) => item.status === "confirmed")
+        .length,
       askingCount: carried.filter((item) => item.status === "asking").length,
       isSelf: member.id === me.id,
     };
   });
 
+  const openCount = items.filter((item) => item.status === "open").length;
+  const unassignedCount = items.filter(
+    (item) => item.status === "unassigned",
+  ).length;
+  const askingCount = items.filter((item) => item.status === "asking").length;
+
   return (
     <>
       <Header>
         <HeaderLogo />
+        <div className="flex-1" />
+        <PackProgress progress={packProgress} />
       </Header>
       <main className="mx-auto w-full max-w-page px-3 pt-4.5 pb-22 sm:px-6 sm:pt-7.5">
-        <h1>{event.title}</h1>
-        {/* <pre className="text-xs">{JSON.stringify(event, null, 2)}</pre> */}
-        <pre className="text-xs">
-          {JSON.stringify({ phase, packProgress, members, items }, null, 2)}
-        </pre>
+        <EventHeading
+          event={event}
+          isDraft={phase === "draft"}
+          memberCount={members.length}
+          askingCount={askingCount}
+        />
+        <AttentionAlert
+          openCount={openCount}
+          unassignedCount={unassignedCount}
+          askingCount={askingCount}
+        />
+        <EventBoard members={members} items={items} meId={me.id} />
       </main>
     </>
   );
