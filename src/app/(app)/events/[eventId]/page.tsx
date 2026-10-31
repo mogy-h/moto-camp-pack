@@ -116,7 +116,12 @@ export default async function EventPage(props: PageProps<"/events/[eventId]">) {
           unassignedCount={unassignedCount}
           askingCount={askingCount}
         />
-        <EventBoard members={members} items={items} meId={me.id} />
+        <EventBoard
+          eventId={eventId}
+          members={members}
+          items={items}
+          meId={me.id}
+        />
       </main>
     </>
   );

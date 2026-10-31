@@ -97,3 +97,8 @@ export const itemSchema = z.object({
   name: fields.gearName,
   size: fields.size,
 });
+
+export const updateEventGearMemoSchema = z.object({
+  eventId: fields.id,
+  gearMemo: fields.gearMemo,
+});

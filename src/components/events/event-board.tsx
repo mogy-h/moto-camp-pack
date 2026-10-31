@@ -9,8 +9,6 @@ import { StatusBadge } from "@/components/events/item-parts";
 import { cn } from "@/lib/utils";
 import type { BoardItem, BoardMember } from "@/components/events/types";
 
-// TODO(本人): 「調整が必要なものだけ」に残すアイテムか
-// （docs/screens.md: 担当が決まっていない open・unassigned と、自分宛ての asking）
 function needsAttention(item: BoardItem, meId: string): boolean {
   if (item.status === "open") return true;
   if (item.status === "unassigned") return true;
@@ -18,8 +16,6 @@ function needsAttention(item: BoardItem, meId: string): boolean {
   return false;
 }
 
-// TODO(本人): カードで選んだメンバーに関係するアイテムか
-// （共同装備は運ぶ人。貸し借りは貸す人か借りたい人）
 function involves(item: BoardItem, memberId: string): boolean {
   switch (item.kind) {
     case "RENTAL":
@@ -39,6 +35,7 @@ const RENTAL_LEGEND = [
 ] as const;
 
 type EventBoardProps = {
+  eventId: string;
   members: BoardMember[];
   items: BoardItem[];
   meId: string; // 見ている本人の EventMember の id
@@ -46,7 +43,7 @@ type EventBoardProps = {
 
 // メンバーカードと2つのリスト。絞り込みの状態を持つので Client Component にする。
 // アイテムは多くても数十件なので、ページから全件を受け取り、絞り込みはブラウザの中で行う（ダッシュボードと同じ）
-function EventBoard({ members, items, meId }: EventBoardProps) {
+function EventBoard({ eventId, members, items, meId }: EventBoardProps) {
   // カードで選んだメンバー（EventMember の id）。null なら絞り込まない
   const [memberFilter, setMemberFilter] = useState<string | null>(null);
   const [onlyAttention, setOnlyAttention] = useState(false);
@@ -61,7 +58,6 @@ function EventBoard({ members, items, meId }: EventBoardProps) {
     needsAttention(item, meId),
   ).length;
 
-  // TODO(本人): 2つの絞り込みをかけたアイテムだけを残す（オフになっている絞り込みは素通しにする）
   const visible = items.filter((item) => {
     if (onlyAttention && !needsAttention(item, meId)) return false;
     if (memberFilter !== null && !involves(item, memberFilter)) return false;
@@ -84,6 +80,7 @@ function EventBoard({ members, items, meId }: EventBoardProps) {
           {members.map((member) => (
             <MemberCard
               key={member.id}
+              eventId={eventId}
               member={member}
               selected={member.id === memberFilter}
               // 選んでいるカードをもう一度押したら解除する
