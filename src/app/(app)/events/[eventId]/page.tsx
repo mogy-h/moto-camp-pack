@@ -11,6 +11,7 @@ import { PackProgress } from "@/components/events/pack-progress";
 import { EventHeading } from "@/components/events/event-heading";
 import { AttentionAlert } from "@/components/events/attention-alert";
 import { EventBoard } from "@/components/events/event-board";
+import { RefreshOnTabReturn } from "@/components/events/refresh-on-tab-return";
 
 export default async function EventPage(props: PageProps<"/events/[eventId]">) {
   const { eventId } = await props.params;
@@ -99,6 +100,7 @@ export default async function EventPage(props: PageProps<"/events/[eventId]">) {
 
   return (
     <>
+      <RefreshOnTabReturn />
       <Header>
         <HeaderLogo />
         <div className="flex-1" />
