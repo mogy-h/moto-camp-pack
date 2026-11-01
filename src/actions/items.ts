@@ -6,10 +6,10 @@ import { requireMember } from "@/lib/session";
 import { notifyOthers } from "@/lib/notify";
 import {
   addSharedItemSchema,
-  deleteItemSchema,
+  itemTargetSchema,
 } from "@/lib/validation/schemas";
 import { assertCan } from "@/lib/permissions";
-import { NotFoundError } from "@/lib/errors";
+import { NotFoundError, AlreadyTakenError } from "@/lib/errors";
 
 import { type ActionResult, ok, toFailure } from "@/lib/action-result";
 
@@ -60,7 +60,7 @@ export async function deleteItem(
 ): Promise<ActionResult> {
   try {
     // ① 入力の検証
-    const input = deleteItemSchema.parse({
+    const input = itemTargetSchema.parse({
       eventId: formData.get("eventId"),
       itemId: formData.get("itemId"),
     });
@@ -84,6 +84,43 @@ export async function deleteItem(
     });
 
     // ⑥ イベント詳細を再検証
+    revalidatePath(`/events/${input.eventId}`);
+    return ok();
+  } catch (error) {
+    return toFailure(error);
+  }
+}
+
+export async function carrySharedItem(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  try {
+    // ① 入力の検証
+    const input = itemTargetSchema.parse({
+      eventId: formData.get("eventId"),
+      itemId: formData.get("itemId"),
+    });
+
+    // ② 参加しているか確かめ、自分の EventMember を取る。
+    // assertCan は呼ばない（先に読むと read-then-write になる。自分の id しか入れないので、他の人を指名できない）
+    const me = await requireMember(input.eventId);
+
+    // ③ 担当がまだいないときだけ、自分を担当にする（実装ルール 4）
+    const { count } = await prisma.item.updateMany({
+      where: {
+        id: input.itemId,
+        eventId: input.eventId,
+        kind: "SHARED",
+        carrierId: null,
+      },
+      data: { carrierId: me.id, acceptedAt: new Date() },
+    });
+
+    // ④ 1件も更新されなければ、先に他の人が担当になっている
+    if (count === 0) throw new AlreadyTakenError();
+
+    // ⑤ イベント詳細を再検証
     revalidatePath(`/events/${input.eventId}`);
     return ok();
   } catch (error) {

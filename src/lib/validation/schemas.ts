@@ -120,8 +120,8 @@ export const addSharedItemSchema = itemSchema.extend({
   eventId: fields.id,
 });
 
-// アイテムの削除
-export const deleteItemSchema = z.object({
+// アイテムを1件指定する操作（削除・運ぶ・降りる・積み込み）で共通
+export const itemTargetSchema = z.object({
   eventId: fields.id,
   itemId: fields.id,
 });
