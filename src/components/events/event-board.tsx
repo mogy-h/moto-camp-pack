@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Funnel, X } from "lucide-react";
+import { AddSharedItemDialog } from "@/components/events/add-shared-item-dialog";
 import { MemberCard } from "@/components/events/member-card";
 import { RentalRow } from "@/components/events/rental-row";
 import { SharedRow } from "@/components/events/shared-row";
@@ -164,14 +165,17 @@ function EventBoard({ eventId, members, items, meId }: EventBoardProps) {
         <SectionHeading
           title="共同装備の分担"
           description="全員で使う大型ギア。運搬は最初に「自分が運ぶ」を押した人に決まります。"
+          action={<AddSharedItemDialog eventId={eventId} />}
         />
         {shared.length > 0 ? (
           <ul className="flex flex-col gap-2">
             {shared.map((item) => (
               <SharedRow
                 key={item.id}
+                eventId={eventId}
                 item={item}
                 carrier={memberOf(item.carrierId)}
+                canDelete={item.createdById === meId}
               />
             ))}
           </ul>
@@ -190,16 +194,21 @@ function EventBoard({ eventId, members, items, meId }: EventBoardProps) {
 function SectionHeading({
   title,
   description,
+  action,
 }: {
   title: string;
   description: string;
+  action?: React.ReactNode; // 見出しの右に置くボタン
 }) {
   return (
-    <div className="mb-2.25">
-      <h2 className="text-lg">{title}</h2>
-      <p className="mt-0.75 text-xs leading-relaxed text-neutral-700">
-        {description}
-      </p>
+    <div className="mb-2.25 flex flex-wrap items-end gap-2.75">
+      <div className="min-w-0 flex-[1_1_15rem]">
+        <h2 className="text-lg">{title}</h2>
+        <p className="mt-0.75 text-xs leading-relaxed text-neutral-700">
+          {description}
+        </p>
+      </div>
+      {action}
     </div>
   );
 }

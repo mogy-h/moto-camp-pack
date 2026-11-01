@@ -21,6 +21,7 @@ type BoardItem = {
   kind: "SHARED" | "RENTAL";
   name: string;
   size: "S" | "M" | "L";
+  createdById: string;
   requesterId: string | null;
   carrierId: string | null;
   packedAt: Date | null;
