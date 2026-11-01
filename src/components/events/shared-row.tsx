@@ -13,7 +13,7 @@ type SharedRowProps = {
   carrier: BoardMember | undefined; // 運ぶ人
 };
 
-// 共同装備（SHARED）の1行。#11 は表示だけで、「自分が運ぶ」「取り消す」などのボタンは #12 で足す
+// 共同装備（SHARED）の1行。「自分が運ぶ」「降りる」などのボタンは #13 で足す
 function SharedRow({ item, carrier }: SharedRowProps) {
   const packed = item.packedAt !== null;
 
