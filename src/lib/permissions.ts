@@ -3,9 +3,12 @@ import { ForbiddenError } from "@/lib/errors";
 // 権限の判定をここ1か所に集める（docs/schema.md「権限」・実装ルール 1）。
 // DB を見ない関数なので、呼ぶ側が先に member と item を取っておく。許可されなければ ForbiddenError を投げる
 type MemberForPermission = { id: string };
-type ItemForPermission = { createdById: string; requesterId: string | null };
-
-type ItemAction = "deleteItem"; // #13 で「降りる」などを足す
+type ItemForPermission = {
+  createdById: string;
+  requesterId: string | null;
+  carrierId: string | null;
+};
+type ItemAction = "deleteItem" | "withdrawCarrier" | "togglePacked";
 
 export function assertCan(
   action: ItemAction,
@@ -17,6 +20,11 @@ export function assertCan(
       // 登録者か借り手なら許可する（共同装備は requesterId が null なので、登録者だけになる）
       if (member.id === item.createdById || member.id === item.requesterId)
         return;
+      throw new ForbiddenError();
+    case "withdrawCarrier":
+    case "togglePacked":
+      // 担当本人だけ許可する
+      if (member.id === item.carrierId) return;
       throw new ForbiddenError();
   }
 }

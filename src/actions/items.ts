@@ -71,7 +71,7 @@ export async function deleteItem(
     // ③ 権限の判定に使う値を取る
     const item = await prisma.item.findFirst({
       where: { id: input.itemId, eventId: input.eventId, kind: "SHARED" },
-      select: { createdById: true, requesterId: true },
+      select: { createdById: true, requesterId: true, carrierId: true },
     });
     if (item === null) throw new NotFoundError();
 
