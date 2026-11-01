@@ -57,6 +57,7 @@ export default async function EventPage(props: PageProps<"/events/[eventId]">) {
           name: true,
           size: true,
           requesterId: true,
+          createdById: true,
           carrierId: true,
           acceptedAt: true,
           packedAt: true,

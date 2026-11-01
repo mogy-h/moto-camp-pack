@@ -13,14 +13,20 @@ function requiredText(label: string, max: number) {
     .string(`${label}を入力してください`)
     .trim()
     .min(1, `${label}を入力してください`)
-    .refine((value) => charLength(value) <= max, `${label}は${max}文字以内で入力してください`);
+    .refine(
+      (value) => charLength(value) <= max,
+      `${label}は${max}文字以内で入力してください`,
+    );
 }
 
 function optionalText(label: string, max: number) {
   return z
     .string()
     .trim()
-    .refine((value) => charLength(value) <= max, `${label}は${max}文字以内で入力してください`)
+    .refine(
+      (value) => charLength(value) <= max,
+      `${label}は${max}文字以内で入力してください`,
+    )
     .nullish()
     .transform((value) => (value ? value : null));
 }
@@ -40,13 +46,22 @@ export const fields = {
     .pipe(
       z
         .email("メールアドレスの形式で入力してください")
-        .max(LIMITS.email, `メールアドレスは${LIMITS.email}文字以内で入力してください`),
+        .max(
+          LIMITS.email,
+          `メールアドレスは${LIMITS.email}文字以内で入力してください`,
+        ),
     ),
   // パスワードは空白も含めて本人が決めた値なので、前後の空白を除かない
   password: z
     .string("パスワードを入力してください")
-    .min(LIMITS.passwordMin, `パスワードは${LIMITS.passwordMin}文字以上で入力してください`)
-    .max(LIMITS.passwordMax, `パスワードは${LIMITS.passwordMax}文字以内で入力してください`),
+    .min(
+      LIMITS.passwordMin,
+      `パスワードは${LIMITS.passwordMin}文字以上で入力してください`,
+    )
+    .max(
+      LIMITS.passwordMax,
+      `パスワードは${LIMITS.passwordMax}文字以内で入力してください`,
+    ),
   bike: optionalText("車種", LIMITS.bike),
   gearMemo: optionalText("積載装備のメモ", LIMITS.gearMemo),
   eventTitle: requiredText("イベント名", LIMITS.eventTitle),
@@ -68,7 +83,9 @@ export const signUpSchema = z.object({
 // ログインでは文字数を確かめない（登録済みのパスワードを、今の規則で弾かないため）
 export const signInSchema = z.object({
   email: fields.email,
-  password: z.string("パスワードを入力してください").min(1, "パスワードを入力してください"),
+  password: z
+    .string("パスワードを入力してください")
+    .min(1, "パスワードを入力してください"),
 });
 
 // 「今日」は呼び出し側で todayInTokyo() を求めて渡す（実装ルール 13）
@@ -96,6 +113,17 @@ export function createEventSchema(today: string) {
 export const itemSchema = z.object({
   name: fields.gearName,
   size: fields.size,
+});
+
+// 共同装備の追加
+export const addSharedItemSchema = itemSchema.extend({
+  eventId: fields.id,
+});
+
+// アイテムの削除
+export const deleteItemSchema = z.object({
+  eventId: fields.id,
+  itemId: fields.id,
 });
 
 export const updateEventGearMemoSchema = z.object({

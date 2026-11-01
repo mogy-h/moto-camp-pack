@@ -64,4 +64,4 @@ function rowBorder(status: ItemStatus) {
     : "border-transparent";
 }
 
-export { StatusBadge, SizeChip, ItemName, rowBorder };
+export { SIZE_LABEL, StatusBadge, SizeChip, ItemName, rowBorder };
