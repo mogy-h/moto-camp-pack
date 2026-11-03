@@ -6,6 +6,7 @@ type NotifyOthersInput = {
   actorId: string; // 操作した本人の EventMember の id（本人には通知しない）
   type: NotifType;
   itemId: string;
+  payload?: Prisma.InputJsonValue; // type ごとの補足（docs/schema.md「通知の payload」）
 };
 
 // 操作した本人以外の参加者全員に、同じ通知を1件ずつ作る。
@@ -32,6 +33,7 @@ export async function notifyOthers(
       type: input.type,
       actorId: input.actorId,
       itemId: input.itemId,
+      payload: input.payload,
     })),
   });
 }
