@@ -174,3 +174,46 @@ export async function withdrawCarrier(
     return toFailure(error);
   }
 }
+
+export async function togglePacked(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  try {
+    // ① 入力の検証
+    const input = itemTargetSchema.parse({
+      eventId: formData.get("eventId"),
+      itemId: formData.get("itemId"),
+    });
+
+    // ② 参加しているか確かめ、自分の EventMember を取る
+    const me = await requireMember(input.eventId);
+
+    // ③ 権限の判定に使う値と、今の積み込みの状態を取る。貸し借りでも使うので（#15）、kind は条件に入れない
+    const item = await prisma.item.findFirst({
+      where: { id: input.itemId, eventId: input.eventId },
+      select: {
+        createdById: true,
+        requesterId: true,
+        carrierId: true,
+        packedAt: true,
+      },
+    });
+    if (item === null) throw new NotFoundError();
+
+    // ④ 担当本人でなければ ForbiddenError を投げる
+    assertCan("togglePacked", { id: me.id }, item);
+
+    // ⑤ 今と逆の状態にする。通知は作らず書き込みも1回なので、トランザクションは使わない
+    await prisma.item.update({
+      where: { id: input.itemId },
+      data: { packedAt: item.packedAt === null ? new Date() : null },
+    });
+
+    // ⑥ イベント詳細を再検証
+    revalidatePath(`/events/${input.eventId}`);
+    return ok();
+  } catch (error) {
+    return toFailure(error);
+  }
+}
