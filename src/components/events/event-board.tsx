@@ -176,6 +176,7 @@ function EventBoard({ eventId, members, items, meId }: EventBoardProps) {
                 item={item}
                 carrier={memberOf(item.carrierId)}
                 canDelete={item.createdById === meId}
+                isCarrier={item.carrierId === meId}
               />
             ))}
           </ul>
