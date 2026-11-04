@@ -130,3 +130,8 @@ export const updateEventGearMemoSchema = z.object({
   eventId: fields.id,
   gearMemo: fields.gearMemo,
 });
+
+// 招待リンクの発行
+export const createInviteSchema = z.object({
+  eventId: fields.id,
+});
