@@ -5,7 +5,7 @@ type NotifyOthersInput = {
   eventId: string;
   actorId: string; // 操作した本人の EventMember の id（本人には通知しない）
   type: NotifType;
-  itemId: string;
+  itemId?: string;
   payload?: Prisma.InputJsonValue; // type ごとの補足（docs/schema.md「通知の payload」）
 };
 
@@ -20,7 +20,7 @@ export async function notifyOthers(
     where: {
       eventId: input.eventId,
       leftAt: null,
-      id: { not: input.actorId }, // 自分を除く
+      id: { not: input.actorId },
     },
     select: { id: true },
   });

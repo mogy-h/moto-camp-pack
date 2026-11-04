@@ -135,3 +135,8 @@ export const updateEventGearMemoSchema = z.object({
 export const createInviteSchema = z.object({
   eventId: fields.id,
 });
+
+// 招待リンクからの参加。トークンは32文字（randomBytes(24) の base64url）。長すぎる値を DB に渡さないよう上限を付ける
+export const joinInviteSchema = z.object({
+  token: z.string().min(1).max(64),
+});
