@@ -12,6 +12,8 @@ import { EventHeading } from "@/components/events/event-heading";
 import { AttentionAlert } from "@/components/events/attention-alert";
 import { EventBoard } from "@/components/events/event-board";
 import { RefreshOnTabReturn } from "@/components/events/refresh-on-tab-return";
+import { inviteStatus } from "@/lib/derive/inviteStatus";
+import { InviteDialog } from "@/components/events/invite-dialog";
 
 export default async function EventPage(props: PageProps<"/events/[eventId]">) {
   const { eventId } = await props.params;
@@ -99,6 +101,19 @@ export default async function EventPage(props: PageProps<"/events/[eventId]">) {
   ).length;
   const askingCount = items.filter((item) => item.status === "asking").length;
 
+  // オーナーだけ、使える招待リンクを読む（なければ null。モーダルに発行ボタンが出る）
+  let inviteToken: string | null = null;
+  if (me.role === "OWNER") {
+    const invite = await prisma.invite.findFirst({
+      where: { eventId, revokedAt: null },
+      orderBy: { createdAt: "desc" },
+      select: { token: true, revokedAt: true, expiresAt: true },
+    });
+    if (invite !== null && inviteStatus(invite, new Date()) === "valid") {
+      inviteToken = invite.token;
+    }
+  }
+
   return (
     <>
       <RefreshOnTabReturn />
@@ -106,6 +121,9 @@ export default async function EventPage(props: PageProps<"/events/[eventId]">) {
         <HeaderLogo />
         <div className="flex-1" />
         <PackProgress progress={packProgress} />
+        {me.role === "OWNER" && (
+          <InviteDialog eventId={eventId} token={inviteToken} />
+        )}
       </Header>
       <main className="mx-auto w-full max-w-page px-3 pt-4.5 pb-22 sm:px-6 sm:pt-7.5">
         <EventHeading

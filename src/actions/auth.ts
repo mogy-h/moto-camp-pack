@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { signUpSchema, signInSchema } from "@/lib/validation/schemas";
 import { type ActionResult, toFailure } from "@/lib/action-result";
 import { AppError } from "@/lib/errors";
+import { safeNextPath } from "@/lib/next-path";
 
 // useActionState から呼ぶので、第1引数に「前回の結果」が入る（今回は使わないので _ を付ける）
 export async function signUp(
@@ -58,7 +59,7 @@ export async function signUp(
   } catch (error) {
     return toFailure(error);
   }
-  redirect("/"); // ★ try の外に書く
+  redirect(safeNextPath(formData.get("next")));
 }
 
 export async function signIn(
@@ -89,7 +90,7 @@ export async function signIn(
   } catch (error) {
     return toFailure(error);
   }
-  redirect("/");
+  redirect(safeNextPath(formData.get("next")));
 }
 
 export async function signOut() {

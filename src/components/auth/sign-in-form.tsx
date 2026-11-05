@@ -11,8 +11,9 @@ import { type ActionResult } from "@/lib/action-result";
 
 const initialState: ActionResult = { ok: true, data: undefined };
 
-// ログインのフォーム。見た目は Claude、Server Action とつなぐ部分（TODO）は本人が書く
-export function SignInForm() {
+// ログインのフォーム。見た目は Claude、Server Action とつなぐ部分（TODO）は本人が書く。
+// next はログイン後に戻す先。signIn がもう一度 safeNextPath で確かめる（hidden の値もブラウザで書き換えられるため）
+export function SignInForm({ next }: { next: string }) {
   const [state, formAction, isPending] = useActionState(signIn, initialState);
   const [email, setEmail] = useState("");
 
@@ -21,6 +22,7 @@ export function SignInForm() {
   return (
     // noValidate: ブラウザ標準のチェック（吹き出し）を止め、エラーの表示を zod の日本語のメッセージにそろえる
     <form action={formAction} noValidate className="flex flex-col gap-3.5">
+      <input type="hidden" name="next" value={next} />
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="email">メールアドレス</Label>
         <Input

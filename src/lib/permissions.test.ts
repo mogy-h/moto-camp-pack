@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { assertCan } from "@/lib/permissions";
+import { assertCan, assertOwner } from "@/lib/permissions";
 import { ForbiddenError } from "@/lib/errors";
 
 describe("assertCan: deleteItem", () => {
@@ -52,5 +52,14 @@ describe("assertCan: togglePacked", () => {
   it("ほかの人が担当なら切り替えられない", () => {
     const item = { createdById: "m2", requesterId: null, carrierId: "m2" };
     expect(() => assertCan("togglePacked", me, item)).toThrow(ForbiddenError);
+  });
+});
+
+describe("assertOwner", () => {
+  it("オーナーの場合、エラーにならない", () => {
+    expect(() => assertOwner({ role: "OWNER" })).not.toThrow();
+  });
+  it("オーナーでない場合、ForbiddenError を投げる", () => {
+    expect(() => assertOwner({ role: "MEMBER" })).toThrow(ForbiddenError);
   });
 });

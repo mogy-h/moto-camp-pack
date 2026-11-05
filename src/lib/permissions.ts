@@ -1,4 +1,5 @@
 import { ForbiddenError } from "@/lib/errors";
+import type { Role } from "@/generated/prisma/client";
 
 // 権限の判定をここ1か所に集める（docs/schema.md「権限」・実装ルール 1）。
 // DB を見ない関数なので、呼ぶ側が先に member と item を取っておく。許可されなければ ForbiddenError を投げる
@@ -27,4 +28,10 @@ export function assertCan(
       if (member.id === item.carrierId) return;
       throw new ForbiddenError();
   }
+}
+
+// イベントの管理（招待の発行など）はオーナーだけ（docs/schema.md「権限」）
+export function assertOwner(member: { role: Role }): void {
+  if (member.role === "OWNER") return;
+  throw new ForbiddenError("オーナーだけが操作できます");
 }

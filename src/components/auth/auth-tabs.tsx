@@ -7,12 +7,17 @@ const TABS = [
 ] as const;
 
 // ログイン / 新規登録の切り替え。1つの画面の中で表示を切り替えるのではなく、2つの URL へのリンクにする
-// （proxy が URL で判断するのに合わせるため。ブラウザの「戻る」も自然に効く）
+// （proxy が URL で判断するのに合わせるため。ブラウザの「戻る」も自然に効く）。
+// next はログイン後に戻す先（safeNextPath を通した値）。タブを切り替えても失わないよう、"/" 以外ならリンクに付ける
 export function AuthTabs({
   current,
+  next,
 }: {
   current: (typeof TABS)[number]["href"];
+  next: string;
 }) {
+  const query = next === "/" ? "" : `?next=${encodeURIComponent(next)}`;
+
   return (
     <nav
       aria-label="ログインと新規登録の切り替え"
@@ -23,7 +28,7 @@ export function AuthTabs({
         return (
           <Link
             key={tab.href}
-            href={tab.href}
+            href={`${tab.href}${query}`}
             aria-current={active ? "page" : undefined}
             className={cn(
               "flex h-8.5 flex-1 items-center justify-center rounded-full text-sm transition-colors",
