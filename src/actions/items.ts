@@ -11,7 +11,6 @@ import {
 } from "@/lib/validation/schemas";
 import { assertCan } from "@/lib/permissions";
 import { NotFoundError, AlreadyTakenError } from "@/lib/errors";
-
 import { type ActionResult, ok, toFailure } from "@/lib/action-result";
 
 export async function addSharedItem(
@@ -305,6 +304,56 @@ export async function offerRental(
     });
 
     // ④ イベント詳細を再検証
+    revalidatePath(`/events/${input.eventId}`);
+    return ok();
+  } catch (error) {
+    return toFailure(error);
+  }
+}
+
+// 借り手による取り下げ。アイテムを消し、本人以外の参加者に REQUEST_CANCELLED を知らせる
+export async function cancelRental(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  try {
+    // ① 入力の検証
+    const input = itemTargetSchema.parse({
+      eventId: formData.get("eventId"),
+      itemId: formData.get("itemId"),
+    });
+
+    // ② 参加しているか確かめ、自分の EventMember を取る
+    const me = await requireMember(input.eventId);
+
+    // ③ 権限の判定に使う値と、通知に残す品名を取る
+    const item = await prisma.item.findFirst({
+      where: { id: input.itemId, eventId: input.eventId, kind: "RENTAL" },
+      select: {
+        name: true, // 品名（通知の payload に入れる）
+        createdById: true,
+        requesterId: true,
+        carrierId: true,
+      },
+    });
+    if (item === null) throw new NotFoundError();
+
+    // ④ 借り手本人でなければ ForbiddenError を投げる
+    assertCan("cancelRental", { id: me.id }, item);
+
+    // ⑤ 削除と通知を、同じトランザクションで行う（実装ルール 5）
+    await prisma.$transaction(async (tx) => {
+      await tx.item.delete({ where: { id: input.itemId } });
+      // アイテムが消えるので itemId は渡さず、品名を payload に残す（docs/schema.md「通知の payload」）
+      await notifyOthers(tx, {
+        eventId: input.eventId,
+        actorId: me.id,
+        type: "REQUEST_CANCELLED",
+        payload: { itemName: item, reason: "withdrawn" },
+      });
+    });
+
+    // ⑥ イベント詳細を再検証
     revalidatePath(`/events/${input.eventId}`);
     return ok();
   } catch (error) {
