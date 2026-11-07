@@ -251,3 +251,63 @@ export async function requestRental(
     return toFailure(error);
   }
 }
+
+// 募集中のリクエストに「自分が貸す」（早い者勝ち）。借り手に ACCEPTED を知らせる
+export async function offerRental(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  try {
+    // ① 入力の検証
+    const input = itemTargetSchema.parse({
+      eventId: formData.get("eventId"),
+      itemId: formData.get("itemId"),
+    });
+
+    // ② 参加しているか確かめ、自分の EventMember を取る（assertCan は呼ばない。carrySharedItem と同じ理由）
+    const me = await requireMember(input.eventId);
+
+    // ③ 更新と通知を、同じトランザクションで行う（実装ルール 5）
+    await prisma.$transaction(async (tx) => {
+      // 貸す人がまだいなくて、自分の募集でないときだけ、自分を貸す人にする（実装ルール 4）
+      const { count } = await tx.item.updateMany({
+        where: {
+          id: input.itemId,
+          eventId: input.eventId,
+          kind: "RENTAL",
+          carrierId: null,
+          requesterId: { not: me.id }, // 自分の募集には自分で貸せない
+        },
+        data: { carrierId: me.id, acceptedAt: new Date() },
+      });
+      // 1件も更新されなければ AlreadyTakenError（carrySharedItem と同じ1行）
+      if (count === 0) throw new AlreadyTakenError();
+
+      // 通知の宛先（借り手）を読む
+      const item = await tx.item.findUniqueOrThrow({
+        where: { id: input.itemId },
+        select: { requesterId: true },
+      });
+      // 型は string | null。貸し借りでは CHECK 制約で必ず入っているが、TypeScript はそれを知らないので確かめる
+      if (item.requesterId === null)
+        throw new Error("借り手のいない貸し借りです");
+
+      // 借り手1人だけに知らせる（notifyOthers は「本人以外の全員」宛てなので使わない）
+      await tx.notification.create({
+        data: {
+          eventId: input.eventId,
+          recipientId: item.requesterId,
+          type: "ACCEPTED",
+          actorId: me.id,
+          itemId: input.itemId,
+        },
+      });
+    });
+
+    // ④ イベント詳細を再検証
+    revalidatePath(`/events/${input.eventId}`);
+    return ok();
+  } catch (error) {
+    return toFailure(error);
+  }
+}
