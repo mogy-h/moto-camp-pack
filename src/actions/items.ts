@@ -7,6 +7,7 @@ import { notifyOthers } from "@/lib/notify";
 import {
   addSharedItemSchema,
   itemTargetSchema,
+  requestRentalSchema,
 } from "@/lib/validation/schemas";
 import { assertCan } from "@/lib/permissions";
 import { NotFoundError, AlreadyTakenError } from "@/lib/errors";
@@ -211,6 +212,39 @@ export async function togglePacked(
     });
 
     // ⑥ イベント詳細を再検証
+    revalidatePath(`/events/${input.eventId}`);
+    return ok();
+  } catch (error) {
+    return toFailure(error);
+  }
+}
+
+// 借りたいギアのリクエスト（宛先なしの募集）。参加者なら誰でも作れる
+export async function requestRental(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  try {
+    // ① 入力の検証
+    const input = requestRentalSchema.parse({
+      eventId: formData.get("eventId"),
+      name: formData.get("name"),
+      size: formData.get("size"),
+    });
+    // ② 参加しているか確かめ、自分の EventMember を取る（assertCan は呼ばない。addSharedItem と同じ理由）
+    const me = await requireMember(input.eventId);
+    // ③ アイテムを作る
+    await prisma.item.create({
+      data: {
+        eventId: input.eventId,
+        kind: "RENTAL",
+        name: input.name,
+        size: input.size,
+        createdById: me.id,
+        requesterId: me.id, // 自分がリクエストしたことを示す
+      },
+    });
+    // ④ イベント詳細を再検証
     revalidatePath(`/events/${input.eventId}`);
     return ok();
   } catch (error) {

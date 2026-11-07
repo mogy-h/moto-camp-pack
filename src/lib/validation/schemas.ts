@@ -120,6 +120,11 @@ export const addSharedItemSchema = itemSchema.extend({
   eventId: fields.id,
 });
 
+// 借りたいギアのリクエスト（#15 は宛先なし。宛先は #16 で足す）
+export const requestRentalSchema = itemSchema.extend({
+  eventId: fields.id,
+});
+
 // アイテムを1件指定する操作（削除・運ぶ・降りる・積み込み）で共通
 export const itemTargetSchema = z.object({
   eventId: fields.id,
