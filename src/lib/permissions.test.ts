@@ -55,6 +55,27 @@ describe("assertCan: togglePacked", () => {
   });
 });
 
+describe("assertCan: cancelRental", () => {
+  const me = { id: "m1" };
+
+  it("借り手本人は取り下げられる", () => {
+    const item = { createdById: "m1", requesterId: "m1", carrierId: null };
+    expect(() => assertCan("cancelRental", me, item)).not.toThrow();
+  });
+  it("ほかの人の募集は取り下げられない", () => {
+    const item = { createdById: "m2", requesterId: "m2", carrierId: null };
+    expect(() => assertCan("cancelRental", me, item)).toThrow(ForbiddenError);
+  });
+  it("貸す人（担当）でも取り下げられない", () => {
+    const item = { createdById: "m2", requesterId: "m2", carrierId: "m1" };
+    expect(() => assertCan("cancelRental", me, item)).toThrow(ForbiddenError);
+  });
+  it("共同装備の登録者は取り下げられない", () => {
+    const item = { createdById: "m1", requesterId: null, carrierId: null };
+    expect(() => assertCan("cancelRental", me, item)).toThrow(ForbiddenError);
+  });
+});
+
 describe("assertOwner", () => {
   it("オーナーの場合、エラーにならない", () => {
     expect(() => assertOwner({ role: "OWNER" })).not.toThrow();

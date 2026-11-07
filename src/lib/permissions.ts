@@ -9,7 +9,11 @@ type ItemForPermission = {
   requesterId: string | null;
   carrierId: string | null;
 };
-type ItemAction = "deleteItem" | "withdrawCarrier" | "togglePacked";
+type ItemAction =
+  | "deleteItem"
+  | "withdrawCarrier"
+  | "togglePacked"
+  | "cancelRental";
 
 export function assertCan(
   action: ItemAction,
@@ -26,6 +30,10 @@ export function assertCan(
     case "togglePacked":
       // 担当本人だけ許可する
       if (member.id === item.carrierId) return;
+      throw new ForbiddenError();
+    case "cancelRental":
+      // 借り手本人だけ許可する（共同装備は requesterId が null なので、誰も通らない）
+      if (member.id === item.requesterId) return;
       throw new ForbiddenError();
   }
 }
