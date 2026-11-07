@@ -8,6 +8,7 @@ import { RentalRow } from "@/components/events/rental-row";
 import { SharedRow } from "@/components/events/shared-row";
 import { StatusBadge } from "@/components/events/item-parts";
 import { cn } from "@/lib/utils";
+import { RequestRentalDialog } from "@/components/events/request-rental-dialog";
 import type { BoardItem, BoardMember } from "@/components/events/types";
 
 function needsAttention(item: BoardItem, meId: string): boolean {
@@ -134,6 +135,7 @@ function EventBoard({ eventId, members, items, meId }: EventBoardProps) {
         <SectionHeading
           title="ギアの貸し借り"
           description="借りたい人のリクエストに、最初に「自分が貸す」を押した人が貸します（早い者勝ち）。運搬は原則「貸す人」のバイク。積めるかどうかは本人が判断します。"
+          action={<RequestRentalDialog eventId={eventId} />}
         />
         <div className="mb-2.25 flex flex-wrap gap-2">
           {RENTAL_LEGEND.map(({ status, note }) => (
@@ -150,9 +152,13 @@ function EventBoard({ eventId, members, items, meId }: EventBoardProps) {
             {rentals.map((item) => (
               <RentalRow
                 key={item.id}
+                eventId={eventId}
                 item={item}
                 requester={memberOf(item.requesterId)}
                 carrier={memberOf(item.carrierId)}
+                canOffer={item.requesterId !== meId && item.carrierId === null}
+                isCarrier={item.carrierId === meId}
+                canCancel={item.requesterId === meId}
               />
             ))}
           </ul>

@@ -52,7 +52,7 @@
 - [x] `derive/`: inviteStatus (#18) — 2026-11-04 `valid` / `revoked` / `expired` を返す。「今」は引数で受け取る（テストで時刻を固定するため）。無効を期限切れより優先し、`expiresAt` ちょうどは期限切れにした（境界をテストに入れた）。`expiresAt` が null なら期限なし
 - [x] Vitest の導入（純関数のテスト）(#5) — 2026-10-18 Vitest 4.1。純関数だけをテストするので jsdom・Testing Library は入れていない。`@/` は `resolve.tsconfigPaths` で解決（プラグイン不要）
 - [x] 日付ヘルパ（日本時間の「今日」、`date` 列と日付文字列の変換）。サーバーのローカル時刻に頼らない (#5) — 2026-10-18 `src/lib/date.ts`。`Intl.DateTimeFormat` の `timeZone` で日本時間の日付を出す。`now` を引数にしてテストで時刻を固定し、UTC 15:00 の境目を確認
-- [x] `permissions.ts`: `assertCan(action, member, item?)` (#12) — 2026-11-01 `boolean` を返さず `ForbiddenError` を投げる（Action の中が1行で済み、投げたエラーは `toFailure` が画面向けの文に変える）。DB を見ない関数にして Vitest で確かめる。`item` は必須にした（`item` を使わない操作はオーナー用の #19 まで出てこないため）。今は `deleteItem` だけで、ほかの操作は #13 から足す → 2026-11-04 #13 で `withdrawCarrier`・`togglePacked`（担当本人だけ）を足した。`ItemForPermission` に `carrierId` を足し、`case` を2つ並べて同じ判定にした → 2026-11-04 #18 で `assertOwner(member)` を足した（`role` だけを見る。`assertCan` は `item` が必須なので別の関数にした）
+- [x] `permissions.ts`: `assertCan(action, member, item?)` (#12) — 2026-11-01 `boolean` を返さず `ForbiddenError` を投げる（Action の中が1行で済み、投げたエラーは `toFailure` が画面向けの文に変える）。DB を見ない関数にして Vitest で確かめる。`item` は必須にした（`item` を使わない操作はオーナー用の #19 まで出てこないため）。今は `deleteItem` だけで、ほかの操作は #13 から足す → 2026-11-04 #13 で `withdrawCarrier`・`togglePacked`（担当本人だけ）を足した。`ItemForPermission` に `carrierId` を足し、`case` を2つ並べて同じ判定にした → 2026-11-04 #18 で `assertOwner(member)` を足した（`role` だけを見る。`assertCan` は `item` が必須なので別の関数にした） → 2026-11-07 #15 で `cancelRental`（借り手本人だけ）を足した。貸し借りでは登録者と借り手が同じ人なので `deleteItem` でも結果は同じだが、「取り下げは借り手だけ」をコードで読めるように分けた。共同装備の登録者が通らないこともテストで確かめた
 - [x] `notify.ts`: 宛先解決（actor 以外の参加者など）と一括作成 (#12) — 2026-11-01 `notifyOthers`。更新と同じトランザクションで通知を作るため、`prisma` ではなく `tx` を受け取る。参加者が自分だけだと宛先は0人になるが、`createMany` は `{ count: 0 }` で正常に終わる（開発用 DB で確認）。payload はまだ受け取らない（必要になる #13 で足す） → 2026-11-04 #13 で `payload?: Prisma.InputJsonValue` を足した。形を決めているのは schema.md「通知の payload」の表だけで、コードの型では縛らない（MVP では payload を読む場所がないため。型と、読むときの zod の検証は #17 で一緒に作る） → 2026-11-04 #18 で `itemId` を省けるようにした（MEMBER_JOINED はアイテムに紐付かないため。DB の列はもともと null 可）
 - [x] `next-path.ts`: ログイン後の戻り先の検証 `safeNextPath` (#18) — 2026-11-04 `?next=` は誰でも書き換えられるので、`/j/トークン` の形（`^/j/[A-Za-z0-9_-]+$`）と完全に一致したときだけ使い、それ以外は `/`（外のサイトへ飛ばすオープンリダイレクトを防ぐ）。外のサイト・`//` で始まる値・`/j/` の後ろの余計なパス・空のトークン・配列（`?next=` が2つ）を `/` にするテストを書いた
 - [ ] 通知文面の生成（type + payload → タイトル・本文）(#17)
@@ -108,11 +108,11 @@ UI の土台は shadcn/ui。採用理由: モーダルやメニューのアク�
 - [ ] updateItem（後回し。誰が編集できるかも含めて #41 で決める）(#41)
 
 **items（貸し借り）**
-- [ ] requestRental（宛先なし → open (#15)。宛先あり → asking + ASK は #16）
-- [ ] offerRental（open に「自分が貸す」、早い者勝ち、ACCEPTED）(#15)
+- [~] requestRental（宛先なし → open (#15)。宛先あり → asking + ASK は #16）
+- [~] offerRental（open に「自分が貸す」、早い者勝ち、ACCEPTED）(#15)
 - [ ] acceptAsk（ACCEPTED、ASK を resolved）(#16)
 - [ ] declineAsk（open に戻す、DECLINED、ASK を resolved）(#16)
-- [ ] cancelRental（削除 + REQUEST_CANCELLED）(#15)
+- [~] cancelRental（削除 + REQUEST_CANCELLED）(#15)
 
 **lendables**
 - [ ] addLendableGear / deleteLendableGear (#14)
@@ -132,7 +132,7 @@ UI の土台は shadcn/ui。採用理由: モーダルやメニューのアク�
 - [ ] `/j/[token]` のゲスト参加フォーム (#21)
 - [ ] `/events/[eventId]`（イベント詳細）
   - [x] ヘッダー・メンバーカード・絞り込み (#11) — 2026-10-31 貸し借り・共同装備のリストは表示だけ先に作った（絞り込みと itemStatus を画面で確かめるため。ボタンは #12・#13・#15 で足す）。アイテムは数十件なので、全件を受け取ってブラウザで絞り込む（ダッシュボードと同じ）。カードは名前のボタンの `::after` を全体に広げて押せるようにした（カード全体を button にすると、中にメモの編集ボタンを置けないため）。デザインの「調整が必要なものだけ」は asking を全部含むが、screens.md に合わせて自分宛ての asking だけにした。デザインにない場所のチップをタイトルの下に足した（ダッシュボードのカードには出ているため）
-  - [ ] 貸し借りセクション (#14, #15, #16)
+  - [~] 貸し借りセクション (#14, #15, #16)
   - [x] 共同装備セクション (#12, #13) — 2026-11-01 #12 で追加ボタンとゴミ箱ボタンを足した。「自分が運ぶ」などのボタンは #13 → 2026-11-04 #13 で「自分が運ぶ」・積み込み済みのチェック・「降りる」を足した。3つとも共通の `ItemActionButton`（hidden の eventId / itemId と `useActionState`）。成功は行が変わるので知らせず、失敗だけトーストを出して `router.refresh()` する（Action が `revalidatePath` の前に抜けるので、画面が古いまま残るため）。文言は「降りる」（デザインの共同装備の行は「取り消す」だが、Issue・screens.md・schema.md に合わせた）。確認モーダルは付けない（デザインどおり）。チェックと「降りる」は担当本人の行だけに出す（デザインは担当がいれば出すが、権限を優先した）。2つのウィンドウを並べ、古い画面から「自分が運ぶ」を押すとトーストが出て行が更新されることと、一時的に全員にボタンを出してサーバー側で拒否されることを確認した
   - [x] 共同装備の追加モーダル・削除の確認モーダル (#12) — 2026-11-01 デザインのフォームにある「自分が運ぶ」の選択欄は入れない（担当は #13 のボタンで決めるので、追加した直後はいつも未割り当て）。確認モーダルはデザインにないので、操作シートの見出しと文言から作り、担当者がいれば「運搬担当の○○さんには通知されません」と出す。ゴミ箱は登録者の行にだけ出す（隠すのは補助で、検証は `assertCan`）
   - [ ] アイテムの編集モーダル・操作シート (#41)・「何を追加しますか？」（#15 で選択肢が増えるときに検討）
