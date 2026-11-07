@@ -152,9 +152,13 @@ function EventBoard({ eventId, members, items, meId }: EventBoardProps) {
             {rentals.map((item) => (
               <RentalRow
                 key={item.id}
+                eventId={eventId}
                 item={item}
                 requester={memberOf(item.requesterId)}
                 carrier={memberOf(item.carrierId)}
+                canOffer={item.requesterId !== meId && item.carrierId === null}
+                isCarrier={item.carrierId === meId}
+                canCancel={item.requesterId === meId}
               />
             ))}
           </ul>

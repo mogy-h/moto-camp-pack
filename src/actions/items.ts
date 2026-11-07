@@ -349,7 +349,7 @@ export async function cancelRental(
         eventId: input.eventId,
         actorId: me.id,
         type: "REQUEST_CANCELLED",
-        payload: { itemName: item, reason: "withdrawn" },
+        payload: { itemName: item.name, reason: "withdrawn" },
       });
     });
 
