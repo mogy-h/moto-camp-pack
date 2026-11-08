@@ -8,6 +8,7 @@ import {
   addSharedItemSchema,
   itemTargetSchema,
   requestRentalSchema,
+  updateItemSchema,
 } from "@/lib/validation/schemas";
 import { assertCan } from "@/lib/permissions";
 import { NotFoundError, AlreadyTakenError } from "@/lib/errors";
@@ -351,6 +352,48 @@ export async function cancelRental(
         type: "REQUEST_CANCELLED",
         payload: { itemName: item.name, reason: "withdrawn" },
       });
+    });
+
+    // ⑥ イベント詳細を再検証
+    revalidatePath(`/events/${input.eventId}`);
+    return ok();
+  } catch (error) {
+    return toFailure(error);
+  }
+}
+
+export async function updateItem(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  try {
+    // ① 入力の検証
+    const input = updateItemSchema.parse({
+      name: formData.get("name"),
+      size: formData.get("size"),
+      eventId: formData.get("eventId"),
+      itemId: formData.get("itemId"),
+    });
+
+    // ② 参加しているか確かめ、自分の EventMember を取る
+    const me = await requireMember(input.eventId);
+
+    // ③ 権限の判定に使う値を取る
+    // 共同装備も貸し借りも編集するので、kind で絞らない
+    const item = await prisma.item.findFirst({
+      where: { id: input.itemId, eventId: input.eventId },
+      select: { createdById: true, requesterId: true, carrierId: true },
+    });
+    if (item === null) throw new NotFoundError();
+
+    // ④ 登録者でなければ ForbiddenError を投げる
+    assertCan("updateItem", { id: me.id }, item);
+
+    // ⑤ アイテムを更新する
+    //name と size だけ書く（担当はフォームから受け取らないので、編集では変えられない）。担当が決まっていても編集でき、通知は作らない
+    await prisma.item.update({
+      where: { id: input.itemId },
+      data: { name: input.name, size: input.size },
     });
 
     // ⑥ イベント詳細を再検証

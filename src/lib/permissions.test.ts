@@ -76,6 +76,23 @@ describe("assertCan: cancelRental", () => {
   });
 });
 
+describe("assertCan: updateItem", () => {
+  const me = { id: "m1" };
+
+  it("共同装備の登録者は編集できる", () => {
+    const item = { createdById: "m1", requesterId: null, carrierId: null };
+    expect(() => assertCan("updateItem", me, item)).not.toThrow();
+  });
+  it("登録者でない参加者は ForbiddenError", () => {
+    const item = { createdById: "m2", requesterId: "m2", carrierId: null };
+    expect(() => assertCan("updateItem", me, item)).toThrow(ForbiddenError);
+  });
+  it("運搬担当（carrierId）でも、登録者でなければ ForbiddenError", () => {
+    const item = { createdById: "m2", requesterId: "m2", carrierId: "m1" };
+    expect(() => assertCan("updateItem", me, item)).toThrow(ForbiddenError);
+  });
+});
+
 describe("assertOwner", () => {
   it("オーナーの場合、エラーにならない", () => {
     expect(() => assertOwner({ role: "OWNER" })).not.toThrow();

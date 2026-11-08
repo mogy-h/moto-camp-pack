@@ -13,7 +13,8 @@ type ItemAction =
   | "deleteItem"
   | "withdrawCarrier"
   | "togglePacked"
-  | "cancelRental";
+  | "cancelRental"
+  | "updateItem";
 
 export function assertCan(
   action: ItemAction,
@@ -34,6 +35,10 @@ export function assertCan(
     case "cancelRental":
       // 借り手本人だけ許可する（共同装備は requesterId が null なので、誰も通らない）
       if (member.id === item.requesterId) return;
+      throw new ForbiddenError();
+    case "updateItem":
+      // 登録者本人だけ許可する
+      if (member.id === item.createdById) return;
       throw new ForbiddenError();
   }
 }

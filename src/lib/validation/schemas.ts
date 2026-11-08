@@ -120,6 +120,12 @@ export const addSharedItemSchema = itemSchema.extend({
   eventId: fields.id,
 });
 
+// アイテムの編集（共同装備・貸し借りで共通）
+export const updateItemSchema = itemSchema.extend({
+  eventId: fields.id,
+  itemId: fields.id,
+});
+
 // 借りたいギアのリクエスト（#15 は宛先なし。宛先は #16 で足す）
 export const requestRentalSchema = itemSchema.extend({
   eventId: fields.id,
