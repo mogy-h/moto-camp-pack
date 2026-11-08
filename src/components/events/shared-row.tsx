@@ -14,6 +14,7 @@ import {
   withdrawCarrier,
 } from "@/actions/items";
 import { cn } from "@/lib/utils";
+import { EditItemDialog } from "@/components/events/edit-item-dialog";
 import type { BoardItem, BoardMember } from "@/components/events/types";
 
 // ボタンを隠すのは補助で、検証は Server Action の中で行う（実装ルール 1）
@@ -23,6 +24,7 @@ type SharedRowProps = {
   carrier: BoardMember | undefined; // 運ぶ人
   isCarrier: boolean; // 見ている本人が運搬担当か（積み込み済み・降りる）
   canDelete: boolean; // 登録者か（削除）
+  canEdit: boolean; // 登録者か（編集）
 };
 
 // 共同装備（SHARED）の1行
@@ -32,6 +34,7 @@ function SharedRow({
   carrier,
   isCarrier,
   canDelete,
+  canEdit,
 }: SharedRowProps) {
   const packed = item.packedAt !== null;
   // 担当がまだいなければ、誰でも「自分が運ぶ」を押せる
@@ -89,7 +92,7 @@ function SharedRow({
           </span>
         </div>
       </div>
-      {(canClaim || isCarrier || canDelete) && (
+      {(canClaim || isCarrier || canDelete || canEdit) && (
         <div className="ml-auto flex shrink-0 items-center gap-1.5">
           {canClaim && (
             // 読み上げの名前には、見えている文字（自分が運ぶ）をそのまま含める
@@ -116,6 +119,13 @@ function SharedRow({
             >
               降りる
             </ItemActionButton>
+          )}
+          {canEdit && (
+            <EditItemDialog
+              eventId={eventId}
+              item={item}
+              carrierName={carrier?.user.displayName}
+            />
           )}
           {canDelete && (
             <DeleteItemDialog
