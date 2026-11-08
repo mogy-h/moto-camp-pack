@@ -159,6 +159,7 @@ function EventBoard({ eventId, members, items, meId }: EventBoardProps) {
                 canOffer={item.requesterId !== meId && item.carrierId === null}
                 isCarrier={item.carrierId === meId}
                 canCancel={item.requesterId === meId}
+                canEdit={item.createdById === meId}
               />
             ))}
           </ul>
@@ -183,6 +184,7 @@ function EventBoard({ eventId, members, items, meId }: EventBoardProps) {
                 carrier={memberOf(item.carrierId)}
                 canDelete={item.createdById === meId}
                 isCarrier={item.carrierId === meId}
+                canEdit={item.createdById === meId}
               />
             ))}
           </ul>

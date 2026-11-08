@@ -10,6 +10,7 @@ import {
 } from "@/components/events/item-parts";
 import { offerRental, togglePacked, withdrawCarrier } from "@/actions/items";
 import { cn } from "@/lib/utils";
+import { EditItemDialog } from "@/components/events/edit-item-dialog";
 import type { BoardItem, BoardMember } from "@/components/events/types";
 
 // ボタンを隠すのは補助で、検証は Server Action の中で行う（実装ルール 1）
@@ -21,6 +22,7 @@ type RentalRowProps = {
   canOffer: boolean; // 「自分が貸す」を出すか
   isCarrier: boolean; // 見ている本人が貸す人か（積み込み済み・降りる）
   canCancel: boolean; // 見ている本人が借り手か（取り下げ）
+  canEdit: boolean; // 見ている本人が登録者か（編集）
 };
 
 // 貸し借り（RENTAL）の1行
@@ -32,6 +34,7 @@ function RentalRow({
   canOffer,
   isCarrier,
   canCancel,
+  canEdit,
 }: RentalRowProps) {
   const packed = item.packedAt !== null;
   const confirmed = item.status === "confirmed";
@@ -148,15 +151,24 @@ function RentalRow({
         </div>
       </div>
 
-      {canCancel && (
+      {(canCancel || canEdit) && (
         // デザインの行の右上の操作ボタンの位置。-m で、押せる範囲を広げたまま行の余白に寄せる
-        <div className="-mt-1.5 -mr-1.5 shrink-0">
-          <CancelRentalDialog
-            eventId={eventId}
-            itemId={item.id}
-            itemName={item.name}
-            carrierName={carrier?.user.displayName}
-          />
+        <div className="-mt-1.5 -mr-1.5 flex shrink-0 items-center">
+          {canEdit && (
+            <EditItemDialog
+              eventId={eventId}
+              item={item}
+              carrierName={carrier?.user.displayName}
+            />
+          )}
+          {canCancel && (
+            <CancelRentalDialog
+              eventId={eventId}
+              itemId={item.id}
+              itemName={item.name}
+              carrierName={carrier?.user.displayName}
+            />
+          )}
         </div>
       )}
     </li>
