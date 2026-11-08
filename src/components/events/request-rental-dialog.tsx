@@ -12,15 +12,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { SIZE_LABEL } from "@/components/events/item-parts";
 import { FormError } from "@/components/ui/form-error";
 import { requestRental } from "@/actions/items";
 import { type ActionResult } from "@/lib/action-result";
+import { ItemFields } from "@/components/events/item-fields";
 
-const SIZES = ["S", "M", "L"] as const;
 const initialState: ActionResult = { ok: true, data: undefined };
 
 // 「借りたいギアをリクエスト」ボタンと、ギア名・かさばり具合を入力するモーダル。
@@ -74,43 +70,12 @@ function RequestRentalForm({
     },
     initialState,
   );
-  // React 19 は送信後にフォームを空に戻すので、エラーのときに入力が消えないよう state で持つ
-  const [name, setName] = useState("");
-  const [size, setSize] = useState("M");
 
   return (
     <form action={formAction} noValidate className="flex flex-col gap-3">
       <input type="hidden" name="eventId" value={eventId} />
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="rental-name">ギア名</Label>
-        <Input
-          id="rental-name"
-          name="name"
-          placeholder="例：ヘキサタープ"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-        />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        {/* ラジオボタンの集まりには for で結びつけられないので、aria-labelledby で見出しを読み上げる */}
-        <Label asChild id="rental-size-label">
-          <span>かさばり具合（運ぶ人の判断材料）</span>
-        </Label>
-        <RadioGroup
-          name="size"
-          aria-labelledby="rental-size-label"
-          value={size}
-          onValueChange={setSize}
-        >
-          {SIZES.map((value) => (
-            <RadioGroupItem key={value} value={value}>
-              {SIZE_LABEL[value]}
-            </RadioGroupItem>
-          ))}
-        </RadioGroup>
-      </div>
+      <ItemFields />
 
       {/* デザインの「指定しない場合は」は、宛先を選べる #16 の文言なので省いた */}
       <DialogDescription className="text-xs leading-relaxed text-neutral-700">
