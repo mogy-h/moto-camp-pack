@@ -160,4 +160,6 @@ DIRECT_URL=          # Supabase Session pooler（:5432。Direct connection は I
 NEXT_PUBLIC_SUPABASE_URL=              # https://<プロジェクトの ref>.supabase.co — lib/supabase/server.ts と proxy.ts（Auth のみ）
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=  # Publishable key（sb_publishable_...）。公開してよいキー。Supabase の新しい形式（古い anon key の代わり）
 SUPABASE_SECRET_KEY=                   # Secret key（sb_secret_...）。prisma/seed.ts だけが使う。全権限を持つので NEXT_PUBLIC_ を付けず、Vercel にも入れない
+GEMINI_API_KEY=      # Gemini API のキー（有料枠 Tier 1。前払い・自動チャージなし）。サーバーだけで使うので NEXT_PUBLIC_ を付けない。Vercel にも入れる
+GEMINI_MODEL=        # 使うモデル名（例: gemini-3.5-flash-lite）。提供終了のときに、コードを直さず切り替えるため
 ```
