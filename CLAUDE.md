@@ -69,7 +69,7 @@ src/
       profile/
     j/[token]/             # 招待リンク
     claim/                 # ゲスト→アカウント引き継ぎ
-  actions/                 # Server Actions（ドメインごと: auth.ts, items.ts, members.ts, events.ts, invites.ts, notifications.ts, profile.ts）
+  actions/                 # Server Actions（ドメインごと: auth.ts, items.ts, members.ts, events.ts, invites.ts, notifications.ts, profile.ts, suggestions.ts）
   lib/
     prisma.ts              # PrismaClient シングルトン（@prisma/adapter-pg + DATABASE_URL）
     utils.ts               # cn()（クラス名の結合。shadcn/ui の init で生成）
@@ -82,6 +82,7 @@ src/
     permissions.ts         # assertCan(action, member, item?)
     notify.ts              # 通知レコード作成ヘルパ
     derive/                # itemStatus, effectiveGearMemo, avatarColor, initials, progress — サーバー・クライアント共用の純関数
+    suggest/               # 共同装備の提案（Gemini API）: プロンプトの組み立て・重複除去・定番リスト（純関数）と、Gemini を呼ぶ gemini.ts（server-only）
   components/
     ui/                    # shadcn/ui から追加した部品（Organic に合わせて調整）+ アプリ固有の共通パーツ（Avatar, Header, GearMemoInput）
     <feature>/             # 画面固有パーツ（events/, dashboard/ ...）
