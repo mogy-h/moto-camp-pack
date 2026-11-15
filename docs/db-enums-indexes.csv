@@ -17,6 +17,7 @@ No,テーブル,内容,備考
 6,items,CHECK ((kind = 'RENTAL' AND requester_id IS NOT NULL) OR (kind = 'SHARED' AND requester_id IS NULL)),items_requester_kind_check。貸し借りには必ず借り手がいる／共同装備には借り手がいない。マイグレーションに手書き
 7,notifications,INDEX (recipient_id, read_at),未読バッジの件数取得
 8,notifications,INDEX (event_id, recipient_id),イベント詳細のベル
+9,suggestion_logs,INDEX (user_id, created_at),共同装備の提案の回数制限（直近24時間の件数）
 ,,,
 外部キー,,,
 No,子テーブル.FK列,参照先,onDelete
@@ -37,6 +38,7 @@ No,子テーブル.FK列,参照先,onDelete
 15,notifications.item_id,items.id,CASCADE
 16,invites.event_id,events.id,CASCADE
 17,invites.created_by_id,event_members.id,RESTRICT
+18,suggestion_logs.user_id,users.id,CASCADE
 ,,,
 離脱時の関連レコード処理,,,
 No,対象,処理,備考

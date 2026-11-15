@@ -18,6 +18,7 @@
 - 全テーブルに作成日時と `updated_at` を持たせる
 - 帰着日（`endDate`）は必須。日帰りは出発日と同じ日
 - 時刻を持つ列は `timestamptz`、出発日・帰着日は `date`。タイムゾーンは日本時間に固定し、完了は帰着日の翌日から（理由は「文字列の長さ・日時の方針」）
+- 共同装備の提案（Gemini API）の回数制限は、呼び出しのログ（`SuggestionLog`）を直近24時間で数える。User に回数とリセット時刻の列を持たせる方式と違い、件数を数えるだけで済み、リセットの処理が要らない
 
 ## テーブル
 
@@ -47,6 +48,7 @@ model User {
 
   members        EventMember[]
   createdEvents  Event[]      @relation("EventCreatedBy")
+  suggestionLogs SuggestionLog[]
 
   @@map("users")
 }
@@ -195,6 +197,20 @@ model Invite {
   @@map("invites")
 }
 
+// 共同装備の提案（Gemini API）を呼んだ記録。1人あたりの回数制限（直近24時間で数える）に使う
+// 追記するだけで、更新・削除はしない（updatedAt は全テーブル共通の方針に合わせて持つ）
+model SuggestionLog {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid   // EventMember ではなく User。イベントをまたいで1人あたりで数えるため
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)   // 呼び出した時刻
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])   // 「この人の、この時刻以降」の件数を数える
+  @@map("suggestion_logs")
+}
+
 enum EventStatus {
   DRAFT
   PUBLISHED
@@ -326,6 +342,7 @@ ER 図は [`docs/ERD.md`](ERD.md)（`prisma/schema.prisma` から prisma-markdow
 | Notification | itemId | Item.id | – | Cascade | – |
 | Invite | eventId | Event.id | – | Cascade | ○ |
 | Invite | createdById | EventMember.id | `InviteCreatedBy` | Restrict | ○ |
+| SuggestionLog | userId | User.id | – | Cascade | ○ |
 
 **リレーション名が要る箇所** — 同じ2テーブル間に複数の経路があるとPrismaが曖昧性エラーを出すため、名前で区別する。
 
@@ -451,6 +468,7 @@ if (count === 0) throw new AlreadyTakenError(); // UI:「先に他の人が引�
 | 貸し借りリクエストの作成 | 全参加者（`requesterId` = 本人） |
 | アイテムの削除 | `createdById` または `requesterId` |
 | アイテムの編集（ギア名・かさばり具合） | `createdById` のみ。担当が決まった後も可（通知なし） |
+| 共同装備の提案（Gemini API） | 全参加者。1人あたり直近24時間で10回まで（`SuggestionLog` の件数で判定） |
 | イベントの編集・公開・メンバー削除・招待の発行と失効 | `OWNER` のみ（自分自身は削除不可） |
 | イベントから退出 | 本人のみ。`OWNER` は退出不可（初版はオーナー移譲なし） |
 

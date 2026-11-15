@@ -126,6 +126,14 @@ export const updateItemSchema = itemSchema.extend({
   itemId: fields.id,
 });
 
+// 共同装備の提案（Gemini の答え）の1件。ギア名は追加フォームと同じ制約にして、
+// そのまま addSharedItem に渡しても弾かれないようにする
+export const suggestionSchema = z.object({
+  name: fields.gearName,
+  size: z.enum(["S", "M", "L"]), // fields.size と違い既定値を付けない（AI が size を返さなければ不正とする）
+});
+export type Suggestion = z.infer<typeof suggestionSchema>;
+
 // 借りたいギアのリクエスト（#15 は宛先なし。宛先は #16 で足す）
 export const requestRentalSchema = itemSchema.extend({
   eventId: fields.id,
@@ -144,6 +152,11 @@ export const updateEventGearMemoSchema = z.object({
 
 // 招待リンクの発行
 export const createInviteSchema = z.object({
+  eventId: fields.id,
+});
+
+// 共同装備の提案（Gemini API）
+export const suggestSharedItemsSchema = z.object({
   eventId: fields.id,
 });
 

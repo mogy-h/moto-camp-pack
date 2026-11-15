@@ -88,6 +88,12 @@ erDiagram
   DateTime(3) created_at
   DateTime(3) updated_at
 }
+"suggestion_logs" {
+  String id PK
+  String user_id FK
+  DateTime(3) created_at
+  DateTime(3) updated_at
+}
 "_EventMemberToInvite" {
   String A FK
   String B FK
@@ -109,6 +115,7 @@ erDiagram
 "notifications" }o--o| "items" : item
 "invites" }o--|| "events" : event
 "invites" }o--|| "event_members" : createdBy
+"suggestion_logs" }o--|| "users" : user
 "_EventMemberToInvite" }o--|| "event_members" : EventMember
 "_EventMemberToInvite" }o--|| "invites" : Invite
 ```
@@ -237,6 +244,19 @@ Properties as follows:
 - `created_by_id`:
 - `expires_at`:
 - `revoked_at`:
+- `created_at`:
+- `updated_at`:
+
+### `suggestion_logs`
+
+共同装備の提案（Gemini API）を呼んだ記録。1人あたりの回数制限（直近24時間で数える）に使う
+
+追記するだけで、更新・削除はしない
+
+Properties as follows:
+
+- `id`:
+- `user_id`:
 - `created_at`:
 - `updated_at`:
 
