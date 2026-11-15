@@ -1,36 +1,144 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MotoCamp Pack
 
-## Getting Started
+> **TODO（本人）**: アプリを一言で説明する（例: 「キャンプツーリングの積載を、仲間内で早い者勝ちで分担する Web アプリ」）
 
-First, run the development server:
+> **TODO（本人）**: スクリーンショット（イベント詳細・AI の提案など）。画像は `docs/images/` に置き、`![イベント詳細](docs/images/event-detail.png)` の形で貼る
+
+## デモ
+
+**URL**: https://moto-camp-pack.vercel.app
+
+### デモアカウント
+
+3人とも同じイベント「富士山麓 1泊2日 キャンプツーリング」に参加しています。パスワードは3人とも `motocamp-dev` です。
+
+| 名前 | メールアドレス | イベントでの役割 |
+|---|---|---|
+| 山田 拓也 | `takuya@motocamp.test` | オーナー（招待リンクを発行できる） |
+| 佐々木 健二 | `kenji@motocamp.test` | メンバー |
+| 川瀬 美咲 | `misaki@motocamp.test` | メンバー |
+
+デモのデータは誰でも変更できます。レビューの前に、シードで初期の状態に戻しています。
+
+### 試し方
+
+1. 山田 拓也でログインし、ダッシュボードから「富士山麓 1泊2日 キャンプツーリング」を開く
+2. 「共同装備の分担」で、担当が決まっていない装備（「初日夕食の食材」など）の「自分が運ぶ」を押す
+3. **早い者勝ちを試す**: 別のブラウザ（シークレットウィンドウなど）で佐々木 健二としてログインし、同じイベントを開く。2つの画面で同じ装備の「自分が運ぶ」を押すと、後から押した方には「先に他の人が引き受けました」と出る
+4. **AI の提案を試す**: 「足りないものを提案」を押すと、Gemini API が足りない共同装備を提案する。候補の「追加」を押すと、共同装備に登録される
+5. **貸し借りを試す**: 「借りたいギアをリクエスト」で募集し、別のアカウントで「自分が貸す」を押す
+6. **招待を試す**: 山田 拓也で「招待」→「招待リンクを発行」を押し、リンクを開いて新しいアカウントで参加する
+
+## 作った目的
+
+> **TODO（本人）**: 背景（どんな場面で困ったか）と、このアプリで解決したいこと
+
+## 要件定義
+
+> **TODO（本人）**: 対象ユーザー・解決する課題・作る範囲・今回は作らないもの。
+> 材料: `docs/progress.md` の「優先順位」（MVP の範囲と「今回は作らない」）、`docs/screens.md`
+
+## 機能一覧
+
+| 分類 | 機能 | 説明 |
+|---|---|---|
+| アカウント | 新規登録・ログイン・ログアウト | メールアドレスとパスワード（Supabase Auth） |
+| イベント | イベントの作成 | イベント名・場所・日程。作成した人がオーナーになる |
+| | ダッシュボード | 参加中のイベントの一覧。予定・完了のタブ、検索、積み込みの進捗 |
+| | 招待 | オーナーが招待リンクを発行し、受け取った人がリンクから参加する。リンクは出発日の終わりまで有効 |
+| メンバー | メンバーカード | 参加者ごとに、車種と積載装備メモを表示する |
+| | 積載装備メモ | 自分のバイクに積む装備のメモを、イベントごとに編集できる |
+| | 絞り込み | メンバーのカードを押すとその人の担当分だけ、「調整が必要なものだけ」で担当や貸す人がまだ決まっていないもの（自分宛ての依頼を含む）だけを表示する |
+| 共同装備 | 追加・編集・削除 | テントやタープなど、全員で使う装備を登録する。かさばり具合は S / M / L |
+| | 運搬担当（早い者勝ち） | 「自分が運ぶ」を最初に押した人に決まる。決まったあとは「降りる」で取り消せる |
+| | 積み込み済み | 担当の人がチェックを付け、イベント全体の進捗に反映される |
+| | 足りないものの提案（AI） | 場所・日程・人数・登録済みの装備から、足りない共同装備を Gemini API が提案する。候補の「追加」で登録できる。AI が使えないときは定番のリストから提案する |
+| 貸し借り | リクエスト | 借りたいギアを募集する。取り下げ・編集もできる |
+| | 「自分が貸す」（早い者勝ち） | 最初に押した人が貸す人に決まり、借りたい人に通知が作られる |
+
+> **TODO（本人）**: 確認。通知は記録だけ作っていて、表示の画面（#17）はまだないので一覧に入れていない
+
+## 技術スタック
+
+| 分類 | 使ったもの | 選定理由 |
+|---|---|---|
+| フレームワーク | Next.js 16（App Router）・React 19・TypeScript | **TODO（本人）** |
+| データベース | PostgreSQL（Supabase） | **TODO（本人）** |
+| ORM | Prisma 7 | スキーマからマイグレーションと型を作れる。手書きの CHECK 制約もマイグレーションに含められる |
+| 認証 | Supabase Auth（`@supabase/ssr`） | **TODO（本人）** |
+| スタイル | Tailwind CSS v4 | デザインのトークン（色・角丸・余白）を `@theme` に置き、クラス名として使える |
+| UI 部品 | shadcn/ui（Radix UI） | モーダルやメニューのアクセシビリティ（フォーカス管理・キーボード操作・読み上げ）を、実績のある実装に任せるため |
+| 入力の検証 | zod | Server Action の入力を検証する。Gemini の答えの形も同じ zod で確かめる |
+| LLM | Gemini API（`@google/genai`） | **TODO（本人）** |
+| テスト | Vitest | DB にも React にも依存しない純関数（状態の導出・権限・日付など）をテストする |
+| デプロイ | Vercel | **TODO（本人）** |
+
+ほかに使っているライブラリ: lucide-react（アイコン）、sonner（トースト）、prisma-markdown（ER 図の生成）
+
+## 外部 API
+
+| サービス | 使っている機能 | 使い方 |
+|---|---|---|
+| Supabase | Auth | メールアドレスとパスワードでの登録・ログイン。セッションは Cookie で持つ |
+| | PostgreSQL | アプリのデータベース。Prisma からだけ接続し、ブラウザから DB に触れる Data API は無効にしている |
+| Google Gemini API | テキスト生成（`gemini-3.5-flash-lite`） | 足りない共同装備の提案。サーバーからだけ呼び、送るのはイベントの場所・日程・人数・登録済みの装備名だけ（名前やメールアドレスは送らない）。答えは JSON の形を指定して受け取る。1人あたり24時間で10回まで |
+
+## 設計
+
+- [ER 図](docs/ERD.md)（`prisma/schema.prisma` から自動生成）
+- [データ設計](docs/schema.md): テーブル・状態の導出・権限・通知
+- [画面設計](docs/screens.md): 画面一覧と各画面の操作
+- [実装の進捗と判断の記録](docs/progress.md)
+
+### 設計で工夫した点
+
+> **TODO（本人）**: 3〜5個。材料: 早い者勝ちを条件付き更新で確定する（`updateMany` の `where` に `carrierId: null`）、権限チェックは必ず Server Action の中で行う、表示ステータスや進捗を DB に保存せず導出する、AI の回数制限と定番リストへの切り替え など
+
+## 開発の進め方
+
+> **TODO（本人）**: GitHub Flow・Issue ごとのブランチ・PR のテンプレート・進捗の記録（`docs/progress.md`）など
+
+## AI の使い方
+
+> **TODO（本人）**: Claude Code をどう使ったか（メンターとして使い、コードは自分で書く。CLAUDE.md にルールを書いた など）
+
+## ローカルでの起動
+
+Node.js 24 で動作を確認しています。
+
+1. Supabase のプロジェクトを作り、次の設定をする
+   - Data API を無効にする
+   - Auth: メールアドレスとパスワードでのログインを有効にし、登録時のメール確認をオフにする
+2. リポジトリを取得し、パッケージを入れる（`postinstall` で Prisma Client も生成される）
+   ```bash
+   git clone https://github.com/mogy-h/moto-camp-pack.git
+   cd moto-camp-pack
+   npm install
+   ```
+3. `.env.local` を作り、次の値を入れる（それぞれの説明は [CLAUDE.md の「環境変数」](CLAUDE.md#環境変数envlocal)）
+   ```
+   DATABASE_URL=                          # Supabase の Transaction pooler（:6543、?pgbouncer=true）
+   DIRECT_URL=                            # Supabase の Session pooler（:5432）。マイグレーションとシードで使う
+   NEXT_PUBLIC_SUPABASE_URL=
+   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+   SUPABASE_SECRET_KEY=                   # シードだけが使う
+   GEMINI_API_KEY=
+   GEMINI_MODEL=gemini-3.5-flash-lite
+   ```
+4. テーブルを作り、サンプルデータ（上のデモアカウント）を入れる
+   ```bash
+   npx prisma migrate deploy
+   npx prisma db seed
+   ```
+5. 開発サーバーを起動し、http://localhost:3000 を開く
+   ```bash
+   npm run dev
+   ```
+
+テスト・型チェック・lint:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm test
+npm run typecheck
+npm run lint
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
