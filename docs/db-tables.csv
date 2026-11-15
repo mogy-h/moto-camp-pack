@@ -93,3 +93,12 @@ No,PK,FK,カラム名,項目名,データ型,NOT NULL,デフォルト,備考
 6,,,revoked_at,失効日時,timestamptz,,,オーナーによる無効化
 7,,,created_at,作成日時,timestamptz,○,now(),
 8,,,updated_at,更新日時,timestamptz,○,,Prisma の @updatedAt で作成・更新時に自動設定
+,,,,,,,,
+suggestion_logs,,,,,,,,
+No,PK,FK,カラム名,項目名,データ型,NOT NULL,デフォルト,備考
+1,○,,id,ID,uuid,○,gen_random_uuid(),
+2,,users.id,user_id,呼び出したユーザーID,uuid,○,,ON DELETE CASCADE。イベントをまたいで1人あたりで数えるため event_members ではなく users
+3,,,created_at,作成日時（呼び出した時刻）,timestamptz,○,now(),直近24時間の件数で回数制限を判定する
+4,,,updated_at,更新日時,timestamptz,○,,Prisma の @updatedAt。追記のみのログだが全テーブル共通の方針に合わせて持つ
+,,,,,,,,INDEX(user_id, created_at)
+,,,,,,,,共同装備の提案（Gemini API）の呼び出しログ。更新・削除はしない

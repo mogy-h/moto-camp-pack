@@ -29,8 +29,9 @@ model User {
   createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  members       EventMember[]
-  createdEvents Event[]       @relation("EventCreatedBy")
+  members        EventMember[]
+  createdEvents  Event[]         @relation("EventCreatedBy")
+  suggestionLogs SuggestionLog[]
 
   @@map("users")
 }
@@ -206,6 +207,21 @@ model Invite {
   joins     EventMember[] @relation("InviteJoins")
 
   @@map("invites")
+}
+
+/// 共同装備の提案（Gemini API）を呼んだ記録。1人あたりの回数制限（直近24時間で数える）に使う
+///
+/// 追記するだけで、更新・削除はしない
+model SuggestionLog {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("suggestion_logs")
 }
 
 enum EventStatus {
