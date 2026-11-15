@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useActionState } from "react";
 import { Funnel, X } from "lucide-react";
 import { AddSharedItemDialog } from "@/components/events/add-shared-item-dialog";
 import { MemberCard } from "@/components/events/member-card";
@@ -10,6 +10,11 @@ import { StatusBadge } from "@/components/events/item-parts";
 import { cn } from "@/lib/utils";
 import { RequestRentalDialog } from "@/components/events/request-rental-dialog";
 import type { BoardItem, BoardMember } from "@/components/events/types";
+import { suggestSharedItems } from "@/actions/suggestions";
+import {
+  SuggestButton,
+  SuggestionPanel,
+} from "@/components/events/shared-suggestions";
 
 function needsAttention(item: BoardItem, meId: string): boolean {
   if (item.status === "open") return true;
@@ -49,6 +54,11 @@ function EventBoard({ eventId, members, items, meId }: EventBoardProps) {
   // カードで選んだメンバー（EventMember の id）。null なら絞り込まない
   const [memberFilter, setMemberFilter] = useState<string | null>(null);
   const [onlyAttention, setOnlyAttention] = useState(false);
+  // 共同装備の提案の結果。null はまだ押していない。見出しのボタンと一覧の両方で使うので、ここで持つ
+  const [suggestState, suggestAction, isSuggesting] = useActionState(
+    suggestSharedItems,
+    null,
+  );
 
   // 行に借りたい人・貸す人・運ぶ人のアバターと名前を出すため、id からメンバーを引けるようにする
   const memberById = new Map(members.map((member) => [member.id, member]));
@@ -68,6 +78,10 @@ function EventBoard({ eventId, members, items, meId }: EventBoardProps) {
 
   const rentals = visible.filter((item) => item.kind === "RENTAL");
   const shared = visible.filter((item) => item.kind === "SHARED");
+  // 登録済みの共同装備の名前。絞り込みで隠れているものも含めるため、visible ではなく items（全件）から作る
+  const sharedNames = items
+    .filter((item) => item.kind === "SHARED")
+    .map((item) => item.name);
 
   return (
     <>
@@ -172,8 +186,25 @@ function EventBoard({ eventId, members, items, meId }: EventBoardProps) {
         <SectionHeading
           title="共同装備の分担"
           description="全員で使う大型ギア。運搬は最初に「自分が運ぶ」を押した人に決まります。"
-          action={<AddSharedItemDialog eventId={eventId} />}
+          action={
+            <div className="flex flex-wrap gap-2">
+              <SuggestButton
+                eventId={eventId}
+                formAction={suggestAction}
+                isPending={isSuggesting}
+              />
+              <AddSharedItemDialog eventId={eventId} />
+            </div>
+          }
         />
+        {suggestState !== null && (
+          <SuggestionPanel
+            eventId={eventId}
+            result={suggestState}
+            registeredNames={sharedNames}
+          />
+        )}
+
         {shared.length > 0 ? (
           <ul className="flex flex-col gap-2">
             {shared.map((item) => (
