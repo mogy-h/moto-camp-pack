@@ -29,7 +29,8 @@ function InviteDialog({ eventId, token }: InviteDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="secondary" size="sm" className="font-medium">
+        {/* ml-auto: 狭い画面でヘッダーが折り返したときも、ボタンを右端に寄せる */}
+        <Button variant="secondary" size="sm" className="ml-auto font-medium">
           <UserPlus strokeWidth={2.75} className="size-3.75" />
           招待
         </Button>

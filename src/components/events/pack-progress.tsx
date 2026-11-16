@@ -6,10 +6,11 @@ function PackProgress({
 }) {
   return (
     <div className="flex shrink-0 items-center gap-2">
-      {/* 数は横の文字で読み上げられるので、バーは飾りとして読み上げから外す。幅は値で変わるので style で渡す */}
+      {/* 数は横の文字で読み上げられるので、バーは飾りとして読み上げから外す。幅は値で変わるので style で渡す。
+          スマホではヘッダーが1行に収まらないので、バーを隠して文字だけにする（#49） */}
       <div
         aria-hidden
-        className="h-2 w-18 overflow-hidden rounded-full bg-neutral-300 sm:w-24 lg:w-32"
+        className="hidden h-2 w-18 overflow-hidden rounded-full bg-neutral-300 sm:block sm:w-24 lg:w-32"
       >
         <div
           className="h-full rounded-full bg-accent-2-500 transition-[width] duration-300"
