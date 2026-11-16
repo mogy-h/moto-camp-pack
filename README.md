@@ -39,8 +39,47 @@
 
 ## 要件定義
 
-> **TODO（本人）**: 対象ユーザー・解決する課題・作る範囲・今回は作らないもの。
-> 材料: `docs/progress.md` の「優先順位」（MVP の範囲と「今回は作らない」）、`docs/screens.md`
+### 対象ユーザー
+
+- キャンプツーリングに3人以上で行く、友人・知人のグループ
+
+### 解決する課題
+
+- 誰が誰にギアを貸すのか、どの共同装備を誰が運ぶのかを明確にする
+- LINE などのチャットで決めると会話が流れてしまい、決めたことが分からなくなる。アプリでは一覧で見えるようにする
+- 誰がどのくらいの荷物を持っていくのかを把握しやすくする（例: 余裕がある人に、当日に買い出す食料の運搬を任せる）
+
+### 作る範囲（MVP）
+
+> **TODO（本人）**: なぜこの範囲にしたか
+
+- 新規登録・ログイン・ログアウト（[#7](https://github.com/mogy-h/moto-camp-pack/issues/7)）
+- ダッシュボードとイベントの作成（[#10](https://github.com/mogy-h/moto-camp-pack/issues/10)）
+- イベント詳細（メンバーの積載装備メモ・絞り込み）（[#11](https://github.com/mogy-h/moto-camp-pack/issues/11)）
+- 招待リンクの発行と、リンクからの参加（[#18](https://github.com/mogy-h/moto-camp-pack/issues/18)）
+- 共同装備の追加・削除（[#12](https://github.com/mogy-h/moto-camp-pack/issues/12)）
+- 共同装備の運搬担当を早い者勝ちで決める（[#13](https://github.com/mogy-h/moto-camp-pack/issues/13)）
+- 借りたいギアのリクエストと、早い者勝ちの「自分が貸す」（[#15](https://github.com/mogy-h/moto-camp-pack/issues/15)）
+- 共同装備・リクエストの編集（[#41](https://github.com/mogy-h/moto-camp-pack/issues/41)）
+- 足りない共同装備の AI による提案（Gemini API）（[#47](https://github.com/mogy-h/moto-camp-pack/issues/47)）
+
+### 今後の予定
+
+> **TODO（本人）**: 説明（DB はこれらの機能も含めて設計済み、など）
+
+- 通知の表示（[#17](https://github.com/mogy-h/moto-camp-pack/issues/17)）— DB: `Notification`（既読・対応済みの日時）。通知のレコードは、MVP の操作ですでに作っている
+- メンバーの退出・削除（[#20](https://github.com/mogy-h/moto-camp-pack/issues/20)）— DB: `EventMember.leftAt`（メンバーは物理削除しない）
+- イベント設定（基本情報・公開・招待リンクの管理）（[#19](https://github.com/mogy-h/moto-camp-pack/issues/19)）— DB: `Event.status`・`Invite.revokedAt`
+- 貸せるギアの登録と、貸し借りの依頼の承諾・辞退（[#14](https://github.com/mogy-h/moto-camp-pack/issues/14)・[#16](https://github.com/mogy-h/moto-camp-pack/issues/16)）— DB: `LendableGear`・`Item.sourceGearId`・`Item.acceptedAt`
+- プロフィール設定（[#9](https://github.com/mogy-h/moto-camp-pack/issues/9)）— DB: `User.bike`・`User.gearMemo`
+
+### 保留しているもの
+
+> **TODO（本人）**: 保留の理由
+
+- パスワードリセット（[#8](https://github.com/mogy-h/moto-camp-pack/issues/8)）— Supabase Auth の機能で作れるので、DB の変更は要らない
+- ゲスト参加（[#21](https://github.com/mogy-h/moto-camp-pack/issues/21)）— DB: `EventMember.isGuest`・`User.claimTokenHash`
+- ゲストからアカウントへの引き継ぎ（[#22](https://github.com/mogy-h/moto-camp-pack/issues/22)）— DB: `User.claimTokenHash`
 
 ## 機能一覧
 
