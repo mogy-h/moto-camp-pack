@@ -51,7 +51,9 @@
 
 ### 作る範囲（MVP）
 
-> **TODO（本人）**: なぜこの範囲にしたか
+新規登録・ログイン → イベントの作成 → 招待 → 装備の追加・編集・削除 → 誰が貸すか・誰が運ぶかの取り決め、という一連の流れを、このアプリに最低限必要な範囲としました。
+
+AI による提案は、分担の流れには必須ではありません。ただ、共同装備の抜け漏れに気づけるようになるのと、LLM を組み込んだ機能を作る経験を積みたかったことから、加えました。
 
 - 新規登録・ログイン・ログアウト（[#7](https://github.com/mogy-h/moto-camp-pack/issues/7)）
 - ダッシュボードとイベントの作成（[#10](https://github.com/mogy-h/moto-camp-pack/issues/10)）
@@ -65,8 +67,13 @@
 
 ### 今後の予定
 
-> **TODO（本人）**: 説明（DB はこれらの機能も含めて設計済み、など）
+ユーザーに公開するなら、あった方がよい機能です。DB はこれらの機能も含めて設計してあり、必要なテーブルや列はすでにあります（各項目の「DB:」）。
 
+特にパスワードリセットは、公開するなら欠かせませんが、デモアカウントでは使う場面がありません。また、リセット用のメールのリンクから戻ってくる画面が別に必要です。Supabase の標準のメール送信も制限が厳しく、本格的に使うなら外部のメール送信サービスが要ります。
+
+まずは分担の流れを一通り使える状態で早く公開することを優先し、これらは後に回しました。
+
+- パスワードリセット（[#8](https://github.com/mogy-h/moto-camp-pack/issues/8)）— Supabase Auth の機能で作れるので、DB の変更は要らない
 - 通知の表示（[#17](https://github.com/mogy-h/moto-camp-pack/issues/17)）— DB: `Notification`（既読・対応済みの日時）。通知のレコードは、MVP の操作ですでに作っている
 - メンバーの退出・削除（[#20](https://github.com/mogy-h/moto-camp-pack/issues/20)）— DB: `EventMember.leftAt`（メンバーは物理削除しない）
 - イベント設定（基本情報・公開・招待リンクの管理）（[#19](https://github.com/mogy-h/moto-camp-pack/issues/19)）— DB: `Event.status`・`Invite.revokedAt`
@@ -75,9 +82,8 @@
 
 ### 保留しているもの
 
-> **TODO（本人）**: 保留の理由
+ゲスト参加は、ログインせずに招待リンクから参加できるので、使い始めるハードルを下げられます。ただ、アカウントへの引き継ぎまで作る必要があり、作るものが多くなります。また、本人の確認を Cookie だけに頼ることになります。別の端末で開いたり、ブラウザのデータを消したりして Cookie がなくなると、自分の参加情報に戻れません。安心して使い続けるには不安定なので、今回は見送りました。
 
-- パスワードリセット（[#8](https://github.com/mogy-h/moto-camp-pack/issues/8)）— Supabase Auth の機能で作れるので、DB の変更は要らない
 - ゲスト参加（[#21](https://github.com/mogy-h/moto-camp-pack/issues/21)）— DB: `EventMember.isGuest`・`User.claimTokenHash`
 - ゲストからアカウントへの引き継ぎ（[#22](https://github.com/mogy-h/moto-camp-pack/issues/22)）— DB: `User.claimTokenHash`
 
