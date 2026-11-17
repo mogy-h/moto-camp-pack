@@ -62,8 +62,10 @@ function DialogContent({
         data-slot="dialog-content"
         // ダッシュボードの「新しいイベント」モーダルに合わせる。
         // 入力欄が多いモーダルでもスマホの画面に収まるよう、高さを画面の 88% までにして中をスクロールさせる
+        // grid-cols-1（minmax(0, 1fr)）: 列はふつう中身の最小の幅より狭くなれず、省略表示（truncate）の長い URL でも
+        // 列が URL の長さまで広がってしまう。列をモーダルの幅まで縮められるようにして、中身が右にはみ出さないようにする（#49）
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid max-h-[88dvh] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto rounded-lg bg-popover p-5 text-sm text-popover-foreground shadow-lg duration-100 outline-none sm:max-w-md data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed top-1/2 left-1/2 z-50 grid max-h-[88dvh] grid-cols-1 w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto rounded-lg bg-popover p-5 text-sm text-popover-foreground shadow-lg duration-100 outline-none sm:max-w-md data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className
         )}
         {...props}
