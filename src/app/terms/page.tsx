@@ -15,7 +15,9 @@ export default function TermsPage() {
         <section className="flex flex-col gap-3">
           <h2 className="text-lg">利用規約</h2>
           <p>
-            MotoCamp Pack（以下「本サービス」）は、キャンプツーリングの積載を仲間内で分担するための Web
+            MotoCamp
+            Pack（以下「本サービス」）は、キャンプツーリングの積載を仲間内で分担するための
+            Web
             アプリです。個人が学習とポートフォリオのために開発・運営しています。
           </p>
           <ul className="flex list-disc flex-col gap-1.5 pl-5">

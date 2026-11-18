@@ -1,4 +1,4 @@
-                        // 有効 | 無効 | 期限切れ
+// 有効 | 無効 | 期限切れ
 export type InviteStatus = "valid" | "revoked" | "expired";
 
 // 招待リンクが使えるか。「今」は呼ぶ側から受け取る（テストで時刻を固定できるように）

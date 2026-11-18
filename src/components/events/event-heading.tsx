@@ -2,7 +2,12 @@ import { CalendarDays, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 type EventHeadingProps = {
-  event: { title: string; place: string | null; startDate: Date; endDate: Date };
+  event: {
+    title: string;
+    place: string | null;
+    startDate: Date;
+    endDate: Date;
+  };
   isDraft: boolean;
   memberCount: number;
   // 引き受け待ち（asking）のアイテムの数。誰宛てかは問わない
@@ -28,11 +33,18 @@ const CHIP =
   "inline-flex max-w-full items-center gap-1.5 rounded-full px-3.25 py-1.5 text-xs";
 
 // タイトル・日程・場所・人数。場所はデザインにないが、ダッシュボードのカードと同じく出す
-function EventHeading({ event, isDraft, memberCount, askingCount }: EventHeadingProps) {
+function EventHeading({
+  event,
+  isDraft,
+  memberCount,
+  askingCount,
+}: EventHeadingProps) {
   return (
     <div className="mb-4 flex flex-wrap items-end gap-2.75 sm:mb-6">
       <div className="min-w-0 flex-1 basis-64">
-        <p className="mb-1.5 text-2xs tracking-widest text-neutral-600">ツーリング</p>
+        <p className="mb-1.5 text-2xs tracking-widest text-neutral-600">
+          ツーリング
+        </p>
         <h1 className="text-2xl text-pretty sm:text-3xl">{event.title}</h1>
         {isDraft && (
           <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -58,7 +70,9 @@ function EventHeading({ event, isDraft, memberCount, askingCount }: EventHeading
         <span className={`${CHIP} bg-accent-2-200 text-accent-2-800`}>
           <Users strokeWidth={2.75} className="size-3.5 shrink-0" />
           {memberCount}名 ·{" "}
-          {askingCount > 0 ? `引き受け待ち ${askingCount}件` : "引き受け待ちなし"}
+          {askingCount > 0
+            ? `引き受け待ち ${askingCount}件`
+            : "引き受け待ちなし"}
         </span>
       </div>
     </div>

@@ -11,7 +11,7 @@ import { type ActionResult } from "@/lib/action-result";
 
 const initialState: ActionResult = { ok: true, data: undefined };
 
-// ログインのフォーム。見た目は Claude、Server Action とつなぐ部分（TODO）は本人が書く。
+// ログインのフォーム。
 // next はログイン後に戻す先。signIn がもう一度 safeNextPath で確かめる（hidden の値もブラウザで書き換えられるため）
 export function SignInForm({ next }: { next: string }) {
   const [state, formAction, isPending] = useActionState(signIn, initialState);

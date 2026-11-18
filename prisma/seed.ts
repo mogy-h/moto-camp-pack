@@ -39,32 +39,49 @@ function createAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const secretKey = process.env.SUPABASE_SECRET_KEY;
   if (!url || !secretKey) {
-    throw new Error("NEXT_PUBLIC_SUPABASE_URL と SUPABASE_SECRET_KEY が設定されていません");
+    throw new Error(
+      "NEXT_PUBLIC_SUPABASE_URL と SUPABASE_SECRET_KEY が設定されていません",
+    );
   }
   // ログインするためではなく管理用の API を呼ぶだけなので、セッションは保存しない
-  return createClient(url, secretKey, { auth: { autoRefreshToken: false, persistSession: false } });
+  return createClient(url, secretKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
 }
 
 // Auth のアカウントを用意し、その id（User.authUid に入れる値）を返す。
 // resetAll は DB の表しか消さないので、2回目以降はアカウントが残っている。そのときは作り直さず、
 // パスワードと表示名を上書きして、いつ実行しても同じ状態にする
-async function ensureAuthUser(admin: SupabaseClient, account: { email: string; displayName: string }) {
+async function ensureAuthUser(
+  admin: SupabaseClient,
+  account: { email: string; displayName: string },
+) {
   const attributes = {
     password: SEED_PASSWORD,
     email_confirm: true,
     user_metadata: { display_name: account.displayName },
   };
 
-  const { data, error } = await admin.auth.admin.createUser({ email: account.email, ...attributes });
+  const { data, error } = await admin.auth.admin.createUser({
+    email: account.email,
+    ...attributes,
+  });
   if (!error) return data.user.id;
-  if (error.code !== "email_exists" && error.code !== "user_already_exists") throw error;
+  if (error.code !== "email_exists" && error.code !== "user_already_exists")
+    throw error;
 
-  const { data: list, error: listError } = await admin.auth.admin.listUsers({ perPage: 1000 });
+  const { data: list, error: listError } = await admin.auth.admin.listUsers({
+    perPage: 1000,
+  });
   if (listError) throw listError;
   const existing = list.users.find((user) => user.email === account.email);
-  if (!existing) throw new Error(`${account.email} のアカウントが見つかりません`);
+  if (!existing)
+    throw new Error(`${account.email} のアカウントが見つかりません`);
 
-  const { error: updateError } = await admin.auth.admin.updateUserById(existing.id, attributes);
+  const { error: updateError } = await admin.auth.admin.updateUserById(
+    existing.id,
+    attributes,
+  );
   if (updateError) throw updateError;
   return existing.id;
 }
@@ -141,7 +158,12 @@ async function seedFujiEvent(tx: Prisma.TransactionClient, authUids: AuthUids) {
 
   // オーナーは山田さん（デザインの既定の視点）
   const takuya = await tx.eventMember.create({
-    data: { eventId: event.id, userId: takuyaUser.id, role: "OWNER", joinedAt: daysAgo(20) },
+    data: {
+      eventId: event.id,
+      userId: takuyaUser.id,
+      role: "OWNER",
+      joinedAt: daysAgo(20),
+    },
   });
 
   const activeInvite = await tx.invite.create({
@@ -164,20 +186,45 @@ async function seedFujiEvent(tx: Prisma.TransactionClient, authUids: AuthUids) {
   });
 
   const kenji = await tx.eventMember.create({
-    data: { eventId: event.id, userId: kenjiUser.id, invitedVia: activeInvite.id, joinedAt: daysAgo(9) },
+    data: {
+      eventId: event.id,
+      userId: kenjiUser.id,
+      invitedVia: activeInvite.id,
+      joinedAt: daysAgo(9),
+    },
   });
   const misaki = await tx.eventMember.create({
-    data: { eventId: event.id, userId: misakiUser.id, invitedVia: activeInvite.id, joinedAt: daysAgo(2) },
+    data: {
+      eventId: event.id,
+      userId: misakiUser.id,
+      invitedVia: activeInvite.id,
+      joinedAt: daysAgo(2),
+    },
   });
 
   await tx.lendableGear.createMany({
     data: [
-      { eventId: event.id, memberId: takuya.id, name: "予備グローブ", size: "S" },
-      { eventId: event.id, memberId: kenji.id, name: "ランタンスタンド", size: "M" },
+      {
+        eventId: event.id,
+        memberId: takuya.id,
+        name: "予備グローブ",
+        size: "S",
+      },
+      {
+        eventId: event.id,
+        memberId: kenji.id,
+        name: "ランタンスタンド",
+        size: "M",
+      },
     ],
   });
   const lowChair = await tx.lendableGear.create({
-    data: { eventId: event.id, memberId: takuya.id, name: "ローチェア", size: "M" },
+    data: {
+      eventId: event.id,
+      memberId: takuya.id,
+      name: "ローチェア",
+      size: "M",
+    },
   });
 
   // 表示順を安定させるため、作成日時を10分ずつずらす
@@ -185,7 +232,12 @@ async function seedFujiEvent(tx: Prisma.TransactionClient, authUids: AuthUids) {
   const nextCreatedAt = () => minutesAgo(30 * 60 - 10 * order++);
 
   // 共同装備: carrier を渡すと確定済み、渡さないと担当者募集中
-  const shared = async (name: string, size: Size, createdById: string, carrier?: { id: string; packed: boolean }) => {
+  const shared = async (
+    name: string,
+    size: Size,
+    createdById: string,
+    carrier?: { id: string; packed: boolean },
+  ) => {
     const createdAt = nextCreatedAt();
     return tx.item.create({
       data: {
@@ -202,10 +254,19 @@ async function seedFujiEvent(tx: Prisma.TransactionClient, authUids: AuthUids) {
     });
   };
 
-  await shared("ヘキサタープ + ポール", "L", takuya.id, { id: takuya.id, packed: true });
-  await shared("焚き火台 + ゴトク", "M", kenji.id, { id: kenji.id, packed: false });
+  await shared("ヘキサタープ + ポール", "L", takuya.id, {
+    id: takuya.id,
+    packed: true,
+  });
+  await shared("焚き火台 + ゴトク", "M", kenji.id, {
+    id: kenji.id,
+    packed: false,
+  });
   const dinner = await shared("初日夕食の食材", "M", takuya.id);
-  await shared("クッカーセット", "S", misaki.id, { id: misaki.id, packed: true });
+  await shared("クッカーセット", "S", misaki.id, {
+    id: misaki.id,
+    packed: true,
+  });
   const firewood = await shared("炭・薪", "L", kenji.id);
   await shared("LEDランタン ×2", "S", takuya.id);
 
@@ -233,21 +294,33 @@ async function seedFujiEvent(tx: Prisma.TransactionClient, authUids: AuthUids) {
     });
   };
 
-  await rental("シュラフ（冬用 -5℃）", "M", misaki.id, { id: takuya.id, accepted: true });
+  await rental("シュラフ（冬用 -5℃）", "M", misaki.id, {
+    id: takuya.id,
+    accepted: true,
+  });
   const chairRequest = await rental("ローチェア", "M", kenji.id, {
     id: takuya.id,
     accepted: false,
     sourceGearId: lowChair.id,
   });
   const mat = await rental("インフレータブルマット", "L", misaki.id);
-  const burner = await rental("シングルバーナー", "S", takuya.id, { id: misaki.id, accepted: true });
+  const burner = await rental("シングルバーナー", "S", takuya.id, {
+    id: misaki.id,
+    accepted: true,
+  });
   await rental("ランタン（充電式）", "S", takuya.id);
 
   // 通知はデザインの視点（山田さん）宛てのみ。文面は保存しない（type + 参照ID + payload）
   const toTakuya = { eventId: event.id, recipientId: takuya.id };
   await tx.notification.createMany({
     data: [
-      { ...toTakuya, type: "ASK", actorId: kenji.id, itemId: chairRequest.id, createdAt: minutesAgo(12) },
+      {
+        ...toTakuya,
+        type: "ASK",
+        actorId: kenji.id,
+        itemId: chairRequest.id,
+        createdAt: minutesAgo(12),
+      },
       {
         ...toTakuya,
         type: "WITHDRAWN",
@@ -256,7 +329,13 @@ async function seedFujiEvent(tx: Prisma.TransactionClient, authUids: AuthUids) {
         payload: { reason: "self" },
         createdAt: minutesAgo(40),
       },
-      { ...toTakuya, type: "ACCEPTED", actorId: misaki.id, itemId: burner.id, createdAt: hoursAgo(2) },
+      {
+        ...toTakuya,
+        type: "ACCEPTED",
+        actorId: misaki.id,
+        itemId: burner.id,
+        createdAt: hoursAgo(2),
+      },
       {
         ...toTakuya,
         type: "WITHDRAWN",
@@ -274,7 +353,13 @@ async function seedFujiEvent(tx: Prisma.TransactionClient, authUids: AuthUids) {
         createdAt: firewood.createdAt,
         readAt: hoursAgo(19),
       },
-      { ...toTakuya, type: "MEMBER_JOINED", actorId: misaki.id, createdAt: daysAgo(2), readAt: daysAgo(1) },
+      {
+        ...toTakuya,
+        type: "MEMBER_JOINED",
+        actorId: misaki.id,
+        createdAt: daysAgo(2),
+        readAt: daysAgo(1),
+      },
     ],
   });
 }
@@ -298,7 +383,9 @@ async function main() {
       },
       { timeout: 60 * 1000 },
     );
-    console.log(`シードを投入しました（ログイン: ${SEED_ACCOUNTS.takuya.email} / ${SEED_PASSWORD} など）`);
+    console.log(
+      `シードを投入しました（ログイン: ${SEED_ACCOUNTS.takuya.email} / ${SEED_PASSWORD} など）`,
+    );
   } finally {
     await prisma.$disconnect();
   }

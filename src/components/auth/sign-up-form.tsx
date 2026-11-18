@@ -13,7 +13,7 @@ import { type ActionResult } from "@/lib/action-result";
 
 const initialState: ActionResult = { ok: true, data: undefined };
 
-// 新規登録のフォーム。見た目は Claude、Server Action とつなぐ部分（TODO）は本人が書く。
+// 新規登録のフォーム。
 // next は登録後に戻す先。signUp がもう一度 safeNextPath で確かめる（hidden の値もブラウザで書き換えられるため）
 export function SignUpForm({ next }: { next: string }) {
   const [state, formAction, isPending] = useActionState(signUp, initialState);

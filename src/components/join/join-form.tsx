@@ -11,7 +11,6 @@ const initialState: ActionResult = { ok: true, data: undefined };
 // 「このアカウントで参加する」。成功すると joinWithAccount がイベント詳細へ redirect するので、ここでは失敗だけ表示する。
 // 入力欄の name（token）は、joinWithAccount が formData.get で読む名前と一致させる
 function JoinForm({ token }: { token: string }) {
-  // TODO(本人): useActionState で joinWithAccount につなぐ
   const [state, formAction, isPending] = useActionState(
     joinWithAccount,
     initialState,
