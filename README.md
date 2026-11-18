@@ -2,7 +2,13 @@
 
 キャンプツーリングの積載を仲間内で分担する Web アプリ。共同装備（タープなど）を誰のバイクで運ぶか、ギアの貸し借りを誰が引き受けるかを、早い者勝ちで決める。
 
-> **TODO（本人）**: スクリーンショット（イベント詳細・AI の提案など）。画像は `docs/images/` に置き、`![イベント詳細](docs/images/event-detail.png)` の形で貼る
+<img width="1913" height="906" alt="スクリーンショット 2026-11-18 192655" src="https://github.com/user-attachments/assets/a81153c2-78d6-4aca-b393-f859f99e1631" />
+<img width="1876" height="606" alt="スクリーンショット 2026-11-18 193816" src="https://github.com/user-attachments/assets/42cfb607-d970-45fe-9a9e-5204448a6b75" />
+<img width="1785" height="707" alt="スクリーンショット 2026-11-18 193836" src="https://github.com/user-attachments/assets/744b44d3-2a36-40c6-abc2-4f6c91d66cb4" />
+<img width="1898" height="749" alt="スクリーンショット 2026-11-18 193855" src="https://github.com/user-attachments/assets/0f84bb12-fb40-4be1-9659-b26289733d0c" />
+<img width="1047" height="439" alt="スクリーンショット 2026-11-15 181405" src="https://github.com/user-attachments/assets/d13401e3-2b34-429d-8802-5906c5f51a58" />
+<img width="493" height="643" alt="スクリーンショット 2026-11-04 175830" src="https://github.com/user-attachments/assets/d8e69c07-a73a-402b-a7ba-1bd8a37d3476" />
+
 
 ## デモ
 
