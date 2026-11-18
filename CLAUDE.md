@@ -146,6 +146,7 @@ npx prisma generate                                  # Client と docs/ERD.md �
 npx prisma studio
 npx prisma db seed
 npm run lint && npm run typecheck                    # typecheck = next typegen && tsc --noEmit（LayoutProps などルートの型を生成してから型チェック）
+npm run format                                       # prettier で整形。npm run format:check は確認だけ。docs/ と Markdown は対象外（.prettierignore）
 npm test                                             # Vitest（src/**/*.test.ts）。npm run test:watch で変更を監視、-- --reporter=verbose で1件ずつ表示
 ```
 
