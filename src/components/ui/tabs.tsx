@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "cn"
-import { Tabs as TabsPrimitive } from "radix-ui"
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "cn";
+import { Tabs as TabsPrimitive } from "radix-ui";
 
 function Tabs({
   className,
@@ -16,11 +16,11 @@ function Tabs({
       data-orientation={orientation}
       className={cn(
         "group/tabs flex gap-2 data-horizontal:flex-col",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 // ダッシュボードのタブに合わせる。shadcn の初期の見た目（灰色の帯の中にタブが並ぶ）ではなく、
@@ -37,8 +37,8 @@ const tabsListVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
-)
+  },
+);
 
 function TabsList({
   className,
@@ -53,7 +53,7 @@ function TabsList({
       className={cn(tabsListVariants({ variant }), className)}
       {...props}
     />
-  )
+  );
 }
 
 // 選ばれていないタブ: 枠線だけ。選ばれたタブ: accent-600 で塗る（data-active は Radix の data-state="active"）。
@@ -68,11 +68,11 @@ function TabsTrigger({
       data-slot="tabs-trigger"
       className={cn(
         "group/tab inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-neutral-300 px-3.5 text-sm font-medium whitespace-nowrap text-neutral-800 transition-colors not-data-active:hover:bg-neutral-200 disabled:pointer-events-none disabled:opacity-45 data-active:border-transparent data-active:bg-accent-600 data-active:font-bold data-active:text-neutral-100 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function TabsContent({
@@ -85,7 +85,7 @@ function TabsContent({
       className={cn("flex-1 outline-none", className)}
       {...props}
     />
-  )
+  );
 }
 
-export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants }
+export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants };

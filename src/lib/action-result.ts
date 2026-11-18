@@ -12,7 +12,8 @@ import { AppError } from "@/lib/errors";
 //       return toFailure(error);
 //     }
 //   }
-export type ActionResult<T = undefined> = { ok: true; data: T } | { ok: false; error: string };
+export type ActionResult<T = undefined> =
+  { ok: true; data: T } | { ok: false; error: string };
 
 export function ok(): ActionResult;
 export function ok<T>(data: T): ActionResult<T>;
@@ -34,5 +35,7 @@ export function toFailure(error: unknown): { ok: false; error: string } {
     return fail(error.issues[0]?.message ?? "入力内容を確認してください");
   }
   console.error(error);
-  return fail("予期しないエラーが発生しました。時間をおいて、もう一度お試しください");
+  return fail(
+    "予期しないエラーが発生しました。時間をおいて、もう一度お試しください",
+  );
 }

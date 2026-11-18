@@ -63,14 +63,21 @@ function MemberCard({ eventId, member, selected, onSelect }: MemberCardProps) {
         {member.isSelf ? (
           <GearMemoDialog
             eventId={eventId}
-            title={member.bike ? `${member.user.displayName}・${member.bike}` : member.user.displayName}
+            title={
+              member.bike
+                ? `${member.user.displayName}・${member.bike}`
+                : member.user.displayName
+            }
             memo={member.gearMemo}
           >
             {/* relative z-10: 名前のボタンの ::after（カード全体）より上に置き、押したときに絞り込みではなくこちらが反応するようにする */}
             <button
               type="button"
               title="自分の積載装備メモを編集"
-              className={cn(memoChipClass, "relative z-10 hover:border-solid hover:bg-surface")}
+              className={cn(
+                memoChipClass,
+                "relative z-10 hover:border-solid hover:bg-surface",
+              )}
             >
               <Motorbike strokeWidth={2.75} className="size-3 shrink-0" />
               <span className="truncate">{memoLabel}</span>

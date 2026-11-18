@@ -103,7 +103,12 @@ function DeleteItemForm({
             キャンセル
           </Button>
         </DialogClose>
-        <Button type="submit" variant="destructive" className="flex-1" disabled={isPending}>
+        <Button
+          type="submit"
+          variant="destructive"
+          className="flex-1"
+          disabled={isPending}
+        >
           リストから削除
         </Button>
       </div>

@@ -7,10 +7,15 @@ type AttentionAlertProps = {
 };
 
 // 調整が必要なアイテムの件数をまとめて知らせる。どれも 0 件なら何も出さない（デザインの alertParts）
-function AttentionAlert({ openCount, unassignedCount, askingCount }: AttentionAlertProps) {
+function AttentionAlert({
+  openCount,
+  unassignedCount,
+  askingCount,
+}: AttentionAlertProps) {
   const parts: string[] = [];
   if (openCount > 0) parts.push(`貸せる人がいないリクエスト ${openCount}件`);
-  if (unassignedCount > 0) parts.push(`運搬担当が未割り当ての共同装備 ${unassignedCount}件`);
+  if (unassignedCount > 0)
+    parts.push(`運搬担当が未割り当ての共同装備 ${unassignedCount}件`);
   if (askingCount > 0) parts.push(`本人の引き受け待ち ${askingCount}件`);
 
   if (parts.length === 0) return null;

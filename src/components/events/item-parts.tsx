@@ -8,9 +8,21 @@ import type { BoardItem } from "@/components/events/types";
 // 状態ごとのラベルと色（デザインの STATUS）。担当が決まっていないものは注意の色、確定は accent-2
 const STATUS_BADGE = {
   open: { label: "未解決", variant: "warn", border: "border-warn-500" },
-  unassigned: { label: "未割り当て", variant: "warn", border: "border-warn-500" },
-  asking: { label: "引き受け確認中", variant: "neutral", border: "border-neutral-400" },
-  confirmed: { label: "確定", variant: "accent-2", border: "border-accent-2-500" },
+  unassigned: {
+    label: "未割り当て",
+    variant: "warn",
+    border: "border-warn-500",
+  },
+  asking: {
+    label: "引き受け確認中",
+    variant: "neutral",
+    border: "border-neutral-400",
+  },
+  confirmed: {
+    label: "確定",
+    variant: "accent-2",
+    border: "border-accent-2-500",
+  },
 } as const;
 
 // note を渡すと「未解決：貸せる人がいない」のような凡例になる
