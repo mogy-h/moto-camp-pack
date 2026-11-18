@@ -2,13 +2,7 @@
 
 キャンプツーリングの積載を仲間内で分担する Web アプリ。共同装備（タープなど）を誰のバイクで運ぶか、ギアの貸し借りを誰が引き受けるかを、早い者勝ちで決める。
 
-<img width="1913" height="906" alt="スクリーンショット 2026-11-18 192655" src="https://github.com/user-attachments/assets/a81153c2-78d6-4aca-b393-f859f99e1631" />
-<img width="1876" height="606" alt="スクリーンショット 2026-11-18 193816" src="https://github.com/user-attachments/assets/42cfb607-d970-45fe-9a9e-5204448a6b75" />
-<img width="1785" height="707" alt="スクリーンショット 2026-11-18 193836" src="https://github.com/user-attachments/assets/744b44d3-2a36-40c6-abc2-4f6c91d66cb4" />
-<img width="1898" height="749" alt="スクリーンショット 2026-11-18 193855" src="https://github.com/user-attachments/assets/0f84bb12-fb40-4be1-9659-b26289733d0c" />
-<img width="1047" height="439" alt="スクリーンショット 2026-11-15 181405" src="https://github.com/user-attachments/assets/d13401e3-2b34-429d-8802-5906c5f51a58" />
-<img width="493" height="643" alt="スクリーンショット 2026-11-04 175830" src="https://github.com/user-attachments/assets/d8e69c07-a73a-402b-a7ba-1bd8a37d3476" />
-
+![イベント詳細: 調整が必要な項目の案内と、メンバーごとの積載](https://github.com/user-attachments/assets/42cfb607-d970-45fe-9a9e-5204448a6b75)
 
 ## デモ
 
@@ -92,6 +86,28 @@ AI による提案は、分担の流れには必須ではありません。た�
 
 - ゲスト参加（[#21](https://github.com/mogy-h/moto-camp-pack/issues/21)）— DB: `EventMember.isGuest`・`User.claimTokenHash`
 - ゲストからアカウントへの引き継ぎ（[#22](https://github.com/mogy-h/moto-camp-pack/issues/22)）— DB: `User.claimTokenHash`
+
+## 画面
+
+**ダッシュボード**: 参加中のイベントの一覧と、積み込みの進捗
+
+![ダッシュボード: 参加中のイベントの一覧と、積み込みの進捗](https://github.com/user-attachments/assets/a81153c2-78d6-4aca-b393-f859f99e1631)
+
+**ギアの貸し借り**: 借りたいギアのリクエストと、早い者勝ちの「自分が貸す」
+
+![ギアの貸し借り: 借りたいギアのリクエストと、早い者勝ちの「自分が貸す」](https://github.com/user-attachments/assets/744b44d3-2a36-40c6-abc2-4f6c91d66cb4)
+
+**共同装備の分担**: 早い者勝ちの「自分が運ぶ」と、積み込み済みのチェック
+
+![共同装備の分担: 早い者勝ちの「自分が運ぶ」と、積み込み済みのチェック](https://github.com/user-attachments/assets/0f84bb12-fb40-4be1-9659-b26289733d0c)
+
+**AI の提案**: 足りない共同装備の候補。「追加」で共同装備に登録できる
+
+![AI の提案: 足りない共同装備の候補](https://github.com/user-attachments/assets/d13401e3-2b34-429d-8802-5906c5f51a58)
+
+**招待リンクからの参加**: リンクを開くと、イベントの概要と参加方法が出る
+
+![招待リンクからの参加: イベントの概要と参加方法](https://github.com/user-attachments/assets/d8e69c07-a73a-402b-a7ba-1bd8a37d3476)
 
 ## 機能一覧
 
