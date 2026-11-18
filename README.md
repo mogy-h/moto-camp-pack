@@ -2,15 +2,7 @@
 
 キャンプツーリングの積載を仲間内で分担する Web アプリ。共同装備（タープなど）を誰のバイクで運ぶか、ギアの貸し借りを誰が引き受けるかを、早い者勝ちで決める。
 
-## スクリーンショット
-
-<img width="1912" height="903" alt="スクリーンショット 2026-11-18 195719" src="https://github.com/user-attachments/assets/d4b9fac2-7272-4dcb-a9a0-fe28bd22b3e0" />
-<img width="1905" height="486" alt="スクリーンショット 2026-11-18 195743" src="https://github.com/user-attachments/assets/fea76a5e-a299-4903-8580-f31d5fc40126" />
-<img width="1895" height="715" alt="スクリーンショット 2026-11-18 195806" src="https://github.com/user-attachments/assets/799a325a-a974-43e5-aba8-c5db09630a79" />
-<img width="1900" height="660" alt="スクリーンショット 2026-11-18 195820" src="https://github.com/user-attachments/assets/b3a9b46e-0b3b-44c6-b333-dda94de44ccc" />
-<img width="1907" height="437" alt="スクリーンショット 2026-11-18 195916" src="https://github.com/user-attachments/assets/cff92eb8-6b6c-4c2f-91b1-53464c2c1455" />
-<img width="788" height="682" alt="スクリーンショット 2026-11-18 200053" src="https://github.com/user-attachments/assets/c6317bb1-563d-4de2-b0f1-1000d2ae976b" />
-
+![イベント詳細: 調整が必要な項目の案内と、メンバーごとの積載](https://github.com/user-attachments/assets/fea76a5e-a299-4903-8580-f31d5fc40126)
 
 ## デモ
 
@@ -99,23 +91,23 @@ AI による提案は、分担の流れには必須ではありません。た�
 
 **ダッシュボード**: 参加中のイベントの一覧と、積み込みの進捗
 
-![ダッシュボード: 参加中のイベントの一覧と、積み込みの進捗](https://github.com/user-attachments/assets/a81153c2-78d6-4aca-b393-f859f99e1631)
+![ダッシュボード: 参加中のイベントの一覧と、積み込みの進捗](https://github.com/user-attachments/assets/d4b9fac2-7272-4dcb-a9a0-fe28bd22b3e0)
 
 **ギアの貸し借り**: 借りたいギアのリクエストと、早い者勝ちの「自分が貸す」
 
-![ギアの貸し借り: 借りたいギアのリクエストと、早い者勝ちの「自分が貸す」](https://github.com/user-attachments/assets/744b44d3-2a36-40c6-abc2-4f6c91d66cb4)
+![ギアの貸し借り: 借りたいギアのリクエストと、早い者勝ちの「自分が貸す」](https://github.com/user-attachments/assets/799a325a-a974-43e5-aba8-c5db09630a79)
 
 **共同装備の分担**: 早い者勝ちの「自分が運ぶ」と、積み込み済みのチェック
 
-![共同装備の分担: 早い者勝ちの「自分が運ぶ」と、積み込み済みのチェック](https://github.com/user-attachments/assets/0f84bb12-fb40-4be1-9659-b26289733d0c)
+![共同装備の分担: 早い者勝ちの「自分が運ぶ」と、積み込み済みのチェック](https://github.com/user-attachments/assets/b3a9b46e-0b3b-44c6-b333-dda94de44ccc)
 
 **AI の提案**: 足りない共同装備の候補。「追加」で共同装備に登録できる
 
-![AI の提案: 足りない共同装備の候補](https://github.com/user-attachments/assets/d13401e3-2b34-429d-8802-5906c5f51a58)
+![AI の提案: 足りない共同装備の候補](https://github.com/user-attachments/assets/cff92eb8-6b6c-4c2f-91b1-53464c2c1455)
 
 **招待リンクからの参加**: リンクを開くと、イベントの概要と参加方法が出る
 
-![招待リンクからの参加: イベントの概要と参加方法](https://github.com/user-attachments/assets/d8e69c07-a73a-402b-a7ba-1bd8a37d3476)
+![招待リンクからの参加: イベントの概要と参加方法](https://github.com/user-attachments/assets/c6317bb1-563d-4de2-b0f1-1000d2ae976b)
 
 ## 機能一覧
 
