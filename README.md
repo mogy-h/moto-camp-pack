@@ -156,7 +156,7 @@ AI による提案は、分担の流れには必須ではありません。た�
 
 ## 設計
 
-- [ER 図](docs/ERD.md)（`prisma/schema.prisma` から自動生成）
+- [ER 図](docs/ERD.md)（`prisma/schema.prisma` から自動生成）。図に出る `_EventMemberToInvite` は、生成ツール（prisma-markdown）の誤判定で、実在しないテーブル（[理由](docs/schema.md#外部キー一覧)）
 - [データ設計](docs/schema.md): テーブル・状態の導出・権限・通知
 - [画面設計](docs/screens.md): 画面一覧と各画面の操作
 - [実装の進捗と判断の記録](docs/progress.md)
