@@ -1,36 +1,247 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MotoCamp Pack
 
-## Getting Started
+キャンプツーリングの積載を仲間内で分担する Web アプリ。共同装備（タープなど）を誰のバイクで運ぶか、ギアの貸し借りを誰が引き受けるかを、早い者勝ちで決める。
 
-First, run the development server:
+![イベント詳細: 調整が必要な項目の案内と、メンバーごとの積載](https://github.com/user-attachments/assets/fea76a5e-a299-4903-8580-f31d5fc40126)
+
+## デモ
+
+**URL**: https://moto-camp-pack.vercel.app
+
+### デモアカウント
+
+3人とも同じイベント「富士山麓 1泊2日 キャンプツーリング」に参加しています。パスワードは3人とも `motocamp-dev` です。
+
+| 名前 | メールアドレス | イベントでの役割 |
+|---|---|---|
+| 山田 拓也 | `takuya@motocamp.test` | オーナー（招待リンクを発行できる） |
+| 佐々木 健二 | `kenji@motocamp.test` | メンバー |
+| 川瀬 美咲 | `misaki@motocamp.test` | メンバー |
+
+デモのデータは誰でも変更できます。レビューの前に、シードで初期の状態に戻しています。
+
+### 試し方
+
+1. 山田 拓也でログインし、ダッシュボードから「富士山麓 1泊2日 キャンプツーリング」を開く
+2. 「共同装備の分担」で、担当が決まっていない装備（「初日夕食の食材」など）の「自分が運ぶ」を押す
+3. **早い者勝ちを試す**: 別のブラウザ（シークレットウィンドウなど）で佐々木 健二としてログインし、同じイベントを開く。2つの画面で同じ装備の「自分が運ぶ」を押すと、後から押した方には「先に他の人が引き受けました」と出る
+4. **AI の提案を試す**: 「足りないものを提案」を押すと、Gemini API が足りない共同装備を提案する。候補の「追加」を押すと、共同装備に登録される
+5. **貸し借りを試す**: 「借りたいギアをリクエスト」で募集し、別のアカウントで「自分が貸す」を押す
+6. **招待を試す**: 山田 拓也で「招待」を押してリンクをコピーし、別のブラウザで開いて、新しいアカウントで参加する
+
+「ギアの貸し借り」の「ローチェア」にある「引き受け確認中」は、相手を指定して頼む流れ（[#16](https://github.com/mogy-h/moto-camp-pack/issues/16)、今後の予定）のためのデータです。承諾・辞退はまだできないため、山田 拓也のカードの「確認中」と、「本人の引き受け待ち」の案内はそのまま残ります。
+
+## 作った目的
+
+初めてバイクでキャンプに行ったとき、初心者の私はキャンプギアを十分に持っておらず、友人に貸してもらいました。これがこのアプリを作ったきっかけです。
+
+バイクは、車種やケースを付けているかどうかで、積める量に個人差があります。そのため、積みきれない装備を余裕のある人に運んでもらったり、ギアを貸し借りしたりするやり取りがよくあります。今までは LINE などのチャットでやり取りをしていましたが、会話が流れてしまい、誰が何を持ってくるのかが曖昧になりがちでした。こうしたやり取りをグループ全体で可視化できたら便利だと思い、このアプリを作りました。
+
+キャンプはただでさえハードルの高い趣味で、バイクで行くならなおさらです。このアプリで、そのハードルが少しでも下がればうれしいです。
+
+## 要件定義
+
+### 対象ユーザー
+
+- キャンプツーリングに3人以上で行く、友人・知人のグループ
+
+### 解決する課題
+
+- 誰が誰にギアを貸すのか、どの共同装備を誰が運ぶのかを明確にする
+- LINE などのチャットで決めると会話が流れてしまい、決めたことが分からなくなる。アプリでは一覧で見えるようにする
+- 誰がどのくらいの荷物を持っていくのかを把握しやすくする（例: 余裕がある人に、当日に買い出す食料の運搬を任せる）
+
+### 作る範囲（MVP）
+
+新規登録・ログイン → イベントの作成 → 招待 → 装備の追加・編集・削除 → 誰が貸すか・誰が運ぶかの取り決め、という一連の流れを、このアプリに最低限必要な範囲としました。
+
+AI による提案は、分担の流れには必須ではありません。ただ、共同装備の抜け漏れに気づけるようになるのと、LLM を組み込んだ機能を作る経験を積みたかったことから、加えました。
+
+- 新規登録・ログイン・ログアウト（[#7](https://github.com/mogy-h/moto-camp-pack/issues/7)）
+- ダッシュボードとイベントの作成（[#10](https://github.com/mogy-h/moto-camp-pack/issues/10)）
+- イベント詳細（メンバーの積載装備メモ・絞り込み）（[#11](https://github.com/mogy-h/moto-camp-pack/issues/11)）
+- 招待リンクの発行と、リンクからの参加（[#18](https://github.com/mogy-h/moto-camp-pack/issues/18)）
+- 共同装備の追加・削除（[#12](https://github.com/mogy-h/moto-camp-pack/issues/12)）
+- 共同装備の運搬担当を早い者勝ちで決める（[#13](https://github.com/mogy-h/moto-camp-pack/issues/13)）
+- 借りたいギアのリクエストと、早い者勝ちの「自分が貸す」（[#15](https://github.com/mogy-h/moto-camp-pack/issues/15)）
+- 共同装備・リクエストの編集（[#41](https://github.com/mogy-h/moto-camp-pack/issues/41)）
+- 足りない共同装備の AI による提案（Gemini API）（[#47](https://github.com/mogy-h/moto-camp-pack/issues/47)）
+
+### 今後の予定
+
+ユーザーに公開するなら、あった方がよい機能です。DB はこれらの機能も含めて設計してあり、必要なテーブルや列はすでにあります（各項目の「DB:」）。
+
+特にパスワードリセットは、公開するなら欠かせませんが、デモアカウントでは使う場面がありません。また、リセット用のメールのリンクから戻ってくる画面が別に必要です。Supabase の標準のメール送信も制限が厳しく、本格的に使うなら外部のメール送信サービスが要ります。
+
+まずは分担の流れを一通り使える状態で早く公開することを優先し、これらは後に回しました。
+
+- パスワードリセット（[#8](https://github.com/mogy-h/moto-camp-pack/issues/8)）— Supabase Auth の機能で作れるので、DB の変更は要らない
+- 通知の表示（[#17](https://github.com/mogy-h/moto-camp-pack/issues/17)）— DB: `Notification`（既読・対応済みの日時）。通知のレコードは、MVP の操作ですでに作っている
+- メンバーの退出・削除（[#20](https://github.com/mogy-h/moto-camp-pack/issues/20)）— DB: `EventMember.leftAt`（メンバーは物理削除しない）
+- イベント設定（基本情報・公開・招待リンクの管理）（[#19](https://github.com/mogy-h/moto-camp-pack/issues/19)）— DB: `Event.status`・`Invite.revokedAt`
+- 貸せるギアの登録と、貸し借りの依頼の承諾・辞退（[#14](https://github.com/mogy-h/moto-camp-pack/issues/14)・[#16](https://github.com/mogy-h/moto-camp-pack/issues/16)）— DB: `LendableGear`・`Item.sourceGearId`・`Item.acceptedAt`
+- プロフィール設定（[#9](https://github.com/mogy-h/moto-camp-pack/issues/9)）— DB: `User.bike`・`User.gearMemo`
+
+### 保留しているもの
+
+ゲスト参加は、ログインせずに招待リンクから参加できるので、使い始めるハードルを下げられます。ただ、アカウントへの引き継ぎまで作る必要があり、作るものが多くなります。また、本人の確認を Cookie だけに頼ることになります。別の端末で開いたり、ブラウザのデータを消したりして Cookie がなくなると、自分の参加情報に戻れません。安心して使い続けるには不安定なので、今回は見送りました。
+
+- ゲスト参加（[#21](https://github.com/mogy-h/moto-camp-pack/issues/21)）— DB: `EventMember.isGuest`・`User.claimTokenHash`
+- ゲストからアカウントへの引き継ぎ（[#22](https://github.com/mogy-h/moto-camp-pack/issues/22)）— DB: `User.claimTokenHash`
+
+## 画面
+
+**ダッシュボード**: 参加中のイベントの一覧と、積み込みの進捗
+
+![ダッシュボード: 参加中のイベントの一覧と、積み込みの進捗](https://github.com/user-attachments/assets/d4b9fac2-7272-4dcb-a9a0-fe28bd22b3e0)
+
+**ギアの貸し借り**: 借りたいギアのリクエストと、早い者勝ちの「自分が貸す」
+
+![ギアの貸し借り: 借りたいギアのリクエストと、早い者勝ちの「自分が貸す」](https://github.com/user-attachments/assets/799a325a-a974-43e5-aba8-c5db09630a79)
+
+**共同装備の分担**: 早い者勝ちの「自分が運ぶ」と、積み込み済みのチェック
+
+![共同装備の分担: 早い者勝ちの「自分が運ぶ」と、積み込み済みのチェック](https://github.com/user-attachments/assets/b3a9b46e-0b3b-44c6-b333-dda94de44ccc)
+
+**AI の提案**: 足りない共同装備の候補。「追加」で共同装備に登録できる
+
+![AI の提案: 足りない共同装備の候補](https://github.com/user-attachments/assets/cff92eb8-6b6c-4c2f-91b1-53464c2c1455)
+
+**招待リンクからの参加**: リンクを開くと、イベントの概要と参加方法が出る
+
+![招待リンクからの参加: イベントの概要と参加方法](https://github.com/user-attachments/assets/c6317bb1-563d-4de2-b0f1-1000d2ae976b)
+
+## 機能一覧
+
+| 分類 | 機能 | 説明 |
+|---|---|---|
+| アカウント | 新規登録・ログイン・ログアウト | メールアドレスとパスワード（Supabase Auth） |
+| イベント | イベントの作成 | イベント名・場所・日程。作成した人がオーナーになる |
+| | ダッシュボード | 参加中のイベントの一覧。予定・完了のタブ、検索、積み込みの進捗 |
+| | 招待 | オーナーが招待リンクを発行し、受け取った人がリンクから参加する。リンクは出発日の終わりまで有効 |
+| メンバー | メンバーカード | 参加者ごとに、車種と積載装備メモを表示する |
+| | 積載装備メモ | 自分のバイクに積む装備のメモを、イベントごとに編集できる |
+| | 絞り込み | メンバーのカードを押すとその人の担当分だけ、「調整が必要なものだけ」で担当や貸す人がまだ決まっていないもの（自分宛ての依頼を含む）だけを表示する |
+| 共同装備 | 追加・編集・削除 | テントやタープなど、全員で使う装備を登録する。かさばり具合は S / M / L |
+| | 運搬担当（早い者勝ち） | 「自分が運ぶ」を最初に押した人に決まる。決まったあとは「降りる」で取り消せる |
+| | 積み込み済み | 担当の人がチェックを付け、イベント全体の進捗に反映される |
+| | 足りないものの提案（AI） | 場所・日程・人数・登録済みの装備から、足りない共同装備を Gemini API が提案する。候補の「追加」で登録できる。AI が使えないときは定番のリストから提案する |
+| 貸し借り | リクエスト | 借りたいギアを募集する。取り下げ・編集もできる |
+| | 「自分が貸す」（早い者勝ち） | 最初に押した人が貸す人に決まり、借りたい人に通知が作られる |
+
+## 技術スタック
+
+| 分類 | 使ったもの | 選定理由 |
+|---|---|---|
+| フレームワーク | Next.js 16（App Router）・React 19・TypeScript | ファイルの置き場所がそのまま URL になる（ファイルベースルーティング）ので、React Router などを入れずに済み、フォルダを見るだけで画面の構成が分かる。Server Components と Server Actions で DB の読み書きまで書けるので、バックエンドのフレームワークを別に用意しなくてよい |
+| データベース | PostgreSQL（Supabase） | イベント・メンバー・装備・通知のように、互いにつながったデータを扱うので、広く使われている RDB の PostgreSQL にした。早い者勝ちは「担当がまだいないときだけ更新する」条件付きの UPDATE で確定でき、同時に押されても先の1人だけが通る。「自分が貸す」の確定と通知の作成は1つのトランザクションにまとめ、途中で失敗したら両方取り消される |
+| ORM | Prisma 7 | スキーマからマイグレーションと型を作れる。手書きの CHECK 制約もマイグレーションに含められる |
+| 認証 | Supabase Auth（`@supabase/ssr`） | パスワードのハッシュ化やセッションの管理は、自分で書くと安全面の不備が起きやすいので、実績のあるサービスに任せた。DB と同じ Supabase なので、1つのサービス（無料枠）で DB と認証がそろう。セッションは `@supabase/ssr` で Cookie に置き、サーバー側でログイン中のユーザーを確かめられる。パスワードリセット（[#8](https://github.com/mogy-h/moto-camp-pack/issues/8)）も Supabase の機能で後から足せる |
+| スタイル | Tailwind CSS v4 | デザインのトークン（色・角丸・余白）を `@theme` に置き、クラス名として使える |
+| UI 部品 | shadcn/ui（Radix UI） | モーダルやメニューのアクセシビリティ（フォーカス管理・キーボード操作・読み上げ）を、実績のある実装に任せるため |
+| 入力の検証 | zod | Server Action の入力を検証する。Gemini の答えの形も同じ zod で確かめる |
+| LLM | Gemini API（`@google/genai`） | 安いモデル（Flash Lite）があり、1回の費用がごく小さい。答えの形を JSON スキーマで指定できる（構造化出力）ので、候補を決まった形で受け取り、zod で確かめられる。有料枠を前払い・自動チャージなしで使い、残高が尽きれば止まるので使いすぎない（無料枠は1日に呼べる回数が少なく、デモを触ってもらう途中で止まるおそれがあった） |
+| テスト | Vitest | DB にも React にも依存しない純関数（状態の導出・権限・日付など）をテストする |
+| デプロイ | Vercel | Next.js の開発元のサービスなので相性がよい。GitHub と連携すると、ブランチごとにプレビュー環境が作られ、マージ前に実際に公開した状態で動作確認できる（[#49](https://github.com/mogy-h/moto-camp-pack/issues/49) のスマホ表示の崩れも、ここで修正を確かめた） |
+
+ほかに使っているライブラリ: lucide-react（アイコン）、sonner（トースト）、prisma-markdown（ER 図の生成）
+
+## 外部 API
+
+| サービス | 使っている機能 | 使い方 |
+|---|---|---|
+| Supabase | Auth | メールアドレスとパスワードでの登録・ログイン。セッションは Cookie で持つ |
+| | PostgreSQL | アプリのデータベース。Prisma からだけ接続し、ブラウザから DB に触れる Data API は無効にしている |
+| Google Gemini API | テキスト生成（`gemini-3.5-flash-lite`） | 足りない共同装備の提案。サーバーからだけ呼び、送るのはイベントの場所・日程・人数・登録済みの装備名だけ（名前やメールアドレスは送らない）。答えは JSON の形を指定して受け取る。1人あたり24時間で10回まで |
+
+## 設計
+
+- [ER 図](docs/ERD.md)（`prisma/schema.prisma` から自動生成）。図に出る `_EventMemberToInvite` は、生成ツール（prisma-markdown）の誤判定で、実在しないテーブル（[理由](docs/schema.md#外部キー一覧)）
+- [データ設計](docs/schema.md): テーブル・状態の導出・権限・通知
+- [画面設計](docs/screens.md): 画面一覧と各画面の操作
+- [実装の進捗と判断の記録](docs/progress.md)
+
+### 設計で工夫した点
+
+#### 1. 早い者勝ちを、条件付きの更新1回で確定する
+
+担当がいるかを読んでから書き込む方式だと、2人が同時に押したとき、2人とも「空いている」と読んで、両方が担当になってしまいます。そこで `updateMany` の条件に `carrierId: null`（担当がまだいない）を入れ、確かめることと書き込むことを1回の UPDATE で行っています。更新できた件数が0件なら先を越されたと分かるので、「先に他の人が引き受けました」と表示します（[`src/actions/items.ts`](src/actions/items.ts)）。
+
+#### 2. 権限の確認は、必ず Server Action の中で行う
+
+Server Action は画面を通さずに直接呼び出せるので、ボタンを隠すだけでは守れません。イベントの中の操作をする Server Action は、最初に `requireMember(eventId)` で参加しているかを確かめ（退出したメンバーは参加していない扱い）、オーナーだけの操作などは `assertCan`・`assertOwner` で確かめています。フォームの hidden の `eventId` を、参加していないイベントのものに書き換えて送っても、拒否されることを確かめました。
+
+#### 3. 表示用の値は DB に保存せず、元のデータから導出する
+
+装備の状態（担当が決まったか、貸し借りの依頼中かなど）、イベントが終わったか、積み込みの進捗、アバターの色は、DB に列を持たせていません。元のデータ（`carrierId`・`acceptedAt`・日程など）から毎回計算します。保存すると、元のデータを変えたときに直し忘れて、食い違うおそれがあるためです。
+
+計算は DB にも React にも依存しない純関数（[`src/lib/derive/`](src/lib/derive/)）にまとめ、サーバーとブラウザの両方で使い、Vitest でテストしています。「今日」は日本時間で求めて引数で渡すので、UTC で動く Vercel でも日付がずれず、テストでは日付を固定できます。
+
+#### 4. AI の提案は、回数と費用を抑え、失敗しても使えるようにする
+
+- 1人あたり直近24時間で10回まで。呼ぶたびに `SuggestionLog` に1行足し、その件数で判定します。回数とリセット時刻を `User` に持たせる方式と違い、リセットの処理が要りません
+- 記録は Gemini を呼ぶ前に残します。失敗やタイムアウトでも料金がかかることがあるためです
+- Gemini が失敗したとき（10秒のタイムアウト、形の違う答えなど）は、定番のリストから提案し、「AI の提案を取得できなかったため、定番のリストから表示しています」と画面に出します
+- Gemini に送るのは、イベントの場所・日程・人数・登録済みの装備名だけです。名前やメールアドレスは送りません
+
+## 開発の進め方
+
+1人での開発ですが、チームでの開発と同じ流れで進めました。
+
+- **実装の前に設計する**: データ設計（[`docs/schema.md`](docs/schema.md)）と画面設計（[`docs/screens.md`](docs/screens.md)）を先に書き、画面のデザインは Claude Design で作りました（[`docs/design/`](docs/design/)）。仕様が決まっていない点は `screens.md` の「要確認」に書き出し、決めてから実装しました
+- **Issue でタスクを管理する**: 機能ごとに Issue を立て、完了条件を書いてから着手しました
+- **GitHub Flow**: main は常に動く状態に保ち、Issue ごとにブランチを切ります（例: `feat/13-carry-shared-item`）。1人で継続的にデプロイする Web アプリなので、release・hotfix ブランチを持つ Git Flow は使いませんでした。コミットメッセージは `feat:`・`fix:` などの接頭辞と日本語で書きます
+- **PR のテンプレート**: 「設計判断」（検討したほかの案と、選ばなかった理由）と「動作確認」（完了条件をどう確かめたか）の欄を設けました（[`.github/pull_request_template.md`](.github/pull_request_template.md)）。マージ前に lint・型チェック・テストを通し、必要に応じて Vercel のプレビュー環境でも動作を確かめます。マージは「Create a merge commit」で、コミットの積み重ねを main に残します
+- **進捗と判断の記録**: [`docs/progress.md`](docs/progress.md) に、機能ごとの状態と完了日、そのときに判断したことと理由を残しました。機能の PR の中で一緒に更新します
+
+## AI の使い方
+
+開発には Claude Code を使いました。ポートフォリオとして、自分で説明できる理解を残すことを優先し、コードを代わりに書かせるのではなく、メンターとして使いました。
+
+- **役割とルールを `CLAUDE.md` に書く**: Claude Code の役割（やること・やらないこと）と、守る実装ルール（権限の確認の場所、早い者勝ちの書き方など）を [`CLAUDE.md`](CLAUDE.md) に書き、毎回同じ前提で相談できるようにしました。答えのコードをいきなり出さず、ヒント → 方針 → 必要なら部分的なコード例、の順で出すようにしています
+- **新しいバージョンは公式ドキュメントで確かめる**: Next.js 16 や Prisma 7 は AI の学習データより新しく、書き方が変わっている部分があるので、使う前に公式ドキュメントを確かめるよう `CLAUDE.md` に書きました
+- **自分で書いたもの**: Server Actions、導出の関数、権限の確認など、アプリのロジック
+- **任せたもの**: 設定ファイルや定型コード、デザイン HTML から Tailwind のクラスへの書き写し、ドキュメント（進捗のメモ・PR の本文・README の一部）の下書き
+- **相談したこと**: 次に何を作るか、設計の選択肢とトレードオフ（決めるのは自分）、書いたコードのレビュー、不具合の原因の調査、分からない概念の解説
+- **後で深掘りする**: 実装中に出てきた、理解を深めたい項目は Issue（[#34](https://github.com/mogy-h/moto-camp-pack/issues/34)）にまとめ、完成後に振り返ります
+
+## ローカルでの起動
+
+Node.js 24 で動作を確認しています。
+
+1. Supabase のプロジェクトを作り、次の設定をする
+   - Data API を無効にする
+   - Auth: メールアドレスとパスワードでのログインを有効にし、登録時のメール確認をオフにする
+2. リポジトリを取得し、パッケージを入れる（`postinstall` で Prisma Client も生成される）
+   ```bash
+   git clone https://github.com/mogy-h/moto-camp-pack.git
+   cd moto-camp-pack
+   npm install
+   ```
+3. `.env.local` を作り、次の値を入れる（それぞれの説明は [CLAUDE.md の「環境変数」](CLAUDE.md#環境変数envlocal)）
+   ```
+   DATABASE_URL=                          # Supabase の Transaction pooler（:6543、?pgbouncer=true）
+   DIRECT_URL=                            # Supabase の Session pooler（:5432）。マイグレーションとシードで使う
+   NEXT_PUBLIC_SUPABASE_URL=
+   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+   SUPABASE_SECRET_KEY=                   # シードだけが使う
+   GEMINI_API_KEY=
+   GEMINI_MODEL=gemini-3.5-flash-lite
+   ```
+4. テーブルを作り、サンプルデータ（上のデモアカウント）を入れる
+   ```bash
+   npx prisma migrate deploy
+   npx prisma db seed
+   ```
+5. 開発サーバーを起動し、http://localhost:3000 を開く
+   ```bash
+   npm run dev
+   ```
+
+テスト・型チェック・lint:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm test
+npm run typecheck
+npm run lint
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

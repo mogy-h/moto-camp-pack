@@ -236,6 +236,9 @@ Properties as follows:
 
 招待リンク
 
+ER 図に出る `_EventMemberToInvite` は prisma-markdown の誤判定で、実在しないテーブル。
+発行者（createdBy）と、経由した参加（joins）の2つの1対多を、多対多と判定している（docs/schema.md「外部キー一覧」）
+
 Properties as follows:
 
 - `id`:
