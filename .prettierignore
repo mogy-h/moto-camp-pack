@@ -1,0 +1,10 @@
+# .gitignore に書いたもの（.next・src/generated など）は、prettier が自動で除外する
+
+# デザイン参照用の書き出しと、prisma-markdown が生成する ER 図（自分で書くコードではない）
+docs/
+
+# Markdown は、表の列幅をそろえるために全行が書き換わり、文章の差分が読みにくくなるので対象外にする
+*.md
+
+# npm が書き出すファイル
+package-lock.json
